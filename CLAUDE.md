@@ -43,6 +43,20 @@ Metrics for every run: time to first paint, total generation time, style consist
 - The prompt set: how many prompts and which data domains.
 - The chart grammar is inherited from POC 2 (a Vega-Lite subset or a custom minimal schema).
 
+## What is built so far
+
+The first build follows a narrower brief than the plan above, so read this before assuming the plan describes the code. See `README.md` for the layout.
+
+- **Four panels, not three modes:** Text (react-markdown), A2UI, Freeform HTML and AG-UI (`generateUserInterface` + JSON Forms). There is no fixed-components mode yet.
+- **A2UI uses the basic catalog only**, not the POC 2 custom catalog (no Chart, StatTile or Legend).
+- **Fixtures only.** The app reads `/fixtures` and makes no model calls. The 25 prompts' renderings were written by Claude in an agent session and saved under `/generation`; there is no AI SDK route, no `AI_GATEWAY_API_KEY` and no timing harness, so time to first paint and generation time are not measured.
+- **Failures are recorded, never repaired.** `pnpm fixtures` validates each saved output and stores the result beside it. Do not edit a file under `/generation` to make it pass.
+- **ADR-002 has not been written.** It belongs in the parent workspace, which this repo's work did not touch.
+- Mode C security is implemented as described above, except that the iframe is not messaged at all (no `postMessage` channel).
+
 ## Commands
 
-None yet. Add `dev`, `build`, `lint`, `test` and the eval runner here once scaffolded.
+- `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`
+- `pnpm fixtures`: rebuild `/fixtures` from `/generation` and re-validate every rendering.
+- `pnpm check:browser`: open every prompt page in headless Chromium against a running production build (`pnpm build && pnpm start -p 3111`) and write `fixtures/browser-check.json`. Needs `pnpm exec playwright install chromium` once.
+- There is no test runner or eval runner yet.
