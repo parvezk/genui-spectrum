@@ -1,0 +1,90 @@
+{
+  "toolCall": {
+    "id": "call_split_bill_24",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "State the default answer for splitting a $186.40 bill between 4 people ($54.99 each with an 18% tip) and show a read-only table of other tip levels. Then let the user confirm or change the bill total, number of people, tip percentage and whether to round each share up to the next dollar, so the split can be recalculated.",
+      "data": {
+        "bill": 186.4,
+        "people": 4,
+        "defaultTipPercent": 18,
+        "perPersonAtDefault": 54.99,
+        "options": [
+          { "tip": "15%", "tipAmount": 27.96, "total": 214.36, "each": 53.59 },
+          { "tip": "18%", "tipAmount": 33.55, "total": 219.95, "each": 54.99 },
+          { "tip": "20%", "tipAmount": 37.28, "total": 223.68, "each": 55.92 },
+          { "tip": "25%", "tipAmount": 46.6, "total": 233.0, "each": 58.25 }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "bill": { "type": "number", "exclusiveMinimum": 0 },
+          "people": { "type": "integer", "minimum": 2, "maximum": 20 },
+          "tipPercent": { "type": "integer", "minimum": 0, "maximum": 30 },
+          "roundUp": { "type": "boolean" }
+        },
+        "required": ["bill", "people", "tipPercent", "roundUp"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "array",
+          "title": "$186.40 between 4 people",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tip": { "type": "string", "title": "Tip" },
+              "tipAmount": { "type": "number", "title": "Tip ($)" },
+              "total": { "type": "number", "title": "Total ($)" },
+              "each": { "type": "number", "title": "Each ($)" }
+            }
+          }
+        },
+        "bill": { "type": "number", "title": "Bill total ($)", "exclusiveMinimum": 0 },
+        "people": { "type": "integer", "title": "People", "minimum": 2, "maximum": 20 },
+        "tipPercent": { "type": "integer", "title": "Tip (%)", "minimum": 0, "maximum": 30, "default": 18 },
+        "roundUp": { "type": "boolean", "title": "Round each share up to the next dollar" }
+      },
+      "required": ["bill", "people", "tipPercent", "roundUp"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "With an 18% tip, each person pays $54.99" },
+        { "type": "Control", "scope": "#/properties/options", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Change the numbers",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/bill" },
+                { "type": "Control", "scope": "#/properties/people" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/tipPercent", "options": { "slider": true } },
+            { "type": "Control", "scope": "#/properties/roundUp", "options": { "toggle": true } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "options": [
+        { "tip": "15%", "tipAmount": 27.96, "total": 214.36, "each": 53.59 },
+        { "tip": "18%", "tipAmount": 33.55, "total": 219.95, "each": 54.99 },
+        { "tip": "20%", "tipAmount": 37.28, "total": 223.68, "each": 55.92 },
+        { "tip": "25%", "tipAmount": 46.6, "total": 233.0, "each": 58.25 }
+      ],
+      "bill": 186.4,
+      "people": 4,
+      "tipPercent": 18,
+      "roundUp": false
+    }
+  }
+}

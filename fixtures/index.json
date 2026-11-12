@@ -241,6 +241,97 @@
         "html": true,
         "agui": true
       }
+    },
+    {
+      "id": "19-book-table",
+      "index": 19,
+      "title": "Restaurant booking",
+      "category": "input",
+      "prompt": "Book me a table for dinner at Luigi's Trattoria. They take reservations from 17:30 to 21:30 in 30-minute slots, for 1 to 8 people, indoors or on the terrace.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "20-flight-filters",
+      "index": 20,
+      "title": "Flight filters",
+      "category": "input",
+      "prompt": "I'm choosing a flight from New York to Lisbon. Let me filter by max price, stops and airline, then pick one. TAP TP202 nonstop 18:30 $640. United UA64 nonstop 20:15 $710. Delta DL272 1 stop 16:05 $520. Iberia IB6252 1 stop 21:40 $480. Air France AF11 1 stop 19:00 $560. TAP TP210 nonstop 22:55 $590.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "21-bug-report",
+      "index": 21,
+      "title": "Bug report form",
+      "category": "input",
+      "prompt": "I want to report a bug in the mobile app. Collect what the team needs to triage it.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "22-offsite-rsvp",
+      "index": 22,
+      "title": "Offsite RSVP",
+      "category": "input",
+      "prompt": "Collect my RSVP for the team offsite in Porto on 12–13 September: whether I'm coming, and if so my dietary needs, whether I need a hotel room, and my T-shirt size.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "23-notification-prefs",
+      "index": 23,
+      "title": "Notification preferences",
+      "category": "input",
+      "prompt": "Let me set my notification preferences: email, push and SMS for each of mentions, direct messages, weekly digest and product updates, plus quiet hours.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "24-split-bill",
+      "index": 24,
+      "title": "Split the bill",
+      "category": "input",
+      "prompt": "Help me split a $186.40 dinner bill between 4 people with a tip.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "25-csat-survey",
+      "index": 25,
+      "title": "Support satisfaction survey",
+      "category": "input",
+      "prompt": "Give me a short satisfaction survey for a customer who just finished a support chat.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
     }
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "text": "Handles the branch in words (reply No, or answer three more things) with a one-line example; fine for one person, awkward to collect consistently from a team.",
+  "a2ui": "All the inputs exist, but the basic catalog has no conditional visibility, so the if-you-are-coming questions are always shown with a caption telling people to skip them.",
+  "html": "The follow-up questions slide open only on Yes, hotel nights appear only with the hotel switch, and a live sentence reads the RSVP back before sending.",
+  "agui": "Rules show the details only when attending and the nights only when a hotel is needed, and the if/then in the output schema makes shirt size required only for attendees."
+}

@@ -1,0 +1,124 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "csat-survey",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "csat-survey",
+      "components": [
+        { "id": "root", "component": "Card", "child": "form" },
+        { "id": "form", "component": "Column", "children": ["title", "subtitle", "satisfaction", "resolved", "effort", "nps", "nps-readout", "comment", "contact", "submit"] },
+        { "id": "title", "component": "Text", "variant": "h3", "text": "How did we do?" },
+        { "id": "subtitle", "component": "Text", "variant": "caption", "text": "Five quick questions about your support chat. It takes about a minute." },
+
+        {
+          "id": "satisfaction",
+          "component": "ChoicePicker",
+          "label": "1. Overall, how satisfied are you with the support you received?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "1 · Very dissatisfied", "value": "1" },
+            { "label": "2", "value": "2" },
+            { "label": "3 · Neutral", "value": "3" },
+            { "label": "4", "value": "4" },
+            { "label": "5 · Very satisfied", "value": "5" }
+          ],
+          "value": { "path": "/survey/satisfaction" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/survey/satisfaction" } } }, "message": "Please pick a rating." }
+          ]
+        },
+        {
+          "id": "resolved",
+          "component": "ChoicePicker",
+          "label": "2. Did we resolve your issue?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Yes", "value": "yes" },
+            { "label": "Partly", "value": "partly" },
+            { "label": "No", "value": "no" }
+          ],
+          "value": { "path": "/survey/resolved" }
+        },
+        {
+          "id": "effort",
+          "component": "ChoicePicker",
+          "label": "3. How easy was it to get the help you needed?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "1 · Very difficult", "value": "1" },
+            { "label": "2", "value": "2" },
+            { "label": "3", "value": "3" },
+            { "label": "4", "value": "4" },
+            { "label": "5 · Very easy", "value": "5" }
+          ],
+          "value": { "path": "/survey/effort" }
+        },
+        { "id": "nps", "component": "Slider", "label": "4. How likely are you to recommend us to a friend or colleague?", "min": 0, "max": 10, "value": { "path": "/survey/recommend" } },
+        {
+          "id": "nps-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${/survey/recommend} out of 10 (0 = not at all likely, 10 = extremely likely)" }, "returnType": "string" }
+        },
+        {
+          "id": "comment",
+          "component": "TextField",
+          "label": "5. Anything else you would like to tell us? (optional)",
+          "variant": "longText",
+          "value": { "path": "/survey/comment" },
+          "checks": [
+            { "condition": { "call": "length", "args": { "value": { "path": "/survey/comment" }, "max": 500 } }, "message": "Please keep it under 500 characters." }
+          ]
+        },
+        { "id": "contact", "component": "CheckBox", "label": "You may contact me about my feedback", "value": { "path": "/survey/mayContact" } },
+        {
+          "id": "submit",
+          "component": "Button",
+          "variant": "primary",
+          "child": "submit-label",
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/survey/satisfaction" } } }, "message": "Answer question 1 to send your feedback." }
+          ],
+          "action": {
+            "event": {
+              "name": "submit_support_survey",
+              "context": {
+                "satisfaction": { "path": "/survey/satisfaction" },
+                "resolved": { "path": "/survey/resolved" },
+                "effort": { "path": "/survey/effort" },
+                "recommend": { "path": "/survey/recommend" },
+                "comment": { "path": "/survey/comment" },
+                "mayContact": { "path": "/survey/mayContact" }
+              }
+            }
+          }
+        },
+        { "id": "submit-label", "component": "Text", "text": "Send feedback" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "csat-survey",
+      "path": "/survey",
+      "value": {
+        "satisfaction": [],
+        "resolved": [],
+        "effort": [],
+        "recommend": 8,
+        "comment": "",
+        "mayContact": false
+      }
+    }
+  }
+]

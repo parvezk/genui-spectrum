@@ -1,0 +1,136 @@
+{
+  "toolCall": {
+    "id": "call_bug_report_21",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Collect a triage-ready bug report for the mobile app in three sections. What happened: one-sentence summary, app area, steps to reproduce, expected and actual behaviour, severity and frequency. Environment: platform, device and OS version, app version. Follow-up: whether the team may contact the reporter and, if so, an email address.",
+      "data": {
+        "areas": ["login", "checkout", "search", "notifications", "profile", "other"],
+        "latestAppVersion": "4.2.1"
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "summary": { "type": "string", "minLength": 5, "maxLength": 120 },
+          "area": { "type": "string", "enum": ["login", "checkout", "search", "notifications", "profile", "other"] },
+          "steps": { "type": "string", "minLength": 10 },
+          "expected": { "type": "string" },
+          "actual": { "type": "string" },
+          "severity": { "type": "string", "enum": ["blocker", "major", "minor", "cosmetic"] },
+          "frequency": { "type": "string", "enum": ["always", "sometimes", "once"] },
+          "platform": { "type": "string", "enum": ["ios", "android"] },
+          "device": { "type": "string", "minLength": 2 },
+          "appVersion": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+){1,2}$" },
+          "canContact": { "type": "boolean" },
+          "email": { "type": "string", "format": "email" }
+        },
+        "required": ["summary", "area", "steps", "severity", "frequency", "platform", "device", "canContact"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": "string", "title": "Summary (one sentence)", "minLength": 5, "maxLength": 120 },
+        "area": {
+          "type": "string",
+          "title": "Where in the app?",
+          "oneOf": [
+            { "const": "login", "title": "Login" },
+            { "const": "checkout", "title": "Checkout" },
+            { "const": "search", "title": "Search" },
+            { "const": "notifications", "title": "Notifications" },
+            { "const": "profile", "title": "Profile" },
+            { "const": "other", "title": "Somewhere else" }
+          ]
+        },
+        "steps": { "type": "string", "title": "Steps to reproduce (one per line)", "minLength": 10 },
+        "expected": { "type": "string", "title": "What did you expect?" },
+        "actual": { "type": "string", "title": "What happened instead?" },
+        "severity": {
+          "type": "string",
+          "title": "How bad is it?",
+          "oneOf": [
+            { "const": "blocker", "title": "Blocker: I cannot use the app" },
+            { "const": "major", "title": "Major: a feature is broken" },
+            { "const": "minor", "title": "Minor: there is a workaround" },
+            { "const": "cosmetic", "title": "Cosmetic: it just looks wrong" }
+          ]
+        },
+        "frequency": {
+          "type": "string",
+          "title": "How often?",
+          "oneOf": [
+            { "const": "always", "title": "Every time" },
+            { "const": "sometimes", "title": "Sometimes" },
+            { "const": "once", "title": "Once" }
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "title": "Platform",
+          "oneOf": [
+            { "const": "ios", "title": "iOS" },
+            { "const": "android", "title": "Android" }
+          ]
+        },
+        "device": { "type": "string", "title": "Device and OS version", "minLength": 2, "description": "For example: Pixel 8, Android 14" },
+        "appVersion": { "type": "string", "title": "App version", "pattern": "^[0-9]+(\\.[0-9]+){1,2}$", "description": "Profile → Settings → About. For example 4.2.1" },
+        "canContact": { "type": "boolean", "title": "The team may contact me about this report" },
+        "email": { "type": "string", "title": "Email", "format": "email" }
+      },
+      "required": ["summary", "area", "steps", "severity", "frequency", "platform", "device", "canContact"]
+    },
+    "uiSchema": {
+      "type": "Categorization",
+      "elements": [
+        {
+          "type": "Category",
+          "label": "What happened",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/summary" },
+            { "type": "Control", "scope": "#/properties/area" },
+            { "type": "Control", "scope": "#/properties/steps", "options": { "multi": true } },
+            { "type": "Control", "scope": "#/properties/expected" },
+            { "type": "Control", "scope": "#/properties/actual" },
+            { "type": "Control", "scope": "#/properties/severity", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/frequency", "options": { "format": "radio" } }
+          ]
+        },
+        {
+          "type": "Category",
+          "label": "Your device",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/platform", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/device" },
+            { "type": "Control", "scope": "#/properties/appVersion" }
+          ]
+        },
+        {
+          "type": "Category",
+          "label": "Follow-up",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/canContact" },
+            {
+              "type": "Control",
+              "scope": "#/properties/email",
+              "rule": {
+                "effect": "SHOW",
+                "condition": { "scope": "#/properties/canContact", "schema": { "const": true } }
+              }
+            },
+            { "type": "Label", "text": "Please do not include passwords or full card numbers." }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "area": "checkout",
+      "severity": "major",
+      "frequency": "always",
+      "platform": "ios",
+      "canContact": false
+    }
+  }
+}

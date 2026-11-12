@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offsite RSVP</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1b2a41; background: #fff7ed; }
+  .hero { background: linear-gradient(135deg, #0c4a6e, #0e7490 60%, #f59e0b); color: #fff; padding: 20px 16px 26px; }
+  .hero small { text-transform: uppercase; letter-spacing: .1em; font-size: 10px; opacity: .85; }
+  .hero h1 { margin: 2px 0; font-size: 22px; }
+  .hero p { margin: 0; opacity: .95; }
+  main { padding: 0 16px 16px; margin-top: -12px; }
+  .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 2px 10px rgba(12,74,110,.08); margin-bottom: 12px; }
+  h2 { font-size: 14px; margin: 0 0 8px; }
+  .yn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .yn button { border: 2px solid #e2e8f0; background: #fff; border-radius: 12px; padding: 12px 6px; font: inherit; font-weight: 700; cursor: pointer; color: inherit; }
+  .yn button span { display: block; font-size: 22px; }
+  .yn button.on[data-v=yes] { border-color: #0e7490; background: #ecfeff; }
+  .yn button.on[data-v=no] { border-color: #94a3b8; background: #f1f5f9; }
+  .more { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .35s ease, opacity .25s ease; }
+  .more.open { max-height: 900px; opacity: 1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; color: inherit; }
+  .chip.on { background: #0e7490; border-color: #0e7490; color: #fff; }
+  input[type=text] { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; margin-top: 8px; }
+  .switch { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .switch input { position: absolute; opacity: 0; }
+  .switch i { width: 42px; height: 24px; border-radius: 12px; background: #cbd5e1; position: relative; transition: background .2s; flex: none; }
+  .switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .2s; }
+  .switch input:checked + i { background: #0e7490; }
+  .switch input:checked + i::after { left: 21px; }
+  .switch input:focus-visible + i { outline: 2px solid #f59e0b; }
+  .nights { display: none; margin-top: 10px; }
+  .nights.open { display: block; }
+  .night { display: flex; gap: 8px; align-items: center; padding: 4px 0; cursor: pointer; }
+  .summary { background: #0c4a6e; color: #fff; border-radius: 14px; padding: 14px; }
+  .summary small { text-transform: uppercase; letter-spacing: .08em; font-size: 10px; opacity: .8; }
+  .summary p { margin: 2px 0 10px; font-size: 15px; }
+  .summary button { width: 100%; border: 0; border-radius: 10px; padding: 11px; font: inherit; font-weight: 700; background: #f59e0b; color: #1b2a41; cursor: pointer; }
+  .summary button:disabled { opacity: .5; cursor: default; }
+  .summary .after { font-size: 12px; opacity: .85; margin: 8px 0 0; }
+  .err { color: #fde68a; font-size: 12px; margin: 0 0 8px; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <small>Team offsite</small>
+    <h1>Porto</h1>
+    <p>12–13 September</p>
+  </div>
+  <main>
+    <div class="card">
+      <h2>Are you coming?</h2>
+      <div class="yn" id="yn">
+        <button type="button" data-v="yes"><span>🎉</span>Yes, I'll be there</button>
+        <button type="button" data-v="no"><span>😔</span>No, I can't make it</button>
+      </div>
+    </div>
+
+    <div class="more" id="more">
+      <div class="card">
+        <h2>Dietary needs</h2>
+        <div class="chips" id="diet"></div>
+        <input type="text" id="allergies" placeholder="Allergies or anything else (optional)" aria-label="Allergies or anything else">
+      </div>
+      <div class="card">
+        <label class="switch"><h2 style="margin:0">I need a hotel room</h2><input type="checkbox" id="hotel"><i></i></label>
+        <div class="nights" id="nights">
+          <label class="night"><input type="checkbox" data-night="11 Sep"> 11 Sep <span style="color:#64748b">(arriving the night before)</span></label>
+          <label class="night"><input type="checkbox" data-night="12 Sep" checked> 12 Sep</label>
+          <label class="night"><input type="checkbox" data-night="13 Sep"> 13 Sep <span style="color:#64748b">(leaving the day after)</span></label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>T-shirt size</h2>
+        <div class="chips" id="shirt"></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <small>Your RSVP</small>
+      <p id="sentence"></p>
+      <p class="err" id="err"></p>
+      <button type="button" id="send">Send RSVP</button>
+      <p class="after" id="after"></p>
+    </div>
+  </main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { attending: null, diet: {}, shirt: null, sent: false };
+  var diets = ['Vegetarian', 'Vegan', 'Gluten-free', 'Halal', 'Kosher'];
+  var sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  function chips(box, values) {
+    values.forEach(function (v) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = v;
+      b.setAttribute('data-v', v);
+      box.appendChild(b);
+    });
+  }
+  chips($('diet'), diets);
+  chips($('shirt'), sizes);
+
+  function nights() {
+    var out = [];
+    var boxes = $('nights').querySelectorAll('input');
+    for (var i = 0; i < boxes.length; i++) { if (boxes[i].checked) { out.push(boxes[i].getAttribute('data-night')); } }
+    return out;
+  }
+
+  function problem() {
+    if (state.attending === null) { return 'Choose yes or no.'; }
+    if (state.attending === 'yes') {
+      if (!state.shirt) { return 'Pick a T-shirt size.'; }
+      if ($('hotel').checked && nights().length === 0) { return 'Pick at least one hotel night, or switch the hotel off.'; }
+    }
+    return '';
+  }
+
+  function sentence() {
+    if (state.attending === null) { return 'Not answered yet.'; }
+    if (state.attending === 'no') { return 'Not coming. Thanks for letting us know.'; }
+    var picked = diets.filter(function (d) { return state.diet[d]; });
+    var parts = ['Coming'];
+    parts.push(picked.length ? picked.join(', ').toLowerCase() : 'no dietary needs');
+    var allergy = $('allergies').value.trim();
+    if (allergy) { parts.push('note: ' + allergy); }
+    if ($('hotel').checked) {
+      var n = nights();
+      parts.push(n.length ? 'hotel for ' + n.length + (n.length === 1 ? ' night (' : ' nights (') + n.join(', ') + ')' : 'hotel (no nights picked)');
+    } else { parts.push('no hotel'); }
+    parts.push(state.shirt ? 'T-shirt ' + state.shirt : 'no T-shirt size yet');
+    return parts.join(' · ') + '.';
+  }
+
+  function render(showError) {
+    var yn = $('yn').children;
+    for (var i = 0; i < yn.length; i++) {
+      var on = yn[i].getAttribute('data-v') === state.attending;
+      yn[i].className = on ? 'on' : '';
+      yn[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    $('more').className = 'more' + (state.attending === 'yes' ? ' open' : '');
+    var d = $('diet').children;
+    for (var k = 0; k < d.length; k++) { d[k].className = 'chip' + (state.diet[d[k].getAttribute('data-v')] ? ' on' : ''); }
+    var s = $('shirt').children;
+    for (var m = 0; m < s.length; m++) { s[m].className = 'chip' + (s[m].getAttribute('data-v') === state.shirt ? ' on' : ''); }
+    $('nights').className = 'nights' + ($('hotel').checked ? ' open' : '');
+    $('sentence').textContent = sentence();
+    $('err').textContent = showError ? problem() : '';
+    $('send').textContent = state.sent ? 'Update RSVP' : 'Send RSVP';
+    $('after').textContent = state.sent ? 'Recorded on this page only: a sandboxed page cannot send it to the organisers.' : '';
+  }
+
+  $('yn').addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== $('yn') && !t.getAttribute('data-v')) { t = t.parentNode; }
+    if (!t || t === $('yn')) { return; }
+    state.attending = t.getAttribute('data-v');
+    state.sent = false;
+    render(false);
+  });
+  $('diet').addEventListener('click', function (e) {
+    var v = e.target.getAttribute('data-v');
+    if (!v) { return; }
+    state.diet[v] = !state.diet[v];
+    state.sent = false;
+    render(false);
+  });
+  $('shirt').addEventListener('click', function (e) {
+    var v = e.target.getAttribute('data-v');
+    if (!v) { return; }
+    state.shirt = v;
+    state.sent = false;
+    render(false);
+  });
+  $('hotel').addEventListener('change', function () { state.sent = false; render(false); });
+  $('nights').addEventListener('change', function () { state.sent = false; render(false); });
+  $('allergies').addEventListener('input', function () { state.sent = false; render(false); });
+  $('send').addEventListener('click', function () {
+    if (problem()) { render(true); return; }
+    state.sent = true;
+    render(false);
+  });
+  render(false);
+})();
+</script>
+</body>
+</html>

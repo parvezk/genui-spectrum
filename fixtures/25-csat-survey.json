@@ -1,0 +1,595 @@
+{
+  "id": "25-csat-survey",
+  "index": 25,
+  "title": "Support satisfaction survey",
+  "category": "input",
+  "prompt": "Give me a short satisfaction survey for a customer who just finished a support chat.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Support chat: quick satisfaction survey\n\nFive short questions, about a minute. Send this to the customer right after the chat ends.\n\n---\n\n**Thanks for chatting with us. How did we do?**\n\n**1. Overall, how satisfied are you with the support you just received?**\n1 – Very dissatisfied · 2 – Dissatisfied · 3 – Neutral · 4 – Satisfied · 5 – Very satisfied\n\n**2. Did we resolve your issue?**\nYes · Partly · No\n\n**3. How easy was it to get the help you needed?**\n1 – Very difficult · 2 – Difficult · 3 – Neither · 4 – Easy · 5 – Very easy\n\n**4. How likely are you to recommend us to a friend or colleague?**\n0 (not at all likely) to 10 (extremely likely)\n\n**5. Anything else you would like to tell us?** *(optional)*\nIf you scored us 1 or 2 on the first question: what went wrong?\nOtherwise: what is one thing we could have done better?\n\n*May we contact you about your feedback?* Yes / No\n\n---\n\n### Why these questions\n\n| # | Measures | Metric |\n| --- | --- | --- |\n| 1 | Satisfaction with this interaction | **CSAT**: share of 4s and 5s |\n| 2 | Whether the problem is actually fixed | **Resolution rate** |\n| 3 | How much effort it took | **CES** (customer effort score) |\n| 4 | Loyalty to the company overall | **NPS**: % scoring 9–10 minus % scoring 0–6 |\n| 5 | The reason behind the scores | Free text for follow-up |\n\n### Tips for sending it\n\n- **Send it immediately**, while the chat is still fresh. People are far more likely to answer in the moment than later.\n- **Keep question 1 first and answerable in one tap.** Many people stop there, and that single answer is still useful.\n- **Follow up on low scores.** A 1 or 2, or a \"No\" on question 2, should open a ticket for a human to review.\n- **Do not add more questions.** Each extra one costs completions.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "csat-survey",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "csat-survey",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "form"
+            },
+            {
+              "id": "form",
+              "component": "Column",
+              "children": [
+                "title",
+                "subtitle",
+                "satisfaction",
+                "resolved",
+                "effort",
+                "nps",
+                "nps-readout",
+                "comment",
+                "contact",
+                "submit"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h3",
+              "text": "How did we do?"
+            },
+            {
+              "id": "subtitle",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Five quick questions about your support chat. It takes about a minute."
+            },
+            {
+              "id": "satisfaction",
+              "component": "ChoicePicker",
+              "label": "1. Overall, how satisfied are you with the support you received?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "1 · Very dissatisfied",
+                  "value": "1"
+                },
+                {
+                  "label": "2",
+                  "value": "2"
+                },
+                {
+                  "label": "3 · Neutral",
+                  "value": "3"
+                },
+                {
+                  "label": "4",
+                  "value": "4"
+                },
+                {
+                  "label": "5 · Very satisfied",
+                  "value": "5"
+                }
+              ],
+              "value": {
+                "path": "/survey/satisfaction"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/survey/satisfaction"
+                      }
+                    }
+                  },
+                  "message": "Please pick a rating."
+                }
+              ]
+            },
+            {
+              "id": "resolved",
+              "component": "ChoicePicker",
+              "label": "2. Did we resolve your issue?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                },
+                {
+                  "label": "Partly",
+                  "value": "partly"
+                },
+                {
+                  "label": "No",
+                  "value": "no"
+                }
+              ],
+              "value": {
+                "path": "/survey/resolved"
+              }
+            },
+            {
+              "id": "effort",
+              "component": "ChoicePicker",
+              "label": "3. How easy was it to get the help you needed?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "1 · Very difficult",
+                  "value": "1"
+                },
+                {
+                  "label": "2",
+                  "value": "2"
+                },
+                {
+                  "label": "3",
+                  "value": "3"
+                },
+                {
+                  "label": "4",
+                  "value": "4"
+                },
+                {
+                  "label": "5 · Very easy",
+                  "value": "5"
+                }
+              ],
+              "value": {
+                "path": "/survey/effort"
+              }
+            },
+            {
+              "id": "nps",
+              "component": "Slider",
+              "label": "4. How likely are you to recommend us to a friend or colleague?",
+              "min": 0,
+              "max": 10,
+              "value": {
+                "path": "/survey/recommend"
+              }
+            },
+            {
+              "id": "nps-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${/survey/recommend} out of 10 (0 = not at all likely, 10 = extremely likely)"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "comment",
+              "component": "TextField",
+              "label": "5. Anything else you would like to tell us? (optional)",
+              "variant": "longText",
+              "value": {
+                "path": "/survey/comment"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": {
+                        "path": "/survey/comment"
+                      },
+                      "max": 500
+                    }
+                  },
+                  "message": "Please keep it under 500 characters."
+                }
+              ]
+            },
+            {
+              "id": "contact",
+              "component": "CheckBox",
+              "label": "You may contact me about my feedback",
+              "value": {
+                "path": "/survey/mayContact"
+              }
+            },
+            {
+              "id": "submit",
+              "component": "Button",
+              "variant": "primary",
+              "child": "submit-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/survey/satisfaction"
+                      }
+                    }
+                  },
+                  "message": "Answer question 1 to send your feedback."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "submit_support_survey",
+                  "context": {
+                    "satisfaction": {
+                      "path": "/survey/satisfaction"
+                    },
+                    "resolved": {
+                      "path": "/survey/resolved"
+                    },
+                    "effort": {
+                      "path": "/survey/effort"
+                    },
+                    "recommend": {
+                      "path": "/survey/recommend"
+                    },
+                    "comment": {
+                      "path": "/survey/comment"
+                    },
+                    "mayContact": {
+                      "path": "/survey/mayContact"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "submit-label",
+              "component": "Text",
+              "text": "Send feedback"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "csat-survey",
+          "path": "/survey",
+          "value": {
+            "satisfaction": [],
+            "resolved": [],
+            "effort": [],
+            "recommend": 8,
+            "comment": "",
+            "mayContact": false
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>How did we do?</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #2e1065; background: #faf5ff; }\n  h1 { font-size: 20px; margin: 0; }\n  .lead { margin: 2px 0 10px; color: #6b5b95; font-size: 13px; }\n  .progress { height: 6px; background: #e9d5ff; border-radius: 3px; overflow: hidden; margin-bottom: 14px; }\n  .progress i { display: block; height: 100%; width: 0; background: #7c3aed; transition: width .3s; }\n  .q { background: #fff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }\n  .q h2 { font-size: 14px; margin: 0 0 8px; }\n  .q h2 span { color: #a78bfa; margin-right: 4px; }\n  .faces { display: flex; justify-content: space-between; }\n  .faces button { border: 2px solid transparent; background: none; border-radius: 12px; font-size: 28px; line-height: 1; padding: 6px 4px; cursor: pointer; filter: grayscale(1); opacity: .55; transition: transform .15s, opacity .15s, filter .15s; }\n  .faces button:hover { opacity: .9; transform: scale(1.1); }\n  .faces button.on { filter: none; opacity: 1; transform: scale(1.25); border-color: #e9d5ff; background: #faf5ff; }\n  .cap { display: flex; justify-content: space-between; font-size: 11px; color: #6b5b95; margin-top: 4px; }\n  .answer { text-align: center; font-weight: 600; min-height: 20px; margin-top: 2px; color: #7c3aed; }\n  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }\n  .seg button { border: 1px solid #d8b4fe; background: #fff; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; color: inherit; }\n  .seg button.on { background: #7c3aed; border-color: #7c3aed; color: #fff; }\n  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }\n  .scale button { border: 1px solid #d8b4fe; background: #fff; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; color: inherit; }\n  .scale button.on { background: #7c3aed; border-color: #7c3aed; color: #fff; }\n  .nps { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }\n  .nps button { border: 1px solid #d8b4fe; background: #fff; border-radius: 6px; padding: 7px 0; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; color: inherit; }\n  .nps button.on.det { background: #dc2626; border-color: #dc2626; color: #fff; }\n  .nps button.on.pas { background: #d97706; border-color: #d97706; color: #fff; }\n  .nps button.on.pro { background: #16a34a; border-color: #16a34a; color: #fff; }\n  textarea { width: 100%; min-height: 70px; padding: 8px 10px; border: 1px solid #d8b4fe; border-radius: 10px; font: inherit; resize: vertical; color: inherit; }\n  .count { text-align: right; font-size: 11px; color: #6b5b95; }\n  .check { display: flex; gap: 8px; align-items: center; margin: 4px 0 12px; cursor: pointer; }\n  .send { width: 100%; border: 0; border-radius: 12px; padding: 12px; font: inherit; font-weight: 700; background: #7c3aed; color: #fff; cursor: pointer; }\n  .send:disabled { background: #d8b4fe; cursor: default; }\n  .hint { text-align: center; font-size: 12px; color: #6b5b95; margin: 6px 0 0; }\n  .thanks { text-align: center; padding: 30px 10px; }\n  .thanks div { font-size: 48px; }\n  .thanks h2 { margin: 6px 0; }\n  .thanks p { color: #6b5b95; margin: 0 0 12px; }\n  .thanks pre { text-align: left; background: #fff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 10px; font-size: 12px; white-space: pre-wrap; }\n  .thanks button { border: 0; background: none; color: #7c3aed; text-decoration: underline; cursor: pointer; font: inherit; }\n  [hidden] { display: none !important; }\n</style>\n</head>\n<body>\n  <div id=\"formView\">\n    <h1>How did we do?</h1>\n    <p class=\"lead\">Five quick questions about your support chat.</p>\n    <div class=\"progress\"><i id=\"bar\"></i></div>\n\n    <div class=\"q\">\n      <h2><span>1</span>Overall, how satisfied are you with the support you received?</h2>\n      <div class=\"faces\" id=\"sat\"><button data-v=\"1\" aria-label=\"1, very dissatisfied\">😡</button><button data-v=\"2\" aria-label=\"2, dissatisfied\">🙁</button><button data-v=\"3\" aria-label=\"3, neutral\">😐</button><button data-v=\"4\" aria-label=\"4, satisfied\">🙂</button><button data-v=\"5\" aria-label=\"5, very satisfied\">😍</button></div>\n      <div class=\"answer\" id=\"satText\"></div>\n    </div>\n\n    <div class=\"q\">\n      <h2><span>2</span>Did we resolve your issue?</h2>\n      <div class=\"seg\" id=\"resolved\"><button data-v=\"yes\">Yes</button><button data-v=\"partly\">Partly</button><button data-v=\"no\">No</button></div>\n    </div>\n\n    <div class=\"q\">\n      <h2><span>3</span>How easy was it to get the help you needed?</h2>\n      <div class=\"scale\" id=\"effort\"><button data-v=\"1\">1</button><button data-v=\"2\">2</button><button data-v=\"3\">3</button><button data-v=\"4\">4</button><button data-v=\"5\">5</button></div>\n      <div class=\"cap\"><span>Very difficult</span><span>Very easy</span></div>\n    </div>\n\n    <div class=\"q\">\n      <h2><span>4</span>How likely are you to recommend us to a friend or colleague?</h2>\n      <div class=\"nps\" id=\"nps\"></div>\n      <div class=\"cap\"><span>Not at all likely</span><span>Extremely likely</span></div>\n    </div>\n\n    <div class=\"q\">\n      <h2><span>5</span><span id=\"commentLabel\" style=\"color:inherit\"></span></h2>\n      <textarea id=\"comment\" maxlength=\"500\" aria-labelledby=\"commentLabel\"></textarea>\n      <div class=\"count\" id=\"count\"></div>\n    </div>\n\n    <label class=\"check\"><input type=\"checkbox\" id=\"contact\"> You may contact me about my feedback</label>\n    <button type=\"button\" class=\"send\" id=\"send\">Send feedback</button>\n    <p class=\"hint\" id=\"hint\"></p>\n  </div>\n\n  <div class=\"thanks\" id=\"thanksView\" hidden>\n    <div id=\"thanksEmoji\"></div>\n    <h2 id=\"thanksTitle\"></h2>\n    <p id=\"thanksText\"></p>\n    <pre id=\"payload\"></pre>\n    <p>This page is sandboxed, so the answers above were not sent anywhere.</p>\n    <button type=\"button\" id=\"again\">Change my answers</button>\n  </div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var a = { sat: null, resolved: null, effort: null, nps: null };\n  var satLabels = { 1: 'Very dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very satisfied' };\n\n  for (var n = 0; n <= 10; n++) {\n    var b = document.createElement('button');\n    b.type = 'button';\n    b.textContent = String(n);\n    b.setAttribute('data-v', String(n));\n    b.className = n <= 6 ? 'det' : (n <= 8 ? 'pas' : 'pro');\n    $('nps').appendChild(b);\n  }\n\n  function mark(boxId, value) {\n    var kids = $(boxId).children;\n    for (var i = 0; i < kids.length; i++) {\n      var on = kids[i].getAttribute('data-v') === String(value);\n      kids[i].classList.toggle('on', on);\n      kids[i].setAttribute('aria-pressed', on ? 'true' : 'false');\n    }\n  }\n\n  function render() {\n    mark('sat', a.sat); mark('resolved', a.resolved); mark('effort', a.effort); mark('nps', a.nps);\n    $('satText').textContent = a.sat ? a.sat + ' of 5 · ' + satLabels[a.sat] : '';\n\n    var unhappy = (a.sat !== null && a.sat <= 2) || a.resolved === 'no';\n    var delighted = a.sat === 5 && a.resolved !== 'no';\n    $('commentLabel').textContent = unhappy ? 'Sorry about that. What went wrong?' : (delighted ? 'Great! What did we do well?' : 'Anything we could have done better? (optional)');\n    $('comment').placeholder = unhappy ? 'Tell us what happened so we can put it right' : 'Your thoughts';\n    $('count').textContent = $('comment').value.length + ' / 500';\n\n    var answered = 0;\n    if (a.sat !== null) { answered += 1; }\n    if (a.resolved !== null) { answered += 1; }\n    if (a.effort !== null) { answered += 1; }\n    if (a.nps !== null) { answered += 1; }\n    if ($('comment').value.trim()) { answered += 1; }\n    $('bar').style.width = (answered / 5 * 100) + '%';\n    $('send').disabled = a.sat === null;\n    $('hint').textContent = a.sat === null ? 'Answer question 1 to send. The rest are optional.' : answered + ' of 5 answered';\n  }\n\n  function pick(boxId, key, numeric) {\n    $(boxId).addEventListener('click', function (e) {\n      var v = e.target.getAttribute('data-v');\n      if (v === null) { return; }\n      var value = numeric ? parseInt(v, 10) : v;\n      a[key] = a[key] === value ? null : value;\n      render();\n    });\n  }\n  pick('sat', 'sat', true);\n  pick('resolved', 'resolved', false);\n  pick('effort', 'effort', true);\n  pick('nps', 'nps', true);\n  $('comment').addEventListener('input', render);\n\n  $('send').addEventListener('click', function () {\n    if (a.sat === null) { return; }\n    var happy = a.sat >= 4;\n    $('thanksEmoji').textContent = happy ? '🎉' : '🙏';\n    $('thanksTitle').textContent = happy ? 'Thank you!' : 'Thank you for telling us';\n    $('thanksText').textContent = happy ? 'We are glad the chat helped.' : 'We are sorry it was not better. ' + ($('contact').checked ? 'Someone will be in touch.' : 'We will review what happened.');\n    var result = {\n      satisfaction: a.sat,\n      resolved: a.resolved,\n      effort: a.effort,\n      recommend: a.nps,\n      comment: $('comment').value.trim(),\n      mayContact: $('contact').checked\n    };\n    $('payload').textContent = JSON.stringify(result, null, 2);\n    $('formView').hidden = true;\n    $('thanksView').hidden = false;\n  });\n  $('again').addEventListener('click', function () {\n    $('thanksView').hidden = true;\n    $('formView').hidden = false;\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_csat_survey_25",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show a short post-chat satisfaction survey: overall satisfaction (1 to 5), whether the issue was resolved (yes, partly, no), how easy it was to get help (1 to 5), likelihood to recommend (0 to 10), an optional comment, and permission to follow up. If satisfaction is 1 or 2, ask what went wrong and make that answer required.",
+        "data": {
+          "channel": "support chat",
+          "scale": {
+            "satisfaction": [
+              1,
+              5
+            ],
+            "effort": [
+              1,
+              5
+            ],
+            "recommend": [
+              0,
+              10
+            ]
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "satisfaction": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "resolved": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "partly",
+                "no"
+              ]
+            },
+            "effort": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "recommend": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "whatWentWrong": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 500
+            },
+            "comment": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "mayContact": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "satisfaction",
+            "resolved"
+          ],
+          "if": {
+            "properties": {
+              "satisfaction": {
+                "maximum": 2
+              }
+            },
+            "required": [
+              "satisfaction"
+            ]
+          },
+          "then": {
+            "required": [
+              "whatWentWrong"
+            ]
+          }
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "satisfaction": {
+            "type": "integer",
+            "title": "1. Overall, how satisfied are you with the support you received?",
+            "oneOf": [
+              {
+                "const": 1,
+                "title": "1 · Very dissatisfied"
+              },
+              {
+                "const": 2,
+                "title": "2 · Dissatisfied"
+              },
+              {
+                "const": 3,
+                "title": "3 · Neutral"
+              },
+              {
+                "const": 4,
+                "title": "4 · Satisfied"
+              },
+              {
+                "const": 5,
+                "title": "5 · Very satisfied"
+              }
+            ]
+          },
+          "whatWentWrong": {
+            "type": "string",
+            "title": "Sorry about that. What went wrong?",
+            "minLength": 3,
+            "maxLength": 500
+          },
+          "resolved": {
+            "type": "string",
+            "title": "2. Did we resolve your issue?",
+            "oneOf": [
+              {
+                "const": "yes",
+                "title": "Yes"
+              },
+              {
+                "const": "partly",
+                "title": "Partly"
+              },
+              {
+                "const": "no",
+                "title": "No"
+              }
+            ]
+          },
+          "effort": {
+            "type": "integer",
+            "title": "3. How easy was it to get the help you needed? (1 = very difficult, 5 = very easy)",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 3
+          },
+          "recommend": {
+            "type": "integer",
+            "title": "4. How likely are you to recommend us? (0 = not at all, 10 = extremely)",
+            "minimum": 0,
+            "maximum": 10,
+            "default": 8
+          },
+          "comment": {
+            "type": "string",
+            "title": "5. Anything else you would like to tell us? (optional)",
+            "maxLength": 500
+          },
+          "mayContact": {
+            "type": "boolean",
+            "title": "You may contact me about my feedback"
+          }
+        },
+        "required": [
+          "satisfaction",
+          "resolved"
+        ],
+        "if": {
+          "properties": {
+            "satisfaction": {
+              "maximum": 2
+            }
+          },
+          "required": [
+            "satisfaction"
+          ]
+        },
+        "then": {
+          "required": [
+            "whatWentWrong"
+          ]
+        }
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "How did we do? Five quick questions about your support chat."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/satisfaction",
+            "options": {
+              "format": "radio"
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/whatWentWrong",
+            "options": {
+              "multi": true
+            },
+            "rule": {
+              "effect": "SHOW",
+              "condition": {
+                "scope": "#/properties/satisfaction",
+                "schema": {
+                  "maximum": 2
+                },
+                "failWhenUndefined": true
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/resolved",
+            "options": {
+              "format": "radio"
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/effort",
+            "options": {
+              "slider": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/recommend",
+            "options": {
+              "slider": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/comment",
+            "options": {
+              "multi": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/mayContact"
+          }
+        ]
+      },
+      "initialData": {
+        "effort": 3,
+        "recommend": 8,
+        "mayContact": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Writes a good survey and explains which metric each question feeds, but it is a document to send, and answers would come back as unstructured text.",
+    "a2ui": "Chip pickers for the scales, a slider for the 0–10 question and a gated submit make a working survey; it cannot swap the comment prompt when the score is low.",
+    "html": "Emoji faces, colour-banded 0–10 buttons, a comment prompt that changes with the score, a progress bar and a thank-you state; the answers stay inside the sandbox.",
+    "agui": "A rule reveals a what-went-wrong field for scores of 1 or 2 and the schema's if/then makes it required, so the survey result is validated end to end."
+  }
+}

@@ -1,0 +1,126 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "offsite-rsvp",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "offsite-rsvp",
+      "components": [
+        { "id": "root", "component": "Card", "child": "form" },
+        { "id": "form", "component": "Column", "children": ["header", "when", "attending", "details-divider", "details-note", "dietary", "allergies", "hotel", "nights", "shirt", "submit"] },
+        { "id": "header", "component": "Row", "align": "center", "children": ["header-icon", "title"] },
+        { "id": "header-icon", "component": "Icon", "name": "event" },
+        { "id": "title", "component": "Text", "variant": "h3", "weight": 1, "text": "Team offsite in Porto" },
+        { "id": "when", "component": "Text", "variant": "caption", "text": "12–13 September" },
+
+        {
+          "id": "attending",
+          "component": "ChoicePicker",
+          "label": "Are you coming?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Yes, I'll be there", "value": "yes" },
+            { "label": "No, I can't make it", "value": "no" }
+          ],
+          "value": { "path": "/rsvp/attending" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/rsvp/attending" } } }, "message": "Let us know either way." }
+          ]
+        },
+
+        { "id": "details-divider", "component": "Divider" },
+        { "id": "details-note", "component": "Text", "variant": "caption", "text": "If you are coming, fill in the rest. If not, skip straight to Send." },
+
+        {
+          "id": "dietary",
+          "component": "ChoicePicker",
+          "label": "Dietary needs",
+          "variant": "multipleSelection",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Vegetarian", "value": "vegetarian" },
+            { "label": "Vegan", "value": "vegan" },
+            { "label": "Gluten-free", "value": "gluten-free" },
+            { "label": "Halal", "value": "halal" },
+            { "label": "Kosher", "value": "kosher" }
+          ],
+          "value": { "path": "/rsvp/dietary" }
+        },
+        { "id": "allergies", "component": "TextField", "label": "Allergies or anything else (optional)", "value": { "path": "/rsvp/allergies" } },
+        { "id": "hotel", "component": "CheckBox", "label": "I need a hotel room", "value": { "path": "/rsvp/needsHotel" } },
+        {
+          "id": "nights",
+          "component": "ChoicePicker",
+          "label": "Hotel nights (only if you need a room)",
+          "variant": "multipleSelection",
+          "options": [
+            { "label": "11 Sep (arriving the night before)", "value": "11 Sep" },
+            { "label": "12 Sep", "value": "12 Sep" },
+            { "label": "13 Sep (leaving the day after)", "value": "13 Sep" }
+          ],
+          "value": { "path": "/rsvp/nights" }
+        },
+        {
+          "id": "shirt",
+          "component": "ChoicePicker",
+          "label": "T-shirt size",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "XS", "value": "XS" },
+            { "label": "S", "value": "S" },
+            { "label": "M", "value": "M" },
+            { "label": "L", "value": "L" },
+            { "label": "XL", "value": "XL" },
+            { "label": "XXL", "value": "XXL" }
+          ],
+          "value": { "path": "/rsvp/shirt" }
+        },
+        {
+          "id": "submit",
+          "component": "Button",
+          "variant": "primary",
+          "child": "submit-label",
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/rsvp/attending" } } }, "message": "Choose yes or no first." }
+          ],
+          "action": {
+            "event": {
+              "name": "submit_offsite_rsvp",
+              "context": {
+                "attending": { "path": "/rsvp/attending" },
+                "dietary": { "path": "/rsvp/dietary" },
+                "allergies": { "path": "/rsvp/allergies" },
+                "needsHotel": { "path": "/rsvp/needsHotel" },
+                "nights": { "path": "/rsvp/nights" },
+                "shirt": { "path": "/rsvp/shirt" }
+              }
+            }
+          }
+        },
+        { "id": "submit-label", "component": "Text", "text": "Send RSVP" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "offsite-rsvp",
+      "path": "/rsvp",
+      "value": {
+        "attending": [],
+        "dietary": [],
+        "allergies": "",
+        "needsHotel": false,
+        "nights": [],
+        "shirt": []
+      }
+    }
+  }
+]

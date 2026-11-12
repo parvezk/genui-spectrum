@@ -1,0 +1,144 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "book-table",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "book-table",
+      "components": [
+        { "id": "root", "component": "Card", "child": "form" },
+        { "id": "form", "component": "Column", "children": ["header", "subtitle", "date", "time", "party", "party-readout", "seating", "divider", "name", "phone", "notes", "submit"] },
+        { "id": "header", "component": "Row", "align": "center", "children": ["header-icon", "title"] },
+        { "id": "header-icon", "component": "Icon", "name": "event" },
+        { "id": "title", "component": "Text", "variant": "h3", "weight": 1, "text": "Luigi's Trattoria" },
+        { "id": "subtitle", "component": "Text", "variant": "caption", "text": "Dinner reservations 17:30–21:30 · up to 8 people · indoors or terrace" },
+
+        { "id": "date", "component": "DateTimeInput", "label": "Date", "enableDate": true, "value": { "path": "/booking/date" } },
+        {
+          "id": "time",
+          "component": "ChoicePicker",
+          "label": "Time",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "17:30", "value": "17:30" },
+            { "label": "18:00", "value": "18:00" },
+            { "label": "18:30", "value": "18:30" },
+            { "label": "19:00", "value": "19:00" },
+            { "label": "19:30", "value": "19:30" },
+            { "label": "20:00", "value": "20:00" },
+            { "label": "20:30", "value": "20:30" },
+            { "label": "21:00", "value": "21:00" },
+            { "label": "21:30", "value": "21:30" }
+          ],
+          "value": { "path": "/booking/time" }
+        },
+        { "id": "party", "component": "Slider", "label": "Party size", "min": 1, "max": 8, "value": { "path": "/booking/partySize" } },
+        {
+          "id": "party-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": {
+            "call": "formatString",
+            "args": { "value": "Table for ${/booking/partySize} ${pluralize(value: ${/booking/partySize}, one: 'person', other: 'people')}" },
+            "returnType": "string"
+          }
+        },
+        {
+          "id": "seating",
+          "component": "ChoicePicker",
+          "label": "Seating",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Indoors", "value": "indoors" },
+            { "label": "Terrace", "value": "terrace" }
+          ],
+          "value": { "path": "/booking/seating" }
+        },
+        { "id": "divider", "component": "Divider" },
+        {
+          "id": "name",
+          "component": "TextField",
+          "label": "Name for the reservation",
+          "value": { "path": "/booking/name" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/booking/name" } } }, "message": "Enter a name." }
+          ]
+        },
+        {
+          "id": "phone",
+          "component": "TextField",
+          "label": "Phone",
+          "value": { "path": "/booking/phone" },
+          "checks": [
+            {
+              "condition": { "call": "regex", "args": { "value": { "path": "/booking/phone" }, "pattern": "^\\+?[0-9 ()-]{7,20}$" } },
+              "message": "Enter a phone number with at least 7 digits."
+            }
+          ]
+        },
+        { "id": "notes", "component": "TextField", "label": "Anything they should know? (optional)", "variant": "longText", "value": { "path": "/booking/notes" } },
+        {
+          "id": "submit",
+          "component": "Button",
+          "variant": "primary",
+          "child": "submit-label",
+          "checks": [
+            {
+              "condition": {
+                "call": "and",
+                "args": {
+                  "values": [
+                    { "call": "required", "args": { "value": { "path": "/booking/date" } } },
+                    { "call": "required", "args": { "value": { "path": "/booking/name" } } },
+                    { "call": "regex", "args": { "value": { "path": "/booking/phone" }, "pattern": "^\\+?[0-9 ()-]{7,20}$" } }
+                  ]
+                }
+              },
+              "message": "Pick a date and enter a name and phone number to continue."
+            }
+          ],
+          "action": {
+            "event": {
+              "name": "book_table",
+              "context": {
+                "restaurant": "Luigi's Trattoria",
+                "date": { "path": "/booking/date" },
+                "time": { "path": "/booking/time" },
+                "partySize": { "path": "/booking/partySize" },
+                "seating": { "path": "/booking/seating" },
+                "name": { "path": "/booking/name" },
+                "phone": { "path": "/booking/phone" },
+                "notes": { "path": "/booking/notes" }
+              }
+            }
+          }
+        },
+        { "id": "submit-label", "component": "Text", "text": "Request table" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "book-table",
+      "path": "/booking",
+      "value": {
+        "date": "",
+        "time": ["19:30"],
+        "partySize": 2,
+        "seating": ["indoors"],
+        "name": "",
+        "phone": "",
+        "notes": ""
+      }
+    }
+  }
+]

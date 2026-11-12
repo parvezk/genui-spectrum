@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New York to Lisbon flights</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px 16px 90px; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #0f172a; background: #f1f5f9; }
+  h1 { font-size: 18px; margin: 0; }
+  .sub { color: #64748b; font-size: 12px; margin: 0 0 12px; }
+  .filters { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  .f { margin-bottom: 10px; }
+  .f:last-child { margin-bottom: 0; }
+  .f > span { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+  .f output { color: #0369a1; }
+  input[type=range] { width: 100%; accent-color: #0369a1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }
+  .chip.on { background: #0369a1; border-color: #0369a1; color: #fff; }
+  .bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; color: #475569; }
+  select { font: inherit; font-size: 12px; padding: 3px 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; }
+  .flight { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .flight.sel { border-color: #0369a1; background: #f0f9ff; }
+  .flight b { font-size: 15px; }
+  .flight .time { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .flight .meta { color: #64748b; font-size: 12px; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 0 5px; margin-left: 4px; text-transform: uppercase; }
+  .tag.ns { background: #dcfce7; color: #166534; } .tag.st { background: #fef3c7; color: #92400e; } .tag.best { background: #0369a1; color: #fff; }
+  .price { text-align: right; font-size: 18px; font-weight: 700; }
+  .flight button { grid-column: 2; border: 0; background: #0f172a; color: #fff; border-radius: 8px; padding: 5px 12px; font: inherit; font-size: 12px; cursor: pointer; }
+  .flight.sel button { background: #0369a1; }
+  .empty { text-align: center; color: #64748b; padding: 24px 8px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; }
+  .empty button { border: 0; background: none; color: #0369a1; text-decoration: underline; cursor: pointer; font: inherit; }
+  .tray { position: fixed; left: 0; right: 0; bottom: 0; background: #0f172a; color: #fff; padding: 10px 16px; font-size: 13px; }
+  .tray small { display: block; color: #94a3b8; font-size: 11px; }
+</style>
+</head>
+<body>
+  <h1>New York → Lisbon</h1>
+  <p class="sub">6 flights. Filters apply as you change them.</p>
+
+  <div class="filters">
+    <div class="f"><span>Max price <output id="priceOut"></output></span><input id="price" type="range" min="450" max="750" step="10" value="750"></div>
+    <div class="f"><span>Stops</span><div class="chips" id="stops"><button class="chip on" data-stops="any">Any</button><button class="chip" data-stops="0">Nonstop only</button><button class="chip" data-stops="1">1 stop only</button></div></div>
+    <div class="f"><span>Airlines</span><div class="chips" id="airlines"></div></div>
+  </div>
+
+  <div class="bar"><span id="count"></span><label>Sort <select id="sort"><option value="price">Price</option><option value="time">Departure</option></select></label></div>
+  <div id="list"></div>
+
+  <div class="tray"><span id="tray">No flight selected yet.</span><small>Selections stay on this page: a sandboxed page cannot send them anywhere.</small></div>
+
+<script>
+(function () {
+  var flights = [
+    { code: 'TP202', airline: 'TAP', stops: 0, time: '18:30', price: 640 },
+    { code: 'UA64', airline: 'United', stops: 0, time: '20:15', price: 710 },
+    { code: 'DL272', airline: 'Delta', stops: 1, time: '16:05', price: 520 },
+    { code: 'IB6252', airline: 'Iberia', stops: 1, time: '21:40', price: 480 },
+    { code: 'AF11', airline: 'Air France', stops: 1, time: '19:00', price: 560 },
+    { code: 'TP210', airline: 'TAP', stops: 0, time: '22:55', price: 590 }
+  ];
+  var airlines = ['TAP', 'United', 'Delta', 'Iberia', 'Air France'];
+  var state = { stops: 'any', airlines: {}, selected: null };
+  airlines.forEach(function (a) { state.airlines[a] = true; });
+  var $ = function (id) { return document.getElementById(id); };
+
+  airlines.forEach(function (a) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip on';
+    b.textContent = a;
+    b.setAttribute('data-airline', a);
+    $('airlines').appendChild(b);
+  });
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined) { n.textContent = text; }
+    return n;
+  }
+
+  function render() {
+    var max = parseInt($('price').value, 10);
+    $('priceOut').textContent = '$' + max;
+    var sort = $('sort').value;
+
+    var list = flights.filter(function (f) {
+      if (f.price > max) { return false; }
+      if (state.stops !== 'any' && String(f.stops) !== state.stops) { return false; }
+      return state.airlines[f.airline];
+    }).sort(function (a, b) {
+      return sort === 'price' ? a.price - b.price : (a.time < b.time ? -1 : 1);
+    });
+    var cheapest = list.reduce(function (m, f) { return m === null || f.price < m.price ? f : m; }, null);
+
+    var box = $('list');
+    box.textContent = '';
+    list.forEach(function (f) {
+      var card = el('div', 'flight' + (state.selected === f.code ? ' sel' : ''));
+      var left = el('div');
+      var top = el('div');
+      top.appendChild(el('span', 'time', f.time));
+      top.appendChild(el('span', 'tag ' + (f.stops === 0 ? 'ns' : 'st'), f.stops === 0 ? 'Nonstop' : '1 stop'));
+      if (cheapest && f.code === cheapest.code) { top.appendChild(el('span', 'tag best', 'Cheapest')); }
+      left.appendChild(top);
+      left.appendChild(el('div', 'meta', f.airline + ' ' + f.code));
+      var right = el('div', 'price', '$' + f.price);
+      var pick = el('button', '', state.selected === f.code ? 'Selected ✓' : 'Select');
+      pick.type = 'button';
+      pick.setAttribute('data-code', f.code);
+      card.appendChild(left); card.appendChild(right); card.appendChild(pick);
+      box.appendChild(card);
+    });
+    if (!list.length) {
+      var empty = el('div', 'empty', 'No flights match these filters. ');
+      var reset = el('button', '', 'Reset filters');
+      reset.type = 'button';
+      reset.setAttribute('data-reset', '1');
+      empty.appendChild(reset);
+      box.appendChild(empty);
+    }
+    $('count').textContent = list.length + ' of ' + flights.length + ' flights';
+
+    var chosen = null;
+    flights.forEach(function (f) { if (f.code === state.selected) { chosen = f; } });
+    var hiddenByFilter = chosen && list.indexOf(chosen) === -1;
+    $('tray').textContent = chosen
+      ? 'Selected: ' + chosen.airline + ' ' + chosen.code + ' · ' + chosen.time + ' · ' + (chosen.stops === 0 ? 'nonstop' : '1 stop') + ' · $' + chosen.price + (hiddenByFilter ? ' (hidden by current filters)' : '')
+      : 'No flight selected yet.';
+
+    var stopChips = $('stops').children;
+    for (var i = 0; i < stopChips.length; i++) { stopChips[i].className = 'chip' + (stopChips[i].getAttribute('data-stops') === state.stops ? ' on' : ''); }
+    var airChips = $('airlines').children;
+    for (var k = 0; k < airChips.length; k++) { airChips[k].className = 'chip' + (state.airlines[airChips[k].getAttribute('data-airline')] ? ' on' : ''); }
+  }
+
+  $('price').addEventListener('input', render);
+  $('sort').addEventListener('change', render);
+  $('stops').addEventListener('click', function (e) {
+    var s = e.target.getAttribute('data-stops');
+    if (s === null) { return; }
+    state.stops = s;
+    render();
+  });
+  $('airlines').addEventListener('click', function (e) {
+    var a = e.target.getAttribute('data-airline');
+    if (a === null) { return; }
+    state.airlines[a] = !state.airlines[a];
+    render();
+  });
+  $('list').addEventListener('click', function (e) {
+    if (e.target.getAttribute('data-reset')) {
+      $('price').value = '750';
+      state.stops = 'any';
+      airlines.forEach(function (a) { state.airlines[a] = true; });
+      render();
+      return;
+    }
+    var code = e.target.getAttribute('data-code');
+    if (code === null) { return; }
+    state.selected = state.selected === code ? null : code;
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

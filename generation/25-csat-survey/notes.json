@@ -1,0 +1,6 @@
+{
+  "text": "Writes a good survey and explains which metric each question feeds, but it is a document to send, and answers would come back as unstructured text.",
+  "a2ui": "Chip pickers for the scales, a slider for the 0–10 question and a gated submit make a working survey; it cannot swap the comment prompt when the score is low.",
+  "html": "Emoji faces, colour-banded 0–10 buttons, a comment prompt that changes with the score, a progress bar and a thank-you state; the answers stay inside the sandbox.",
+  "agui": "A rule reveals a what-went-wrong field for scores of 1 or 2 and the schema's if/then makes it required, so the survey result is validated end to end."
+}

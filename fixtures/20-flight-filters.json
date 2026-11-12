@@ -1,0 +1,733 @@
+{
+  "id": "20-flight-filters",
+  "index": 20,
+  "title": "Flight filters",
+  "category": "input",
+  "prompt": "I'm choosing a flight from New York to Lisbon. Let me filter by max price, stops and airline, then pick one. TAP TP202 nonstop 18:30 $640. United UA64 nonstop 20:15 $710. Delta DL272 1 stop 16:05 $520. Iberia IB6252 1 stop 21:40 $480. Air France AF11 1 stop 19:00 $560. TAP TP210 nonstop 22:55 $590.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## New York → Lisbon: six flights\n\nI cannot give you live filters in a text reply, so here are the flights sorted by price, the answers to the most likely filters, and what to tell me to narrow it down.\n\n| Flight | Airline | Stops | Departs | Price |\n| --- | --- | --- | ---: | ---: |\n| IB6252 | Iberia | 1 stop | 21:40 | **$480** |\n| DL272 | Delta | 1 stop | 16:05 | $520 |\n| AF11 | Air France | 1 stop | 19:00 | $560 |\n| TP210 | TAP | Nonstop | 22:55 | $590 |\n| TP202 | TAP | Nonstop | 18:30 | $640 |\n| UA64 | United | Nonstop | 20:15 | $710 |\n\n### Common filters, already applied\n\n- **Cheapest overall:** Iberia IB6252, $480 (1 stop, 21:40).\n- **Cheapest nonstop:** TAP TP210, $590 (22:55). Going nonstop costs at least $110 more than the cheapest option.\n- **Nonstop only:** TP210 $590 · TP202 $640 · UA64 $710.\n- **Under $550:** IB6252 $480 · DL272 $520 (both 1 stop).\n- **Under $600:** adds AF11 $560 and TP210 $590, which is the only nonstop at that price.\n- **Earliest departure:** Delta DL272 at 16:05. **Latest:** TAP TP210 at 22:55.\n- **By airline:** TAP has two flights, both nonstop. United is nonstop only. Delta, Iberia and Air France each have one flight with one stop.\n\n### My pick\n\nIf you want nonstop, **TAP TP210 at $590** is the best value, as long as a 22:55 departure works. If you would rather leave earlier, **TAP TP202 at 18:30** is $50 more. If price is all that matters, **Iberia IB6252 at $480**.\n\n### To narrow it down, tell me\n\n1. Your **maximum price**\n2. **Nonstop only**, or is one stop fine?\n3. Any **airlines** to include or avoid\n4. Which flight you want, and I will pick it for you\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "flight-filters",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "flight-filters",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "route",
+                "filters-card",
+                "results-label",
+                "flights"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "New York → Lisbon"
+            },
+            {
+              "id": "route",
+              "component": "Text",
+              "variant": "caption",
+              "text": "6 flights · filter, then pick one"
+            },
+            {
+              "id": "filters-card",
+              "component": "Card",
+              "child": "filters-col"
+            },
+            {
+              "id": "filters-col",
+              "component": "Column",
+              "children": [
+                "price-slider",
+                "price-readout",
+                "stops-picker",
+                "airline-picker",
+                "apply-button"
+              ]
+            },
+            {
+              "id": "price-slider",
+              "component": "Slider",
+              "label": "Maximum price",
+              "min": 450,
+              "max": 750,
+              "value": {
+                "path": "/filters/maxPrice"
+              }
+            },
+            {
+              "id": "price-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Up to ${formatCurrency(value: ${/filters/maxPrice}, currency: 'USD', decimals: 0)}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "stops-picker",
+              "component": "ChoicePicker",
+              "label": "Stops",
+              "variant": "multipleSelection",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Nonstop",
+                  "value": "nonstop"
+                },
+                {
+                  "label": "1 stop",
+                  "value": "one-stop"
+                }
+              ],
+              "value": {
+                "path": "/filters/stops"
+              }
+            },
+            {
+              "id": "airline-picker",
+              "component": "ChoicePicker",
+              "label": "Airlines",
+              "variant": "multipleSelection",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "TAP",
+                  "value": "TAP"
+                },
+                {
+                  "label": "United",
+                  "value": "United"
+                },
+                {
+                  "label": "Delta",
+                  "value": "Delta"
+                },
+                {
+                  "label": "Iberia",
+                  "value": "Iberia"
+                },
+                {
+                  "label": "Air France",
+                  "value": "Air France"
+                }
+              ],
+              "value": {
+                "path": "/filters/airlines"
+              }
+            },
+            {
+              "id": "apply-button",
+              "component": "Button",
+              "child": "apply-label",
+              "action": {
+                "event": {
+                  "name": "apply_flight_filters",
+                  "context": {
+                    "maxPrice": {
+                      "path": "/filters/maxPrice"
+                    },
+                    "stops": {
+                      "path": "/filters/stops"
+                    },
+                    "airlines": {
+                      "path": "/filters/airlines"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "apply-label",
+              "component": "Text",
+              "text": "Apply filters"
+            },
+            {
+              "id": "results-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/resultsLabel"
+              }
+            },
+            {
+              "id": "flights",
+              "component": "List",
+              "children": {
+                "componentId": "flight-card",
+                "path": "/flights"
+              }
+            },
+            {
+              "id": "flight-card",
+              "component": "Card",
+              "child": "flight-row"
+            },
+            {
+              "id": "flight-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "flight-info",
+                "flight-side"
+              ]
+            },
+            {
+              "id": "flight-info",
+              "component": "Column",
+              "weight": 3,
+              "children": [
+                "flight-name",
+                "flight-detail"
+              ]
+            },
+            {
+              "id": "flight-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${airline} ${code}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "flight-detail",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Departs ${departs} · ${stops}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "flight-side",
+              "component": "Column",
+              "weight": 2,
+              "align": "end",
+              "children": [
+                "flight-price",
+                "flight-select"
+              ]
+            },
+            {
+              "id": "flight-price",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "price"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "flight-select",
+              "component": "Button",
+              "variant": "primary",
+              "child": "flight-select-label",
+              "action": {
+                "event": {
+                  "name": "select_flight",
+                  "context": {
+                    "flight": {
+                      "path": "code"
+                    },
+                    "airline": {
+                      "path": "airline"
+                    },
+                    "price": {
+                      "path": "price"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "flight-select-label",
+              "component": "Text",
+              "text": "Select"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "flight-filters",
+          "path": "/",
+          "value": {
+            "filters": {
+              "maxPrice": 750,
+              "stops": [
+                "nonstop",
+                "one-stop"
+              ],
+              "airlines": [
+                "TAP",
+                "United",
+                "Delta",
+                "Iberia",
+                "Air France"
+              ]
+            },
+            "resultsLabel": "Showing all 6 flights, cheapest first",
+            "flights": [
+              {
+                "airline": "Iberia",
+                "code": "IB6252",
+                "stops": "1 stop",
+                "departs": "21:40",
+                "price": 480
+              },
+              {
+                "airline": "Delta",
+                "code": "DL272",
+                "stops": "1 stop",
+                "departs": "16:05",
+                "price": 520
+              },
+              {
+                "airline": "Air France",
+                "code": "AF11",
+                "stops": "1 stop",
+                "departs": "19:00",
+                "price": 560
+              },
+              {
+                "airline": "TAP",
+                "code": "TP210",
+                "stops": "Nonstop",
+                "departs": "22:55",
+                "price": 590
+              },
+              {
+                "airline": "TAP",
+                "code": "TP202",
+                "stops": "Nonstop",
+                "departs": "18:30",
+                "price": 640
+              },
+              {
+                "airline": "United",
+                "code": "UA64",
+                "stops": "Nonstop",
+                "departs": "20:15",
+                "price": 710
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>New York to Lisbon flights</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px 16px 90px; font: 14px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #0f172a; background: #f1f5f9; }\n  h1 { font-size: 18px; margin: 0; }\n  .sub { color: #64748b; font-size: 12px; margin: 0 0 12px; }\n  .filters { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }\n  .f { margin-bottom: 10px; }\n  .f:last-child { margin-bottom: 0; }\n  .f > span { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }\n  .f output { color: #0369a1; }\n  input[type=range] { width: 100%; accent-color: #0369a1; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; }\n  .chip { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }\n  .chip.on { background: #0369a1; border-color: #0369a1; color: #fff; }\n  .bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; color: #475569; }\n  select { font: inherit; font-size: 12px; padding: 3px 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; }\n  .flight { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }\n  .flight.sel { border-color: #0369a1; background: #f0f9ff; }\n  .flight b { font-size: 15px; }\n  .flight .time { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }\n  .flight .meta { color: #64748b; font-size: 12px; }\n  .tag { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 0 5px; margin-left: 4px; text-transform: uppercase; }\n  .tag.ns { background: #dcfce7; color: #166534; } .tag.st { background: #fef3c7; color: #92400e; } .tag.best { background: #0369a1; color: #fff; }\n  .price { text-align: right; font-size: 18px; font-weight: 700; }\n  .flight button { grid-column: 2; border: 0; background: #0f172a; color: #fff; border-radius: 8px; padding: 5px 12px; font: inherit; font-size: 12px; cursor: pointer; }\n  .flight.sel button { background: #0369a1; }\n  .empty { text-align: center; color: #64748b; padding: 24px 8px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; }\n  .empty button { border: 0; background: none; color: #0369a1; text-decoration: underline; cursor: pointer; font: inherit; }\n  .tray { position: fixed; left: 0; right: 0; bottom: 0; background: #0f172a; color: #fff; padding: 10px 16px; font-size: 13px; }\n  .tray small { display: block; color: #94a3b8; font-size: 11px; }\n</style>\n</head>\n<body>\n  <h1>New York → Lisbon</h1>\n  <p class=\"sub\">6 flights. Filters apply as you change them.</p>\n\n  <div class=\"filters\">\n    <div class=\"f\"><span>Max price <output id=\"priceOut\"></output></span><input id=\"price\" type=\"range\" min=\"450\" max=\"750\" step=\"10\" value=\"750\"></div>\n    <div class=\"f\"><span>Stops</span><div class=\"chips\" id=\"stops\"><button class=\"chip on\" data-stops=\"any\">Any</button><button class=\"chip\" data-stops=\"0\">Nonstop only</button><button class=\"chip\" data-stops=\"1\">1 stop only</button></div></div>\n    <div class=\"f\"><span>Airlines</span><div class=\"chips\" id=\"airlines\"></div></div>\n  </div>\n\n  <div class=\"bar\"><span id=\"count\"></span><label>Sort <select id=\"sort\"><option value=\"price\">Price</option><option value=\"time\">Departure</option></select></label></div>\n  <div id=\"list\"></div>\n\n  <div class=\"tray\"><span id=\"tray\">No flight selected yet.</span><small>Selections stay on this page: a sandboxed page cannot send them anywhere.</small></div>\n\n<script>\n(function () {\n  var flights = [\n    { code: 'TP202', airline: 'TAP', stops: 0, time: '18:30', price: 640 },\n    { code: 'UA64', airline: 'United', stops: 0, time: '20:15', price: 710 },\n    { code: 'DL272', airline: 'Delta', stops: 1, time: '16:05', price: 520 },\n    { code: 'IB6252', airline: 'Iberia', stops: 1, time: '21:40', price: 480 },\n    { code: 'AF11', airline: 'Air France', stops: 1, time: '19:00', price: 560 },\n    { code: 'TP210', airline: 'TAP', stops: 0, time: '22:55', price: 590 }\n  ];\n  var airlines = ['TAP', 'United', 'Delta', 'Iberia', 'Air France'];\n  var state = { stops: 'any', airlines: {}, selected: null };\n  airlines.forEach(function (a) { state.airlines[a] = true; });\n  var $ = function (id) { return document.getElementById(id); };\n\n  airlines.forEach(function (a) {\n    var b = document.createElement('button');\n    b.type = 'button';\n    b.className = 'chip on';\n    b.textContent = a;\n    b.setAttribute('data-airline', a);\n    $('airlines').appendChild(b);\n  });\n\n  function el(tag, cls, text) {\n    var n = document.createElement(tag);\n    if (cls) { n.className = cls; }\n    if (text !== undefined) { n.textContent = text; }\n    return n;\n  }\n\n  function render() {\n    var max = parseInt($('price').value, 10);\n    $('priceOut').textContent = '$' + max;\n    var sort = $('sort').value;\n\n    var list = flights.filter(function (f) {\n      if (f.price > max) { return false; }\n      if (state.stops !== 'any' && String(f.stops) !== state.stops) { return false; }\n      return state.airlines[f.airline];\n    }).sort(function (a, b) {\n      return sort === 'price' ? a.price - b.price : (a.time < b.time ? -1 : 1);\n    });\n    var cheapest = list.reduce(function (m, f) { return m === null || f.price < m.price ? f : m; }, null);\n\n    var box = $('list');\n    box.textContent = '';\n    list.forEach(function (f) {\n      var card = el('div', 'flight' + (state.selected === f.code ? ' sel' : ''));\n      var left = el('div');\n      var top = el('div');\n      top.appendChild(el('span', 'time', f.time));\n      top.appendChild(el('span', 'tag ' + (f.stops === 0 ? 'ns' : 'st'), f.stops === 0 ? 'Nonstop' : '1 stop'));\n      if (cheapest && f.code === cheapest.code) { top.appendChild(el('span', 'tag best', 'Cheapest')); }\n      left.appendChild(top);\n      left.appendChild(el('div', 'meta', f.airline + ' ' + f.code));\n      var right = el('div', 'price', '$' + f.price);\n      var pick = el('button', '', state.selected === f.code ? 'Selected ✓' : 'Select');\n      pick.type = 'button';\n      pick.setAttribute('data-code', f.code);\n      card.appendChild(left); card.appendChild(right); card.appendChild(pick);\n      box.appendChild(card);\n    });\n    if (!list.length) {\n      var empty = el('div', 'empty', 'No flights match these filters. ');\n      var reset = el('button', '', 'Reset filters');\n      reset.type = 'button';\n      reset.setAttribute('data-reset', '1');\n      empty.appendChild(reset);\n      box.appendChild(empty);\n    }\n    $('count').textContent = list.length + ' of ' + flights.length + ' flights';\n\n    var chosen = null;\n    flights.forEach(function (f) { if (f.code === state.selected) { chosen = f; } });\n    var hiddenByFilter = chosen && list.indexOf(chosen) === -1;\n    $('tray').textContent = chosen\n      ? 'Selected: ' + chosen.airline + ' ' + chosen.code + ' · ' + chosen.time + ' · ' + (chosen.stops === 0 ? 'nonstop' : '1 stop') + ' · $' + chosen.price + (hiddenByFilter ? ' (hidden by current filters)' : '')\n      : 'No flight selected yet.';\n\n    var stopChips = $('stops').children;\n    for (var i = 0; i < stopChips.length; i++) { stopChips[i].className = 'chip' + (stopChips[i].getAttribute('data-stops') === state.stops ? ' on' : ''); }\n    var airChips = $('airlines').children;\n    for (var k = 0; k < airChips.length; k++) { airChips[k].className = 'chip' + (state.airlines[airChips[k].getAttribute('data-airline')] ? ' on' : ''); }\n  }\n\n  $('price').addEventListener('input', render);\n  $('sort').addEventListener('change', render);\n  $('stops').addEventListener('click', function (e) {\n    var s = e.target.getAttribute('data-stops');\n    if (s === null) { return; }\n    state.stops = s;\n    render();\n  });\n  $('airlines').addEventListener('click', function (e) {\n    var a = e.target.getAttribute('data-airline');\n    if (a === null) { return; }\n    state.airlines[a] = !state.airlines[a];\n    render();\n  });\n  $('list').addEventListener('click', function (e) {\n    if (e.target.getAttribute('data-reset')) {\n      $('price').value = '750';\n      state.stops = 'any';\n      airlines.forEach(function (a) { state.airlines[a] = true; });\n      render();\n      return;\n    }\n    var code = e.target.getAttribute('data-code');\n    if (code === null) { return; }\n    state.selected = state.selected === code ? null : code;\n    render();\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_flight_filters_20",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the six New York to Lisbon flights as a read-only table sorted by price, give the user filter controls (maximum price, stops, airlines) and have them pick the flight they want. Return the filters used and the selected flight number.",
+        "data": {
+          "route": "New York → Lisbon",
+          "flights": [
+            {
+              "flight": "IB6252",
+              "airline": "Iberia",
+              "stops": "1 stop",
+              "departs": "21:40",
+              "price": 480
+            },
+            {
+              "flight": "DL272",
+              "airline": "Delta",
+              "stops": "1 stop",
+              "departs": "16:05",
+              "price": 520
+            },
+            {
+              "flight": "AF11",
+              "airline": "Air France",
+              "stops": "1 stop",
+              "departs": "19:00",
+              "price": 560
+            },
+            {
+              "flight": "TP210",
+              "airline": "TAP",
+              "stops": "Nonstop",
+              "departs": "22:55",
+              "price": 590
+            },
+            {
+              "flight": "TP202",
+              "airline": "TAP",
+              "stops": "Nonstop",
+              "departs": "18:30",
+              "price": 640
+            },
+            {
+              "flight": "UA64",
+              "airline": "United",
+              "stops": "Nonstop",
+              "departs": "20:15",
+              "price": 710
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "maxPrice": {
+              "type": "integer",
+              "minimum": 450,
+              "maximum": 750
+            },
+            "stops": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "nonstop",
+                  "one-stop"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "airlines": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "TAP",
+                  "United",
+                  "Delta",
+                  "Iberia",
+                  "Air France"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "selectedFlight": {
+              "type": "string",
+              "enum": [
+                "IB6252",
+                "DL272",
+                "AF11",
+                "TP210",
+                "TP202",
+                "UA64"
+              ]
+            }
+          },
+          "required": [
+            "selectedFlight"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "maxPrice": {
+            "type": "integer",
+            "title": "Maximum price ($)",
+            "minimum": 450,
+            "maximum": 750,
+            "default": 750
+          },
+          "stops": {
+            "type": "array",
+            "title": "Stops",
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "nonstop",
+                  "title": "Nonstop"
+                },
+                {
+                  "const": "one-stop",
+                  "title": "1 stop"
+                }
+              ]
+            }
+          },
+          "airlines": {
+            "type": "array",
+            "title": "Airlines",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "TAP",
+                "United",
+                "Delta",
+                "Iberia",
+                "Air France"
+              ]
+            }
+          },
+          "flights": {
+            "type": "array",
+            "title": "All flights, cheapest first",
+            "items": {
+              "type": "object",
+              "properties": {
+                "flight": {
+                  "type": "string",
+                  "title": "Flight"
+                },
+                "airline": {
+                  "type": "string",
+                  "title": "Airline"
+                },
+                "stops": {
+                  "type": "string",
+                  "title": "Stops"
+                },
+                "departs": {
+                  "type": "string",
+                  "title": "Departs"
+                },
+                "price": {
+                  "type": "integer",
+                  "title": "Price ($)"
+                }
+              }
+            }
+          },
+          "selectedFlight": {
+            "type": "string",
+            "title": "Flight to book",
+            "oneOf": [
+              {
+                "const": "IB6252",
+                "title": "Iberia IB6252 · 21:40 · 1 stop · $480"
+              },
+              {
+                "const": "DL272",
+                "title": "Delta DL272 · 16:05 · 1 stop · $520"
+              },
+              {
+                "const": "AF11",
+                "title": "Air France AF11 · 19:00 · 1 stop · $560"
+              },
+              {
+                "const": "TP210",
+                "title": "TAP TP210 · 22:55 · nonstop · $590"
+              },
+              {
+                "const": "TP202",
+                "title": "TAP TP202 · 18:30 · nonstop · $640"
+              },
+              {
+                "const": "UA64",
+                "title": "United UA64 · 20:15 · nonstop · $710"
+              }
+            ]
+          }
+        },
+        "required": [
+          "selectedFlight"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "New York → Lisbon: 6 flights"
+          },
+          {
+            "type": "Group",
+            "label": "Filters",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/maxPrice",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/stops"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/airlines"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/flights",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/selectedFlight",
+            "options": {
+              "format": "radio"
+            }
+          }
+        ]
+      },
+      "initialData": {
+        "maxPrice": 750,
+        "stops": [
+          "nonstop",
+          "one-stop"
+        ],
+        "airlines": [
+          "TAP",
+          "United",
+          "Delta",
+          "Iberia",
+          "Air France"
+        ],
+        "flights": [
+          {
+            "flight": "IB6252",
+            "airline": "Iberia",
+            "stops": "1 stop",
+            "departs": "21:40",
+            "price": 480
+          },
+          {
+            "flight": "DL272",
+            "airline": "Delta",
+            "stops": "1 stop",
+            "departs": "16:05",
+            "price": 520
+          },
+          {
+            "flight": "AF11",
+            "airline": "Air France",
+            "stops": "1 stop",
+            "departs": "19:00",
+            "price": 560
+          },
+          {
+            "flight": "TP210",
+            "airline": "TAP",
+            "stops": "Nonstop",
+            "departs": "22:55",
+            "price": 590
+          },
+          {
+            "flight": "TP202",
+            "airline": "TAP",
+            "stops": "Nonstop",
+            "departs": "18:30",
+            "price": 640
+          },
+          {
+            "flight": "UA64",
+            "airline": "United",
+            "stops": "Nonstop",
+            "departs": "20:15",
+            "price": 710
+          }
+        ]
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "With no controls, it pre-answers the likely filters (cheapest, nonstop, under $550) in prose and asks for the rest, turning one interaction into a conversation.",
+    "a2ui": "Has the right controls and a Select button on every flight that sends its bound flight number, but the list cannot react to the filters without an agent round trip.",
+    "html": "Filters apply instantly, the cheapest match is tagged, an empty state offers a reset and a tray tracks the pick; the pick then has nowhere to go from inside the sandbox.",
+    "agui": "Returns the cleanest result (typed filters plus one flight number), but rules cannot filter the table or the radio options, so the filter controls do nothing visible."
+  }
+}

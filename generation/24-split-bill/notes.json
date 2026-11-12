@@ -1,0 +1,6 @@
+{
+  "text": "Answers outright ($54.99 each at 18%) with a table of tip levels and the cent-rounding explained; any other tip or head count needs another message.",
+  "a2ui": "Shows the precomputed answer and tip table with currency formatting, but with no arithmetic functions the sliders cannot change the result without a Recalculate round trip.",
+  "html": "A true calculator: tip chips and slider, people stepper and round-up toggle recompute per-person cost in whole cents on every touch, with leftover and effective tip shown.",
+  "agui": "Bill, people, tip and rounding come back as a tidy validated object, but a form cannot compute, so the page shows a static table until the agent replies."
+}

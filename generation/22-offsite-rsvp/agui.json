@@ -1,0 +1,112 @@
+{
+  "toolCall": {
+    "id": "call_offsite_rsvp_22",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Collect an RSVP for the team offsite in Porto on 12–13 September. Ask whether the person is attending. Only if they are, also ask for dietary needs and allergies, whether they need a hotel room and for which nights, and their T-shirt size.",
+      "data": {
+        "event": "Team offsite",
+        "city": "Porto",
+        "dates": ["12 September", "13 September"],
+        "hotelNights": ["11 Sep", "12 Sep", "13 Sep"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "attending": { "type": "boolean" },
+          "dietary": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["vegetarian", "vegan", "gluten-free", "halal", "kosher"] },
+            "uniqueItems": true
+          },
+          "allergies": { "type": "string" },
+          "needsHotel": { "type": "boolean" },
+          "hotelNights": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["11 Sep", "12 Sep", "13 Sep"] },
+            "uniqueItems": true
+          },
+          "shirtSize": { "type": "string", "enum": ["XS", "S", "M", "L", "XL", "XXL"] }
+        },
+        "required": ["attending"],
+        "if": { "properties": { "attending": { "const": true } }, "required": ["attending"] },
+        "then": { "required": ["needsHotel", "shirtSize"] }
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "attending": { "type": "boolean", "title": "I'm coming to the offsite" },
+        "dietary": {
+          "type": "array",
+          "title": "Dietary needs",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "const": "vegetarian", "title": "Vegetarian" },
+              { "const": "vegan", "title": "Vegan" },
+              { "const": "gluten-free", "title": "Gluten-free" },
+              { "const": "halal", "title": "Halal" },
+              { "const": "kosher", "title": "Kosher" }
+            ]
+          }
+        },
+        "allergies": { "type": "string", "title": "Allergies or anything else" },
+        "needsHotel": { "type": "boolean", "title": "I need a hotel room" },
+        "hotelNights": {
+          "type": "array",
+          "title": "Which nights?",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "const": "11 Sep", "title": "11 Sep (arriving the night before)" },
+              { "const": "12 Sep", "title": "12 Sep" },
+              { "const": "13 Sep", "title": "13 Sep (leaving the day after)" }
+            ]
+          }
+        },
+        "shirtSize": { "type": "string", "title": "T-shirt size", "enum": ["XS", "S", "M", "L", "XL", "XXL"] }
+      },
+      "required": ["attending"],
+      "if": { "properties": { "attending": { "const": true } }, "required": ["attending"] },
+      "then": { "required": ["needsHotel", "shirtSize"] }
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Team offsite in Porto, 12–13 September" },
+        { "type": "Control", "scope": "#/properties/attending", "options": { "toggle": true } },
+        {
+          "type": "Group",
+          "label": "A few details",
+          "rule": {
+            "effect": "SHOW",
+            "condition": { "scope": "#/properties/attending", "schema": { "const": true } }
+          },
+          "elements": [
+            { "type": "Control", "scope": "#/properties/dietary" },
+            { "type": "Control", "scope": "#/properties/allergies" },
+            { "type": "Control", "scope": "#/properties/needsHotel", "options": { "toggle": true } },
+            {
+              "type": "Control",
+              "scope": "#/properties/hotelNights",
+              "rule": {
+                "effect": "SHOW",
+                "condition": { "scope": "#/properties/needsHotel", "schema": { "const": true } }
+              }
+            },
+            { "type": "Control", "scope": "#/properties/shirtSize" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "attending": false,
+      "dietary": [],
+      "needsHotel": false,
+      "hotelNights": []
+    }
+  }
+}

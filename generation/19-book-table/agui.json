@@ -1,0 +1,101 @@
+{
+  "toolCall": {
+    "id": "call_book_table_19",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Collect the details needed to reserve a dinner table at Luigi's Trattoria: date, time (30-minute slots from 17:30 to 21:30), party size (1 to 8), seating (indoors or terrace), a name and phone number for the reservation, and optional notes for the restaurant.",
+      "data": {
+        "restaurant": "Luigi's Trattoria",
+        "slots": ["17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"],
+        "maxPartySize": 8,
+        "seating": ["indoors", "terrace"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "enum": ["17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"] },
+          "partySize": { "type": "integer", "minimum": 1, "maximum": 8 },
+          "seating": { "type": "string", "enum": ["indoors", "terrace"] },
+          "name": { "type": "string", "minLength": 1 },
+          "phone": { "type": "string", "pattern": "^\\+?[0-9 ()-]{7,20}$" },
+          "occasion": { "type": "string", "enum": ["none", "birthday", "anniversary", "business"] },
+          "notes": { "type": "string", "maxLength": 300 }
+        },
+        "required": ["date", "time", "partySize", "seating", "name", "phone"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date", "title": "Date" },
+        "time": {
+          "type": "string",
+          "title": "Time",
+          "enum": ["17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"]
+        },
+        "partySize": { "type": "integer", "title": "Party size", "minimum": 1, "maximum": 8, "default": 2 },
+        "seating": {
+          "type": "string",
+          "title": "Seating",
+          "oneOf": [
+            { "const": "indoors", "title": "Indoors" },
+            { "const": "terrace", "title": "Terrace" }
+          ]
+        },
+        "name": { "type": "string", "title": "Name for the reservation", "minLength": 1 },
+        "phone": { "type": "string", "title": "Phone", "pattern": "^\\+?[0-9 ()-]{7,20}$" },
+        "occasion": {
+          "type": "string",
+          "title": "Occasion",
+          "oneOf": [
+            { "const": "none", "title": "No special occasion" },
+            { "const": "birthday", "title": "Birthday" },
+            { "const": "anniversary", "title": "Anniversary" },
+            { "const": "business", "title": "Business dinner" }
+          ]
+        },
+        "notes": { "type": "string", "title": "Anything they should know?", "maxLength": 300 }
+      },
+      "required": ["date", "time", "partySize", "seating", "name", "phone"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Reserve a table at Luigi's Trattoria" },
+        {
+          "type": "HorizontalLayout",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/date" },
+            { "type": "Control", "scope": "#/properties/time" }
+          ]
+        },
+        { "type": "Control", "scope": "#/properties/partySize", "options": { "slider": true } },
+        { "type": "Control", "scope": "#/properties/seating", "options": { "format": "radio" } },
+        {
+          "type": "Group",
+          "label": "Your details",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/name" },
+                { "type": "Control", "scope": "#/properties/phone" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/occasion" },
+            { "type": "Control", "scope": "#/properties/notes", "options": { "multi": true } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "time": "19:30",
+      "partySize": 2,
+      "seating": "indoors",
+      "occasion": "none"
+    }
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "toolCall": {
+    "id": "call_notification_prefs_23",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Let the user set notification preferences: for each of mentions, direct messages, weekly digest and product updates, switches for email, push and SMS. Add quiet hours with an on/off switch and a from and to time. Pre-fill with the user's current settings.",
+      "data": {
+        "current": {
+          "mentions": { "email": true, "push": true, "sms": false },
+          "directMessages": { "email": false, "push": true, "sms": false },
+          "weeklyDigest": { "email": true, "push": false, "sms": false },
+          "productUpdates": { "email": true, "push": false, "sms": false },
+          "quietHours": { "enabled": true, "from": "22:00:00", "to": "07:00:00" }
+        }
+      },
+      "output": {
+        "type": "object",
+        "$defs": {
+          "channels": {
+            "type": "object",
+            "properties": {
+              "email": { "type": "boolean" },
+              "push": { "type": "boolean" },
+              "sms": { "type": "boolean" }
+            },
+            "required": ["email", "push", "sms"]
+          }
+        },
+        "properties": {
+          "mentions": { "$ref": "#/$defs/channels" },
+          "directMessages": { "$ref": "#/$defs/channels" },
+          "weeklyDigest": { "$ref": "#/$defs/channels" },
+          "productUpdates": { "$ref": "#/$defs/channels" },
+          "quietHours": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "from": { "type": "string" },
+              "to": { "type": "string" }
+            },
+            "required": ["enabled"]
+          }
+        },
+        "required": ["mentions", "directMessages", "weeklyDigest", "productUpdates", "quietHours"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "$defs": {
+        "channels": {
+          "type": "object",
+          "properties": {
+            "email": { "type": "boolean", "title": "Email" },
+            "push": { "type": "boolean", "title": "Push" },
+            "sms": { "type": "boolean", "title": "SMS" }
+          },
+          "required": ["email", "push", "sms"]
+        }
+      },
+      "properties": {
+        "mentions": { "$ref": "#/$defs/channels" },
+        "directMessages": { "$ref": "#/$defs/channels" },
+        "weeklyDigest": { "$ref": "#/$defs/channels" },
+        "productUpdates": { "$ref": "#/$defs/channels" },
+        "quietHours": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "title": "Hold push and SMS during quiet hours" },
+            "from": { "type": "string", "format": "time", "title": "From" },
+            "to": { "type": "string", "format": "time", "title": "To" }
+          },
+          "required": ["enabled"]
+        }
+      },
+      "required": ["mentions", "directMessages", "weeklyDigest", "productUpdates", "quietHours"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        {
+          "type": "Group",
+          "label": "Mentions",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/mentions/properties/email", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/mentions/properties/push", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/mentions/properties/sms", "options": { "toggle": true } }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Direct messages",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/directMessages/properties/email", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/directMessages/properties/push", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/directMessages/properties/sms", "options": { "toggle": true } }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Weekly digest",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/weeklyDigest/properties/email", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/weeklyDigest/properties/push", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/weeklyDigest/properties/sms", "options": { "toggle": true } }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Product updates",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/productUpdates/properties/email", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/productUpdates/properties/push", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/productUpdates/properties/sms", "options": { "toggle": true } }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Quiet hours",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/quietHours/properties/enabled", "options": { "toggle": true } },
+            {
+              "type": "HorizontalLayout",
+              "rule": {
+                "effect": "ENABLE",
+                "condition": { "scope": "#/properties/quietHours/properties/enabled", "schema": { "const": true } }
+              },
+              "elements": [
+                { "type": "Control", "scope": "#/properties/quietHours/properties/from" },
+                { "type": "Control", "scope": "#/properties/quietHours/properties/to" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "mentions": { "email": true, "push": true, "sms": false },
+      "directMessages": { "email": false, "push": true, "sms": false },
+      "weeklyDigest": { "email": true, "push": false, "sms": false },
+      "productUpdates": { "email": true, "push": false, "sms": false },
+      "quietHours": { "enabled": true, "from": "22:00:00", "to": "07:00:00" }
+    }
+  }
+}

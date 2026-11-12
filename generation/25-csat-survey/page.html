@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How did we do?</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #2e1065; background: #faf5ff; }
+  h1 { font-size: 20px; margin: 0; }
+  .lead { margin: 2px 0 10px; color: #6b5b95; font-size: 13px; }
+  .progress { height: 6px; background: #e9d5ff; border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+  .progress i { display: block; height: 100%; width: 0; background: #7c3aed; transition: width .3s; }
+  .q { background: #fff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
+  .q h2 { font-size: 14px; margin: 0 0 8px; }
+  .q h2 span { color: #a78bfa; margin-right: 4px; }
+  .faces { display: flex; justify-content: space-between; }
+  .faces button { border: 2px solid transparent; background: none; border-radius: 12px; font-size: 28px; line-height: 1; padding: 6px 4px; cursor: pointer; filter: grayscale(1); opacity: .55; transition: transform .15s, opacity .15s, filter .15s; }
+  .faces button:hover { opacity: .9; transform: scale(1.1); }
+  .faces button.on { filter: none; opacity: 1; transform: scale(1.25); border-color: #e9d5ff; background: #faf5ff; }
+  .cap { display: flex; justify-content: space-between; font-size: 11px; color: #6b5b95; margin-top: 4px; }
+  .answer { text-align: center; font-weight: 600; min-height: 20px; margin-top: 2px; color: #7c3aed; }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .seg button { border: 1px solid #d8b4fe; background: #fff; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; color: inherit; }
+  .seg button.on { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .scale button { border: 1px solid #d8b4fe; background: #fff; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; color: inherit; }
+  .scale button.on { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+  .nps { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+  .nps button { border: 1px solid #d8b4fe; background: #fff; border-radius: 6px; padding: 7px 0; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; color: inherit; }
+  .nps button.on.det { background: #dc2626; border-color: #dc2626; color: #fff; }
+  .nps button.on.pas { background: #d97706; border-color: #d97706; color: #fff; }
+  .nps button.on.pro { background: #16a34a; border-color: #16a34a; color: #fff; }
+  textarea { width: 100%; min-height: 70px; padding: 8px 10px; border: 1px solid #d8b4fe; border-radius: 10px; font: inherit; resize: vertical; color: inherit; }
+  .count { text-align: right; font-size: 11px; color: #6b5b95; }
+  .check { display: flex; gap: 8px; align-items: center; margin: 4px 0 12px; cursor: pointer; }
+  .send { width: 100%; border: 0; border-radius: 12px; padding: 12px; font: inherit; font-weight: 700; background: #7c3aed; color: #fff; cursor: pointer; }
+  .send:disabled { background: #d8b4fe; cursor: default; }
+  .hint { text-align: center; font-size: 12px; color: #6b5b95; margin: 6px 0 0; }
+  .thanks { text-align: center; padding: 30px 10px; }
+  .thanks div { font-size: 48px; }
+  .thanks h2 { margin: 6px 0; }
+  .thanks p { color: #6b5b95; margin: 0 0 12px; }
+  .thanks pre { text-align: left; background: #fff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 10px; font-size: 12px; white-space: pre-wrap; }
+  .thanks button { border: 0; background: none; color: #7c3aed; text-decoration: underline; cursor: pointer; font: inherit; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <div id="formView">
+    <h1>How did we do?</h1>
+    <p class="lead">Five quick questions about your support chat.</p>
+    <div class="progress"><i id="bar"></i></div>
+
+    <div class="q">
+      <h2><span>1</span>Overall, how satisfied are you with the support you received?</h2>
+      <div class="faces" id="sat"><button data-v="1" aria-label="1, very dissatisfied">😡</button><button data-v="2" aria-label="2, dissatisfied">🙁</button><button data-v="3" aria-label="3, neutral">😐</button><button data-v="4" aria-label="4, satisfied">🙂</button><button data-v="5" aria-label="5, very satisfied">😍</button></div>
+      <div class="answer" id="satText"></div>
+    </div>
+
+    <div class="q">
+      <h2><span>2</span>Did we resolve your issue?</h2>
+      <div class="seg" id="resolved"><button data-v="yes">Yes</button><button data-v="partly">Partly</button><button data-v="no">No</button></div>
+    </div>
+
+    <div class="q">
+      <h2><span>3</span>How easy was it to get the help you needed?</h2>
+      <div class="scale" id="effort"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+      <div class="cap"><span>Very difficult</span><span>Very easy</span></div>
+    </div>
+
+    <div class="q">
+      <h2><span>4</span>How likely are you to recommend us to a friend or colleague?</h2>
+      <div class="nps" id="nps"></div>
+      <div class="cap"><span>Not at all likely</span><span>Extremely likely</span></div>
+    </div>
+
+    <div class="q">
+      <h2><span>5</span><span id="commentLabel" style="color:inherit"></span></h2>
+      <textarea id="comment" maxlength="500" aria-labelledby="commentLabel"></textarea>
+      <div class="count" id="count"></div>
+    </div>
+
+    <label class="check"><input type="checkbox" id="contact"> You may contact me about my feedback</label>
+    <button type="button" class="send" id="send">Send feedback</button>
+    <p class="hint" id="hint"></p>
+  </div>
+
+  <div class="thanks" id="thanksView" hidden>
+    <div id="thanksEmoji"></div>
+    <h2 id="thanksTitle"></h2>
+    <p id="thanksText"></p>
+    <pre id="payload"></pre>
+    <p>This page is sandboxed, so the answers above were not sent anywhere.</p>
+    <button type="button" id="again">Change my answers</button>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var a = { sat: null, resolved: null, effort: null, nps: null };
+  var satLabels = { 1: 'Very dissatisfied', 2: 'Dissatisfied', 3: 'Neutral', 4: 'Satisfied', 5: 'Very satisfied' };
+
+  for (var n = 0; n <= 10; n++) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = String(n);
+    b.setAttribute('data-v', String(n));
+    b.className = n <= 6 ? 'det' : (n <= 8 ? 'pas' : 'pro');
+    $('nps').appendChild(b);
+  }
+
+  function mark(boxId, value) {
+    var kids = $(boxId).children;
+    for (var i = 0; i < kids.length; i++) {
+      var on = kids[i].getAttribute('data-v') === String(value);
+      kids[i].classList.toggle('on', on);
+      kids[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+
+  function render() {
+    mark('sat', a.sat); mark('resolved', a.resolved); mark('effort', a.effort); mark('nps', a.nps);
+    $('satText').textContent = a.sat ? a.sat + ' of 5 · ' + satLabels[a.sat] : '';
+
+    var unhappy = (a.sat !== null && a.sat <= 2) || a.resolved === 'no';
+    var delighted = a.sat === 5 && a.resolved !== 'no';
+    $('commentLabel').textContent = unhappy ? 'Sorry about that. What went wrong?' : (delighted ? 'Great! What did we do well?' : 'Anything we could have done better? (optional)');
+    $('comment').placeholder = unhappy ? 'Tell us what happened so we can put it right' : 'Your thoughts';
+    $('count').textContent = $('comment').value.length + ' / 500';
+
+    var answered = 0;
+    if (a.sat !== null) { answered += 1; }
+    if (a.resolved !== null) { answered += 1; }
+    if (a.effort !== null) { answered += 1; }
+    if (a.nps !== null) { answered += 1; }
+    if ($('comment').value.trim()) { answered += 1; }
+    $('bar').style.width = (answered / 5 * 100) + '%';
+    $('send').disabled = a.sat === null;
+    $('hint').textContent = a.sat === null ? 'Answer question 1 to send. The rest are optional.' : answered + ' of 5 answered';
+  }
+
+  function pick(boxId, key, numeric) {
+    $(boxId).addEventListener('click', function (e) {
+      var v = e.target.getAttribute('data-v');
+      if (v === null) { return; }
+      var value = numeric ? parseInt(v, 10) : v;
+      a[key] = a[key] === value ? null : value;
+      render();
+    });
+  }
+  pick('sat', 'sat', true);
+  pick('resolved', 'resolved', false);
+  pick('effort', 'effort', true);
+  pick('nps', 'nps', true);
+  $('comment').addEventListener('input', render);
+
+  $('send').addEventListener('click', function () {
+    if (a.sat === null) { return; }
+    var happy = a.sat >= 4;
+    $('thanksEmoji').textContent = happy ? '🎉' : '🙏';
+    $('thanksTitle').textContent = happy ? 'Thank you!' : 'Thank you for telling us';
+    $('thanksText').textContent = happy ? 'We are glad the chat helped.' : 'We are sorry it was not better. ' + ($('contact').checked ? 'Someone will be in touch.' : 'We will review what happened.');
+    var result = {
+      satisfaction: a.sat,
+      resolved: a.resolved,
+      effort: a.effort,
+      recommend: a.nps,
+      comment: $('comment').value.trim(),
+      mayContact: $('contact').checked
+    };
+    $('payload').textContent = JSON.stringify(result, null, 2);
+    $('formView').hidden = true;
+    $('thanksView').hidden = false;
+  });
+  $('again').addEventListener('click', function () {
+    $('thanksView').hidden = true;
+    $('formView').hidden = false;
+  });
+  render();
+})();
+</script>
+</body>
+</html>

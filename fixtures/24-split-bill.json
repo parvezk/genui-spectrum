@@ -1,0 +1,693 @@
+{
+  "id": "24-split-bill",
+  "index": 24,
+  "title": "Split the bill",
+  "category": "input",
+  "prompt": "Help me split a $186.40 dinner bill between 4 people with a tip.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Splitting $186.40 between 4 people\n\n**With an 18% tip, each person pays $54.99.**\n\nHere is how that works out, and what other tip levels would cost:\n\n| Tip | Tip amount | Total | Per person (÷ 4) |\n| ---: | ---: | ---: | ---: |\n| No tip | $0.00 | $186.40 | $46.60 |\n| 15% | $27.96 | $214.36 | $53.59 |\n| **18%** | **$33.55** | **$219.95** | **$54.99** |\n| 20% | $37.28 | $223.68 | $55.92 |\n| 25% | $46.60 | $233.00 | $58.25 |\n\n### The 18% calculation\n\n1. Tip: $186.40 × 0.18 = $33.55\n2. Total: $186.40 + $33.55 = $219.95\n3. Per person: $219.95 ÷ 4 = $54.9875, which rounds up to **$54.99**\n\nFour payments of $54.99 come to $219.96, one cent more than the total, so the bill is fully covered.\n\n### Easier numbers\n\n- **Round up to $55 each.** That collects $220.00, and the tip becomes $33.60 (18.0%).\n- **Go to 20% and pay $56 each.** That collects $224.00; the tip is $37.60 (20.2%).\n\n### Quick mental check\n\nEach person's share of the bill before tip is $46.60. Every 5% of tip adds $2.33 per person, so 15% is about +$7, 20% is about +$9.30.\n\nTell me a different tip percentage or number of people and I will redo it. If the split should be uneven (someone skipped drinks, say), give me each person's subtotal and I will add tip proportionally.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "split-bill",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "split-bill",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "answer-card",
+                "options-card",
+                "adjust-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Split the bill"
+            },
+            {
+              "id": "answer-card",
+              "component": "Card",
+              "child": "answer-col"
+            },
+            {
+              "id": "answer-col",
+              "component": "Column",
+              "align": "center",
+              "children": [
+                "answer-label",
+                "answer-value",
+                "answer-detail"
+              ]
+            },
+            {
+              "id": "answer-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Each person pays, with 18% tip"
+            },
+            {
+              "id": "answer-value",
+              "component": "Text",
+              "variant": "h1",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "/result/perPerson"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "answer-detail",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${formatCurrency(value: ${/result/bill}, currency: 'USD', decimals: 2)} + ${formatCurrency(value: ${/result/tip}, currency: 'USD', decimals: 2)} tip = ${formatCurrency(value: ${/result/total}, currency: 'USD', decimals: 2)}, split 4 ways"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "options-card",
+              "component": "Card",
+              "child": "options-col"
+            },
+            {
+              "id": "options-col",
+              "component": "Column",
+              "children": [
+                "options-title",
+                "options-head",
+                "options-divider",
+                "options-rows"
+              ]
+            },
+            {
+              "id": "options-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Other tip levels, 4 people"
+            },
+            {
+              "id": "options-head",
+              "component": "Row",
+              "children": [
+                "oh-tip",
+                "oh-amount",
+                "oh-total",
+                "oh-each"
+              ]
+            },
+            {
+              "id": "oh-tip",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Tip"
+            },
+            {
+              "id": "oh-amount",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Amount"
+            },
+            {
+              "id": "oh-total",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Total"
+            },
+            {
+              "id": "oh-each",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Each"
+            },
+            {
+              "id": "options-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "options-rows",
+              "component": "List",
+              "children": {
+                "componentId": "option-row",
+                "path": "/options"
+              }
+            },
+            {
+              "id": "option-row",
+              "component": "Row",
+              "children": [
+                "or-tip",
+                "or-amount",
+                "or-total",
+                "or-each"
+              ]
+            },
+            {
+              "id": "or-tip",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "label"
+              }
+            },
+            {
+              "id": "or-amount",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "tip"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "or-total",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "total"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "or-each",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "each"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "adjust-card",
+              "component": "Card",
+              "child": "adjust-col"
+            },
+            {
+              "id": "adjust-col",
+              "component": "Column",
+              "children": [
+                "adjust-title",
+                "bill-field",
+                "people-slider",
+                "people-readout",
+                "tip-slider",
+                "tip-readout",
+                "round-up",
+                "recalc"
+              ]
+            },
+            {
+              "id": "adjust-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Change the numbers"
+            },
+            {
+              "id": "bill-field",
+              "component": "TextField",
+              "label": "Bill total ($)",
+              "variant": "number",
+              "value": {
+                "path": "/input/bill"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "regex",
+                    "args": {
+                      "value": {
+                        "path": "/input/bill"
+                      },
+                      "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+                    }
+                  },
+                  "message": "Enter an amount such as 186.40."
+                }
+              ]
+            },
+            {
+              "id": "people-slider",
+              "component": "Slider",
+              "label": "People",
+              "min": 2,
+              "max": 12,
+              "value": {
+                "path": "/input/people"
+              }
+            },
+            {
+              "id": "people-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${/input/people} people"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "tip-slider",
+              "component": "Slider",
+              "label": "Tip",
+              "min": 0,
+              "max": 30,
+              "value": {
+                "path": "/input/tipPercent"
+              }
+            },
+            {
+              "id": "tip-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${/input/tipPercent}% tip"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "round-up",
+              "component": "CheckBox",
+              "label": "Round each share up to the next dollar",
+              "value": {
+                "path": "/input/roundUp"
+              }
+            },
+            {
+              "id": "recalc",
+              "component": "Button",
+              "variant": "primary",
+              "child": "recalc-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "regex",
+                    "args": {
+                      "value": {
+                        "path": "/input/bill"
+                      },
+                      "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+                    }
+                  },
+                  "message": "Enter a valid bill total first."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "recalculate_split",
+                  "context": {
+                    "bill": {
+                      "path": "/input/bill"
+                    },
+                    "people": {
+                      "path": "/input/people"
+                    },
+                    "tipPercent": {
+                      "path": "/input/tipPercent"
+                    },
+                    "roundUp": {
+                      "path": "/input/roundUp"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "recalc-label",
+              "component": "Text",
+              "text": "Recalculate"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "split-bill",
+          "path": "/",
+          "value": {
+            "result": {
+              "bill": 186.4,
+              "tip": 33.55,
+              "total": 219.95,
+              "perPerson": 54.99
+            },
+            "options": [
+              {
+                "label": "15%",
+                "tip": 27.96,
+                "total": 214.36,
+                "each": 53.59
+              },
+              {
+                "label": "18%",
+                "tip": 33.55,
+                "total": 219.95,
+                "each": 54.99
+              },
+              {
+                "label": "20%",
+                "tip": 37.28,
+                "total": 223.68,
+                "each": 55.92
+              },
+              {
+                "label": "25%",
+                "tip": 46.6,
+                "total": 233,
+                "each": 58.25
+              }
+            ],
+            "input": {
+              "bill": "186.40",
+              "people": 4,
+              "tipPercent": 18,
+              "roundUp": false
+            }
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Split the bill</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #f8fafc; background: #111827; }\n  h1 { font-size: 18px; margin: 0 0 12px; }\n  .result { background: linear-gradient(135deg, #10b981, #059669); border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 14px; }\n  .result small { display: block; opacity: .9; font-size: 12px; }\n  .result b { display: block; font-size: 40px; line-height: 1.15; font-variant-numeric: tabular-nums; }\n  .result span { font-size: 12px; opacity: .95; }\n  .card { background: #1f2937; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }\n  .card h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9ca3af; margin: 0 0 8px; font-weight: 600; }\n  .bill { display: flex; align-items: center; gap: 6px; font-size: 26px; font-weight: 700; }\n  .bill input { flex: 1; min-width: 0; background: none; border: 0; border-bottom: 2px solid #374151; color: inherit; font: inherit; padding: 2px 0; font-variant-numeric: tabular-nums; }\n  .bill input:focus { outline: none; border-color: #10b981; }\n  .tips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }\n  .tips button { border: 1px solid #374151; background: #111827; color: inherit; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; }\n  .tips button.on { background: #10b981; border-color: #10b981; color: #052e1f; }\n  .custom { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-top: 10px; font-size: 12px; color: #9ca3af; }\n  .custom input { width: 100%; accent-color: #10b981; }\n  .people { display: flex; align-items: center; justify-content: space-between; }\n  .people .n { font-size: 26px; font-weight: 700; min-width: 40px; text-align: center; }\n  .people button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #374151; background: #111827; color: inherit; font-size: 20px; cursor: pointer; }\n  .people button:disabled { opacity: .3; cursor: default; }\n  .dots { flex: 1; text-align: center; font-size: 18px; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }\n  .toggle { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }\n  .toggle input { width: 18px; height: 18px; accent-color: #10b981; }\n  dl { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; margin: 0; font-variant-numeric: tabular-nums; }\n  dt { color: #9ca3af; }\n  dd { margin: 0; text-align: right; font-weight: 600; }\n  dd.total, dt.total { border-top: 1px solid #374151; padding-top: 6px; color: #f8fafc; }\n  .warn { color: #fbbf24; font-size: 12px; margin: 6px 0 0; min-height: 16px; }\n</style>\n</head>\n<body>\n  <h1>Split the bill</h1>\n\n  <div class=\"result\">\n    <small>Each person pays</small>\n    <b id=\"each\"></b>\n    <span id=\"eachNote\"></span>\n  </div>\n\n  <div class=\"card\">\n    <h2>Bill</h2>\n    <div class=\"bill\"><span>$</span><input id=\"bill\" type=\"text\" inputmode=\"decimal\" value=\"186.40\" aria-label=\"Bill total in dollars\"></div>\n    <p class=\"warn\" id=\"warn\"></p>\n  </div>\n\n  <div class=\"card\">\n    <h2>Tip</h2>\n    <div class=\"tips\" id=\"tips\"><button data-tip=\"0\">0%</button><button data-tip=\"15\">15%</button><button data-tip=\"18\">18%</button><button data-tip=\"20\">20%</button><button data-tip=\"25\">25%</button></div>\n    <div class=\"custom\"><input id=\"tip\" type=\"range\" min=\"0\" max=\"35\" step=\"1\" value=\"18\" aria-label=\"Tip percentage\"><span id=\"tipOut\"></span></div>\n  </div>\n\n  <div class=\"card\">\n    <h2>People</h2>\n    <div class=\"people\"><button id=\"minus\" aria-label=\"One fewer\">−</button><span class=\"dots\" id=\"dots\"></span><span class=\"n\" id=\"n\"></span><button id=\"plus\" aria-label=\"One more\">+</button></div>\n  </div>\n\n  <div class=\"card\">\n    <label class=\"toggle\"><span>Round each share up to the next dollar</span><input type=\"checkbox\" id=\"round\"></label>\n  </div>\n\n  <div class=\"card\">\n    <h2>Breakdown</h2>\n    <dl>\n      <dt>Bill</dt><dd id=\"dBill\"></dd>\n      <dt id=\"tipLabel\">Tip</dt><dd id=\"dTip\"></dd>\n      <dt class=\"total\">Total</dt><dd class=\"total\" id=\"dTotal\"></dd>\n      <dt>Collected</dt><dd id=\"dCollected\"></dd>\n      <dt>Left over</dt><dd id=\"dExtra\"></dd>\n    </dl>\n  </div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var people = 4;\n  var lastGoodCents = 18640;\n\n  // All arithmetic is in whole cents to avoid floating-point drift.\n  function money(cents) {\n    var sign = cents < 0 ? '-' : '';\n    cents = Math.abs(cents);\n    var dollars = Math.floor(cents / 100);\n    var rest = cents % 100;\n    return sign + '$' + dollars.toLocaleString('en-US') + '.' + (rest < 10 ? '0' : '') + rest;\n  }\n  function parseBill(text) {\n    var clean = text.replace(/[$,\\s]/g, '');\n    if (!/^[0-9]+(\\.[0-9]{0,2})?$/.test(clean)) { return null; }\n    return Math.round(parseFloat(clean) * 100);\n  }\n\n  function render() {\n    var parsed = parseBill($('bill').value);\n    if (parsed === null) { $('warn').textContent = 'Enter an amount such as 186.40. Showing the last valid bill.'; }\n    else { $('warn').textContent = ''; lastGoodCents = parsed; }\n    var bill = lastGoodCents;\n    var tipPct = parseInt($('tip').value, 10);\n    var roundUp = $('round').checked;\n\n    var tip = Math.round(bill * tipPct / 100);\n    var total = bill + tip;\n    var each = Math.ceil(total / people);\n    if (roundUp) { each = Math.ceil(each / 100) * 100; }\n    var collected = each * people;\n    var extra = collected - total;\n    var effective = bill > 0 ? (collected - bill) / bill * 100 : 0;\n\n    $('each').textContent = money(each);\n    $('eachNote').textContent = people + ' people · ' + tipPct + '% tip' + (roundUp ? ' · rounded up' : '');\n    $('tipOut').textContent = tipPct + '%';\n    $('n').textContent = String(people);\n    var dots = '';\n    for (var i = 0; i < people; i++) { dots += '🧑'; }\n    $('dots').textContent = dots;\n    $('minus').disabled = people <= 2;\n    $('plus').disabled = people >= 12;\n\n    var chips = $('tips').children;\n    for (var c = 0; c < chips.length; c++) { chips[c].className = parseInt(chips[c].getAttribute('data-tip'), 10) === tipPct ? 'on' : ''; }\n\n    $('dBill').textContent = money(bill);\n    $('tipLabel').textContent = 'Tip (' + tipPct + '%)';\n    $('dTip').textContent = money(tip);\n    $('dTotal').textContent = money(total);\n    $('dCollected').textContent = money(collected) + ' (' + people + ' × ' + money(each) + ')';\n    $('dExtra').textContent = extra === 0 ? 'Nothing' : money(extra) + (roundUp ? ' extra tip, ' + effective.toFixed(1) + '% in all' : ' from rounding to the cent');\n  }\n\n  $('bill').addEventListener('input', render);\n  $('tip').addEventListener('input', render);\n  $('round').addEventListener('change', render);\n  $('tips').addEventListener('click', function (e) {\n    var t = e.target.getAttribute('data-tip');\n    if (t === null) { return; }\n    $('tip').value = t;\n    render();\n  });\n  $('minus').addEventListener('click', function () { if (people > 2) { people -= 1; render(); } });\n  $('plus').addEventListener('click', function () { if (people < 12) { people += 1; render(); } });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_split_bill_24",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "State the default answer for splitting a $186.40 bill between 4 people ($54.99 each with an 18% tip) and show a read-only table of other tip levels. Then let the user confirm or change the bill total, number of people, tip percentage and whether to round each share up to the next dollar, so the split can be recalculated.",
+        "data": {
+          "bill": 186.4,
+          "people": 4,
+          "defaultTipPercent": 18,
+          "perPersonAtDefault": 54.99,
+          "options": [
+            {
+              "tip": "15%",
+              "tipAmount": 27.96,
+              "total": 214.36,
+              "each": 53.59
+            },
+            {
+              "tip": "18%",
+              "tipAmount": 33.55,
+              "total": 219.95,
+              "each": 54.99
+            },
+            {
+              "tip": "20%",
+              "tipAmount": 37.28,
+              "total": 223.68,
+              "each": 55.92
+            },
+            {
+              "tip": "25%",
+              "tipAmount": 46.6,
+              "total": 233,
+              "each": 58.25
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "bill": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "people": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 20
+            },
+            "tipPercent": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "roundUp": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "bill",
+            "people",
+            "tipPercent",
+            "roundUp"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "title": "$186.40 between 4 people",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tip": {
+                  "type": "string",
+                  "title": "Tip"
+                },
+                "tipAmount": {
+                  "type": "number",
+                  "title": "Tip ($)"
+                },
+                "total": {
+                  "type": "number",
+                  "title": "Total ($)"
+                },
+                "each": {
+                  "type": "number",
+                  "title": "Each ($)"
+                }
+              }
+            }
+          },
+          "bill": {
+            "type": "number",
+            "title": "Bill total ($)",
+            "exclusiveMinimum": 0
+          },
+          "people": {
+            "type": "integer",
+            "title": "People",
+            "minimum": 2,
+            "maximum": 20
+          },
+          "tipPercent": {
+            "type": "integer",
+            "title": "Tip (%)",
+            "minimum": 0,
+            "maximum": 30,
+            "default": 18
+          },
+          "roundUp": {
+            "type": "boolean",
+            "title": "Round each share up to the next dollar"
+          }
+        },
+        "required": [
+          "bill",
+          "people",
+          "tipPercent",
+          "roundUp"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "With an 18% tip, each person pays $54.99"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/options",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Change the numbers",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/bill"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/people"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/tipPercent",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/roundUp",
+                "options": {
+                  "toggle": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "options": [
+          {
+            "tip": "15%",
+            "tipAmount": 27.96,
+            "total": 214.36,
+            "each": 53.59
+          },
+          {
+            "tip": "18%",
+            "tipAmount": 33.55,
+            "total": 219.95,
+            "each": 54.99
+          },
+          {
+            "tip": "20%",
+            "tipAmount": 37.28,
+            "total": 223.68,
+            "each": 55.92
+          },
+          {
+            "tip": "25%",
+            "tipAmount": 46.6,
+            "total": 233,
+            "each": 58.25
+          }
+        ],
+        "bill": 186.4,
+        "people": 4,
+        "tipPercent": 18,
+        "roundUp": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Answers outright ($54.99 each at 18%) with a table of tip levels and the cent-rounding explained; any other tip or head count needs another message.",
+    "a2ui": "Shows the precomputed answer and tip table with currency formatting, but with no arithmetic functions the sliders cannot change the result without a Recalculate round trip.",
+    "html": "A true calculator: tip chips and slider, people stepper and round-up toggle recompute per-person cost in whole cents on every touch, with leftover and effective tip shown.",
+    "agui": "Bill, people, tip and rounding come back as a tidy validated object, but a form cannot compute, so the page shows a static table until the agent replies."
+  }
+}

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report a bug</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #24292f; background: #f6f8fa; }
+  h1 { font-size: 18px; margin: 0 0 2px; }
+  .lead { margin: 0 0 12px; color: #57606a; font-size: 13px; }
+  .steps { display: flex; gap: 4px; margin-bottom: 12px; }
+  .steps button { flex: 1; border: 0; border-bottom: 3px solid #d0d7de; background: none; padding: 6px 2px; font: inherit; font-size: 12px; font-weight: 600; color: #57606a; cursor: pointer; }
+  .steps button.on { border-color: #0969da; color: #0969da; }
+  .steps button.ok::after { content: " ✓"; color: #1a7f37; }
+  .card { background: #fff; border: 1px solid #d0d7de; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  label, .lbl { display: block; font-size: 12px; font-weight: 600; margin: 10px 0 4px; }
+  .card > label:first-child, .card > .lbl:first-child { margin-top: 0; }
+  label .req { color: #cf222e; }
+  input[type=text], input[type=email], textarea { width: 100%; padding: 7px 9px; border: 1px solid #d0d7de; border-radius: 6px; font: inherit; background: #fff; color: inherit; }
+  textarea { min-height: 76px; resize: vertical; }
+  .bad { border-color: #cf222e !important; }
+  .hint { display: flex; justify-content: space-between; font-size: 11px; color: #57606a; margin-top: 2px; min-height: 15px; }
+  .hint .err { color: #cf222e; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid #d0d7de; background: #f6f8fa; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }
+  .chip.on { background: #0969da; border-color: #0969da; color: #fff; }
+  .sev { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .sev button { border: 1px solid #d0d7de; background: #fff; border-radius: 6px; padding: 6px 2px; font: inherit; font-size: 11px; cursor: pointer; color: inherit; }
+  .sev button.on { color: #fff; font-weight: 700; border-color: transparent; }
+  .sev button.on[data-v=blocker] { background: #cf222e; } .sev button.on[data-v=major] { background: #bc4c00; }
+  .sev button.on[data-v=minor] { background: #9a6700; } .sev button.on[data-v=cosmetic] { background: #57606a; }
+  .two { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+  .check { display: flex; gap: 8px; align-items: center; font-weight: 400; font-size: 13px; }
+  .nav { display: flex; gap: 8px; }
+  .nav button { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #d0d7de; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .nav button.primary { background: #1f883d; border-color: #1f883d; color: #fff; }
+  .preview { background: #fff; border: 1px solid #d0d7de; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; }
+  .preview h2 { font-size: 15px; margin: 0 0 6px; }
+  .preview .labels { margin-bottom: 8px; }
+  .preview .labels span { display: inline-block; font-size: 11px; border-radius: 999px; padding: 0 8px; margin-right: 4px; background: #ddf4ff; color: #0969da; font-weight: 600; }
+  .preview h3 { font-size: 12px; margin: 8px 0 2px; color: #57606a; text-transform: uppercase; letter-spacing: .04em; }
+  .preview ol { margin: 0; padding-left: 20px; }
+  .preview p { margin: 0; }
+  .muted { color: #8c959f; font-style: italic; }
+  .sent { background: #dafbe1; border: 1px solid #aceebb; border-radius: 8px; padding: 10px; font-size: 13px; margin-bottom: 12px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <h1>Report a bug</h1>
+  <p class="lead">Three short steps. The preview at the bottom shows what the team will see.</p>
+
+  <div class="steps" id="tabs"><button data-step="0">1 What happened</button><button data-step="1">2 Your device</button><button data-step="2">3 Follow-up</button></div>
+
+  <div class="card" data-panel="0">
+    <label for="summary">Summary <span class="req">*</span></label>
+    <input type="text" id="summary" maxlength="120" placeholder="The app crashes when I tap Pay">
+    <div class="hint"><span class="err" id="summaryErr"></span><span id="summaryCount"></span></div>
+
+    <span class="lbl">Where in the app?</span>
+    <div class="chips" id="area"></div>
+
+    <label for="steps">Steps to reproduce, one per line <span class="req">*</span></label>
+    <textarea id="steps" placeholder="Open the app&#10;Add an item to the basket&#10;Tap Pay"></textarea>
+    <div class="hint"><span class="err" id="stepsErr"></span></div>
+
+    <label for="expected">What did you expect?</label>
+    <input type="text" id="expected">
+    <label for="actual">What happened instead?</label>
+    <input type="text" id="actual">
+
+    <span class="lbl">How bad is it?</span>
+    <div class="sev" id="severity"><button data-v="blocker">Blocker</button><button data-v="major">Major</button><button data-v="minor">Minor</button><button data-v="cosmetic">Cosmetic</button></div>
+    <span class="lbl">How often?</span>
+    <div class="chips" id="frequency"></div>
+  </div>
+
+  <div class="card" data-panel="1" hidden>
+    <span class="lbl">Platform</span>
+    <div class="chips" id="platform"></div>
+    <div class="two">
+      <div><label for="device">Device and OS <span class="req">*</span></label><input type="text" id="device" placeholder="Pixel 8, Android 14"><div class="hint"><span class="err" id="deviceErr"></span></div></div>
+      <div><label for="version">App version</label><input type="text" id="version" placeholder="4.2.1"><div class="hint"><span class="err" id="versionErr"></span></div></div>
+    </div>
+  </div>
+
+  <div class="card" data-panel="2" hidden>
+    <label class="check"><input type="checkbox" id="contact"> The team may contact me about this report</label>
+    <div id="emailWrap" hidden>
+      <label for="email">Email <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="you@example.com">
+      <div class="hint"><span class="err" id="emailErr"></span></div>
+    </div>
+  </div>
+
+  <div class="nav"><button type="button" id="back">Back</button><button type="button" id="next" class="primary">Next</button></div>
+
+  <div class="sent" id="sent" hidden>Report ready. In a real app this would now be filed; this sandboxed page cannot send it anywhere.</div>
+
+  <div class="preview" style="margin-top:12px">
+    <h2 id="pTitle"></h2>
+    <div class="labels" id="pLabels"></div>
+    <h3>Steps to reproduce</h3><div id="pSteps"></div>
+    <h3>Expected</h3><p id="pExpected"></p>
+    <h3>Actual</h3><p id="pActual"></p>
+    <h3>Environment</h3><p id="pEnv"></p>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { step: 0, area: 'Checkout', severity: 'major', frequency: 'Every time', platform: 'iOS', tried: [false, false, false], done: false };
+  var groups = {
+    area: ['Login', 'Checkout', 'Search', 'Notifications', 'Profile', 'Other'],
+    frequency: ['Every time', 'Sometimes', 'Once'],
+    platform: ['iOS', 'Android']
+  };
+
+  Object.keys(groups).forEach(function (key) {
+    groups[key].forEach(function (v) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = v;
+      b.setAttribute('data-v', v);
+      $(key).appendChild(b);
+    });
+    $(key).addEventListener('click', function (e) {
+      var v = e.target.getAttribute('data-v');
+      if (v) { state[key] = v; render(); }
+    });
+  });
+  $('severity').addEventListener('click', function (e) {
+    var v = e.target.getAttribute('data-v');
+    if (v) { state.severity = v; render(); }
+  });
+
+  function stepErrors(step) {
+    var e = {};
+    if (step === 0) {
+      if (!$('summary').value.trim()) { e.summary = 'Add a one-sentence summary.'; }
+      if (!$('steps').value.trim()) { e.steps = 'List at least one step.'; }
+    } else if (step === 1) {
+      if (!$('device').value.trim()) { e.device = 'Which device and OS?'; }
+      var v = $('version').value.trim();
+      if (v && !/^[0-9]+(\.[0-9]+){1,2}$/.test(v)) { e.version = 'Use 4.2 or 4.2.1.'; }
+    } else {
+      if ($('contact').checked && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($('email').value.trim())) { e.email = 'Enter a valid email.'; }
+    }
+    return e;
+  }
+  function hasErrors(step) { return Object.keys(stepErrors(step)).length > 0; }
+
+  function setText(id, text, placeholder) {
+    var n = $(id);
+    n.textContent = text || placeholder;
+    n.className = text ? '' : 'muted';
+  }
+
+  function render() {
+    var panels = document.querySelectorAll('[data-panel]');
+    for (var i = 0; i < panels.length; i++) { panels[i].hidden = parseInt(panels[i].getAttribute('data-panel'), 10) !== state.step; }
+    var tabs = $('tabs').children;
+    for (var t = 0; t < tabs.length; t++) {
+      tabs[t].className = (t === state.step ? 'on' : '') + (state.tried[t] && !hasErrors(t) ? ' ok' : '');
+    }
+    ['area', 'frequency', 'platform', 'severity'].forEach(function (key) {
+      var kids = $(key).children;
+      for (var k = 0; k < kids.length; k++) {
+        var on = kids[k].getAttribute('data-v') === state[key];
+        kids[k].classList.toggle('on', on);
+        kids[k].setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+    });
+
+    var e = state.tried[state.step] ? stepErrors(state.step) : {};
+    [['summary', 'summary'], ['steps', 'steps'], ['device', 'device'], ['version', 'version'], ['email', 'email']].forEach(function (pair) {
+      $(pair[0] + 'Err').textContent = e[pair[1]] || '';
+      $(pair[0]).classList.toggle('bad', !!e[pair[1]]);
+    });
+    $('summaryCount').textContent = $('summary').value.length + ' / 120';
+    $('emailWrap').hidden = !$('contact').checked;
+    $('back').disabled = state.step === 0;
+    $('next').textContent = state.step === 2 ? 'Send bug report' : 'Next';
+    $('sent').hidden = !state.done;
+
+    setText('pTitle', $('summary').value.trim(), 'Summary appears here');
+    var labels = $('pLabels');
+    labels.textContent = '';
+    [state.area, state.severity, state.frequency, state.platform].forEach(function (text) {
+      var s = document.createElement('span'); s.textContent = text; labels.appendChild(s);
+    });
+    var lines = $('steps').value.split('\n').map(function (l) { return l.trim(); }).filter(function (l) { return l; });
+    var box = $('pSteps');
+    box.textContent = '';
+    if (lines.length) {
+      var ol = document.createElement('ol');
+      lines.forEach(function (l) { var li = document.createElement('li'); li.textContent = l.replace(/^[0-9]+[.)]\s*/, ''); ol.appendChild(li); });
+      box.appendChild(ol);
+    } else {
+      var p = document.createElement('p'); p.className = 'muted'; p.textContent = 'No steps yet'; box.appendChild(p);
+    }
+    setText('pExpected', $('expected').value.trim(), 'Not given');
+    setText('pActual', $('actual').value.trim(), 'Not given');
+    var env = [$('device').value.trim(), $('version').value.trim() ? 'app ' + $('version').value.trim() : ''].filter(function (x) { return x; }).join(' · ');
+    setText('pEnv', env, 'Not given');
+  }
+
+  $('tabs').addEventListener('click', function (e) {
+    var s = e.target.getAttribute('data-step');
+    if (s === null) { return; }
+    state.step = parseInt(s, 10);
+    render();
+  });
+  $('back').addEventListener('click', function () { if (state.step > 0) { state.step -= 1; render(); } });
+  $('next').addEventListener('click', function () {
+    state.tried[state.step] = true;
+    if (hasErrors(state.step)) { render(); return; }
+    if (state.step < 2) { state.step += 1; render(); return; }
+    // Final step: check the earlier ones too, and jump to the first that fails.
+    for (var i = 0; i < 2; i++) {
+      state.tried[i] = true;
+      if (hasErrors(i)) { state.step = i; render(); return; }
+    }
+    state.done = true;
+    render();
+  });
+  ['summary', 'steps', 'expected', 'actual', 'device', 'version', 'email'].forEach(function (id) {
+    $(id).addEventListener('input', function () { state.done = false; render(); });
+  });
+  $('contact').addEventListener('change', render);
+  render();
+})();
+</script>
+</body>
+</html>

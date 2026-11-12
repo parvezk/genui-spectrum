@@ -1,0 +1,926 @@
+{
+  "id": "21-bug-report",
+  "index": 21,
+  "title": "Bug report form",
+  "category": "input",
+  "prompt": "I want to report a bug in the mobile app. Collect what the team needs to triage it.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Reporting a bug in the mobile app\n\nSorry you ran into a problem. To get this to the right team quickly, I need the following. The first five are essential; the rest speed things up.\n\n**Essential**\n\n1. **What went wrong, in one sentence.** For example: \"The app crashes when I tap Pay.\"\n2. **Where in the app?** Login, Checkout, Search, Notifications, Profile, or somewhere else.\n3. **Steps to reproduce.** What you did, one step per line, from opening the app.\n4. **What you expected** and **what happened instead.**\n5. **Your device.** Phone model and OS version (for example iPhone 15, iOS 17.5 or Pixel 8, Android 14).\n\n**Helpful**\n\n6. **App version.** In the app: Profile → Settings → About.\n7. **How often it happens.** Every time, sometimes, or just once.\n8. **How bad it is.** Does it block you completely, is there a workaround, or is it cosmetic?\n9. **A screenshot or screen recording**, if you have one.\n10. **An email address** if you are happy for the team to contact you.\n\nYou can copy this template and fill it in:\n\n```\nSummary:\nArea: Login / Checkout / Search / Notifications / Profile / Other\nSteps to reproduce:\n  1.\n  2.\n  3.\nExpected:\nActual:\nDevice and OS:\nApp version:\nFrequency: always / sometimes / once\nSeverity: blocker / major / minor / cosmetic\nContact email (optional):\n```\n\n**A good report looks like this:**\n\n> **Summary:** Checkout button does nothing with a saved card.\n> **Steps:** 1. Add any item to the basket. 2. Go to Checkout. 3. Choose the saved card. 4. Tap Pay.\n> **Expected:** Payment goes through. **Actual:** The button greys out and nothing happens.\n> **Device:** Pixel 8, Android 14. **App:** 4.2.1. **Frequency:** always. **Severity:** blocker.\n\nPlease do not include passwords or full card numbers. Send me what you have and I will file it.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "bug-report",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "bug-report",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "header",
+                "intro",
+                "what-card",
+                "env-card",
+                "contact-card",
+                "submit",
+                "privacy"
+              ]
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "header-icon",
+                "title"
+              ]
+            },
+            {
+              "id": "header-icon",
+              "component": "Icon",
+              "name": "error"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "weight": 1,
+              "text": "Report a bug"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "variant": "caption",
+              "text": "A summary, the steps and your device are enough for the team to start."
+            },
+            {
+              "id": "what-card",
+              "component": "Card",
+              "child": "what-col"
+            },
+            {
+              "id": "what-col",
+              "component": "Column",
+              "children": [
+                "what-title",
+                "summary",
+                "area",
+                "steps",
+                "expected",
+                "actual",
+                "severity",
+                "frequency"
+              ]
+            },
+            {
+              "id": "what-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "What happened"
+            },
+            {
+              "id": "summary",
+              "component": "TextField",
+              "label": "Summary (one sentence)",
+              "value": {
+                "path": "/report/summary"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/report/summary"
+                      }
+                    }
+                  },
+                  "message": "Describe the problem in a sentence."
+                },
+                {
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": {
+                        "path": "/report/summary"
+                      },
+                      "max": 120
+                    }
+                  },
+                  "message": "Keep the summary under 120 characters."
+                }
+              ]
+            },
+            {
+              "id": "area",
+              "component": "ChoicePicker",
+              "label": "Where in the app?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Login",
+                  "value": "login"
+                },
+                {
+                  "label": "Checkout",
+                  "value": "checkout"
+                },
+                {
+                  "label": "Search",
+                  "value": "search"
+                },
+                {
+                  "label": "Notifications",
+                  "value": "notifications"
+                },
+                {
+                  "label": "Profile",
+                  "value": "profile"
+                },
+                {
+                  "label": "Other",
+                  "value": "other"
+                }
+              ],
+              "value": {
+                "path": "/report/area"
+              }
+            },
+            {
+              "id": "steps",
+              "component": "TextField",
+              "label": "Steps to reproduce (one per line)",
+              "variant": "longText",
+              "value": {
+                "path": "/report/steps"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/report/steps"
+                      }
+                    }
+                  },
+                  "message": "List the steps that lead to the bug."
+                }
+              ]
+            },
+            {
+              "id": "expected",
+              "component": "TextField",
+              "label": "What did you expect?",
+              "value": {
+                "path": "/report/expected"
+              }
+            },
+            {
+              "id": "actual",
+              "component": "TextField",
+              "label": "What happened instead?",
+              "value": {
+                "path": "/report/actual"
+              }
+            },
+            {
+              "id": "severity",
+              "component": "ChoicePicker",
+              "label": "How bad is it?",
+              "variant": "mutuallyExclusive",
+              "options": [
+                {
+                  "label": "Blocker: I cannot use the app",
+                  "value": "blocker"
+                },
+                {
+                  "label": "Major: a feature is broken",
+                  "value": "major"
+                },
+                {
+                  "label": "Minor: there is a workaround",
+                  "value": "minor"
+                },
+                {
+                  "label": "Cosmetic: it just looks wrong",
+                  "value": "cosmetic"
+                }
+              ],
+              "value": {
+                "path": "/report/severity"
+              }
+            },
+            {
+              "id": "frequency",
+              "component": "ChoicePicker",
+              "label": "How often?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Every time",
+                  "value": "always"
+                },
+                {
+                  "label": "Sometimes",
+                  "value": "sometimes"
+                },
+                {
+                  "label": "Once",
+                  "value": "once"
+                }
+              ],
+              "value": {
+                "path": "/report/frequency"
+              }
+            },
+            {
+              "id": "env-card",
+              "component": "Card",
+              "child": "env-col"
+            },
+            {
+              "id": "env-col",
+              "component": "Column",
+              "children": [
+                "env-title",
+                "platform",
+                "env-row"
+              ]
+            },
+            {
+              "id": "env-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Your device"
+            },
+            {
+              "id": "platform",
+              "component": "ChoicePicker",
+              "label": "Platform",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "iOS",
+                  "value": "ios"
+                },
+                {
+                  "label": "Android",
+                  "value": "android"
+                }
+              ],
+              "value": {
+                "path": "/report/platform"
+              }
+            },
+            {
+              "id": "env-row",
+              "component": "Row",
+              "children": [
+                "device",
+                "app-version"
+              ]
+            },
+            {
+              "id": "device",
+              "component": "TextField",
+              "label": "Device and OS version",
+              "weight": 2,
+              "value": {
+                "path": "/report/device"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/report/device"
+                      }
+                    }
+                  },
+                  "message": "For example: Pixel 8, Android 14."
+                }
+              ]
+            },
+            {
+              "id": "app-version",
+              "component": "TextField",
+              "label": "App version",
+              "weight": 1,
+              "value": {
+                "path": "/report/appVersion"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "or",
+                    "args": {
+                      "values": [
+                        {
+                          "call": "not",
+                          "args": {
+                            "value": {
+                              "call": "required",
+                              "args": {
+                                "value": {
+                                  "path": "/report/appVersion"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "call": "regex",
+                          "args": {
+                            "value": {
+                              "path": "/report/appVersion"
+                            },
+                            "pattern": "^[0-9]+(\\.[0-9]+){1,2}$"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Use the form 4.2 or 4.2.1."
+                }
+              ]
+            },
+            {
+              "id": "contact-card",
+              "component": "Card",
+              "child": "contact-col"
+            },
+            {
+              "id": "contact-col",
+              "component": "Column",
+              "children": [
+                "contact-title",
+                "can-contact",
+                "email"
+              ]
+            },
+            {
+              "id": "contact-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Follow-up"
+            },
+            {
+              "id": "can-contact",
+              "component": "CheckBox",
+              "label": "The team may contact me about this report",
+              "value": {
+                "path": "/report/canContact"
+              }
+            },
+            {
+              "id": "email",
+              "component": "TextField",
+              "label": "Email (only if you ticked the box)",
+              "value": {
+                "path": "/report/email"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "or",
+                    "args": {
+                      "values": [
+                        {
+                          "call": "not",
+                          "args": {
+                            "value": {
+                              "path": "/report/canContact"
+                            }
+                          }
+                        },
+                        {
+                          "call": "email",
+                          "args": {
+                            "value": {
+                              "path": "/report/email"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Enter a valid email so the team can reach you."
+                }
+              ]
+            },
+            {
+              "id": "submit",
+              "component": "Button",
+              "variant": "primary",
+              "child": "submit-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "and",
+                    "args": {
+                      "values": [
+                        {
+                          "call": "required",
+                          "args": {
+                            "value": {
+                              "path": "/report/summary"
+                            }
+                          }
+                        },
+                        {
+                          "call": "required",
+                          "args": {
+                            "value": {
+                              "path": "/report/steps"
+                            }
+                          }
+                        },
+                        {
+                          "call": "required",
+                          "args": {
+                            "value": {
+                              "path": "/report/device"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Add a summary, the steps and your device first."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "submit_bug_report",
+                  "context": {
+                    "report": {
+                      "path": "/report"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "submit-label",
+              "component": "Text",
+              "text": "Send bug report"
+            },
+            {
+              "id": "privacy",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Please do not include passwords or full card numbers."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "bug-report",
+          "path": "/report",
+          "value": {
+            "summary": "",
+            "area": [
+              "checkout"
+            ],
+            "steps": "",
+            "expected": "",
+            "actual": "",
+            "severity": [
+              "major"
+            ],
+            "frequency": [
+              "always"
+            ],
+            "platform": [
+              "ios"
+            ],
+            "device": "",
+            "appVersion": "",
+            "canContact": false,
+            "email": ""
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Report a bug</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #24292f; background: #f6f8fa; }\n  h1 { font-size: 18px; margin: 0 0 2px; }\n  .lead { margin: 0 0 12px; color: #57606a; font-size: 13px; }\n  .steps { display: flex; gap: 4px; margin-bottom: 12px; }\n  .steps button { flex: 1; border: 0; border-bottom: 3px solid #d0d7de; background: none; padding: 6px 2px; font: inherit; font-size: 12px; font-weight: 600; color: #57606a; cursor: pointer; }\n  .steps button.on { border-color: #0969da; color: #0969da; }\n  .steps button.ok::after { content: \" ✓\"; color: #1a7f37; }\n  .card { background: #fff; border: 1px solid #d0d7de; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  label, .lbl { display: block; font-size: 12px; font-weight: 600; margin: 10px 0 4px; }\n  .card > label:first-child, .card > .lbl:first-child { margin-top: 0; }\n  label .req { color: #cf222e; }\n  input[type=text], input[type=email], textarea { width: 100%; padding: 7px 9px; border: 1px solid #d0d7de; border-radius: 6px; font: inherit; background: #fff; color: inherit; }\n  textarea { min-height: 76px; resize: vertical; }\n  .bad { border-color: #cf222e !important; }\n  .hint { display: flex; justify-content: space-between; font-size: 11px; color: #57606a; margin-top: 2px; min-height: 15px; }\n  .hint .err { color: #cf222e; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; }\n  .chip { border: 1px solid #d0d7de; background: #f6f8fa; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }\n  .chip.on { background: #0969da; border-color: #0969da; color: #fff; }\n  .sev { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }\n  .sev button { border: 1px solid #d0d7de; background: #fff; border-radius: 6px; padding: 6px 2px; font: inherit; font-size: 11px; cursor: pointer; color: inherit; }\n  .sev button.on { color: #fff; font-weight: 700; border-color: transparent; }\n  .sev button.on[data-v=blocker] { background: #cf222e; } .sev button.on[data-v=major] { background: #bc4c00; }\n  .sev button.on[data-v=minor] { background: #9a6700; } .sev button.on[data-v=cosmetic] { background: #57606a; }\n  .two { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }\n  .check { display: flex; gap: 8px; align-items: center; font-weight: 400; font-size: 13px; }\n  .nav { display: flex; gap: 8px; }\n  .nav button { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #d0d7de; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }\n  .nav button.primary { background: #1f883d; border-color: #1f883d; color: #fff; }\n  .preview { background: #fff; border: 1px solid #d0d7de; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; }\n  .preview h2 { font-size: 15px; margin: 0 0 6px; }\n  .preview .labels { margin-bottom: 8px; }\n  .preview .labels span { display: inline-block; font-size: 11px; border-radius: 999px; padding: 0 8px; margin-right: 4px; background: #ddf4ff; color: #0969da; font-weight: 600; }\n  .preview h3 { font-size: 12px; margin: 8px 0 2px; color: #57606a; text-transform: uppercase; letter-spacing: .04em; }\n  .preview ol { margin: 0; padding-left: 20px; }\n  .preview p { margin: 0; }\n  .muted { color: #8c959f; font-style: italic; }\n  .sent { background: #dafbe1; border: 1px solid #aceebb; border-radius: 8px; padding: 10px; font-size: 13px; margin-bottom: 12px; }\n  [hidden] { display: none !important; }\n</style>\n</head>\n<body>\n  <h1>Report a bug</h1>\n  <p class=\"lead\">Three short steps. The preview at the bottom shows what the team will see.</p>\n\n  <div class=\"steps\" id=\"tabs\"><button data-step=\"0\">1 What happened</button><button data-step=\"1\">2 Your device</button><button data-step=\"2\">3 Follow-up</button></div>\n\n  <div class=\"card\" data-panel=\"0\">\n    <label for=\"summary\">Summary <span class=\"req\">*</span></label>\n    <input type=\"text\" id=\"summary\" maxlength=\"120\" placeholder=\"The app crashes when I tap Pay\">\n    <div class=\"hint\"><span class=\"err\" id=\"summaryErr\"></span><span id=\"summaryCount\"></span></div>\n\n    <span class=\"lbl\">Where in the app?</span>\n    <div class=\"chips\" id=\"area\"></div>\n\n    <label for=\"steps\">Steps to reproduce, one per line <span class=\"req\">*</span></label>\n    <textarea id=\"steps\" placeholder=\"Open the app&#10;Add an item to the basket&#10;Tap Pay\"></textarea>\n    <div class=\"hint\"><span class=\"err\" id=\"stepsErr\"></span></div>\n\n    <label for=\"expected\">What did you expect?</label>\n    <input type=\"text\" id=\"expected\">\n    <label for=\"actual\">What happened instead?</label>\n    <input type=\"text\" id=\"actual\">\n\n    <span class=\"lbl\">How bad is it?</span>\n    <div class=\"sev\" id=\"severity\"><button data-v=\"blocker\">Blocker</button><button data-v=\"major\">Major</button><button data-v=\"minor\">Minor</button><button data-v=\"cosmetic\">Cosmetic</button></div>\n    <span class=\"lbl\">How often?</span>\n    <div class=\"chips\" id=\"frequency\"></div>\n  </div>\n\n  <div class=\"card\" data-panel=\"1\" hidden>\n    <span class=\"lbl\">Platform</span>\n    <div class=\"chips\" id=\"platform\"></div>\n    <div class=\"two\">\n      <div><label for=\"device\">Device and OS <span class=\"req\">*</span></label><input type=\"text\" id=\"device\" placeholder=\"Pixel 8, Android 14\"><div class=\"hint\"><span class=\"err\" id=\"deviceErr\"></span></div></div>\n      <div><label for=\"version\">App version</label><input type=\"text\" id=\"version\" placeholder=\"4.2.1\"><div class=\"hint\"><span class=\"err\" id=\"versionErr\"></span></div></div>\n    </div>\n  </div>\n\n  <div class=\"card\" data-panel=\"2\" hidden>\n    <label class=\"check\"><input type=\"checkbox\" id=\"contact\"> The team may contact me about this report</label>\n    <div id=\"emailWrap\" hidden>\n      <label for=\"email\">Email <span class=\"req\">*</span></label>\n      <input type=\"email\" id=\"email\" placeholder=\"you@example.com\">\n      <div class=\"hint\"><span class=\"err\" id=\"emailErr\"></span></div>\n    </div>\n  </div>\n\n  <div class=\"nav\"><button type=\"button\" id=\"back\">Back</button><button type=\"button\" id=\"next\" class=\"primary\">Next</button></div>\n\n  <div class=\"sent\" id=\"sent\" hidden>Report ready. In a real app this would now be filed; this sandboxed page cannot send it anywhere.</div>\n\n  <div class=\"preview\" style=\"margin-top:12px\">\n    <h2 id=\"pTitle\"></h2>\n    <div class=\"labels\" id=\"pLabels\"></div>\n    <h3>Steps to reproduce</h3><div id=\"pSteps\"></div>\n    <h3>Expected</h3><p id=\"pExpected\"></p>\n    <h3>Actual</h3><p id=\"pActual\"></p>\n    <h3>Environment</h3><p id=\"pEnv\"></p>\n  </div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var state = { step: 0, area: 'Checkout', severity: 'major', frequency: 'Every time', platform: 'iOS', tried: [false, false, false], done: false };\n  var groups = {\n    area: ['Login', 'Checkout', 'Search', 'Notifications', 'Profile', 'Other'],\n    frequency: ['Every time', 'Sometimes', 'Once'],\n    platform: ['iOS', 'Android']\n  };\n\n  Object.keys(groups).forEach(function (key) {\n    groups[key].forEach(function (v) {\n      var b = document.createElement('button');\n      b.type = 'button'; b.className = 'chip'; b.textContent = v;\n      b.setAttribute('data-v', v);\n      $(key).appendChild(b);\n    });\n    $(key).addEventListener('click', function (e) {\n      var v = e.target.getAttribute('data-v');\n      if (v) { state[key] = v; render(); }\n    });\n  });\n  $('severity').addEventListener('click', function (e) {\n    var v = e.target.getAttribute('data-v');\n    if (v) { state.severity = v; render(); }\n  });\n\n  function stepErrors(step) {\n    var e = {};\n    if (step === 0) {\n      if (!$('summary').value.trim()) { e.summary = 'Add a one-sentence summary.'; }\n      if (!$('steps').value.trim()) { e.steps = 'List at least one step.'; }\n    } else if (step === 1) {\n      if (!$('device').value.trim()) { e.device = 'Which device and OS?'; }\n      var v = $('version').value.trim();\n      if (v && !/^[0-9]+(\\.[0-9]+){1,2}$/.test(v)) { e.version = 'Use 4.2 or 4.2.1.'; }\n    } else {\n      if ($('contact').checked && !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test($('email').value.trim())) { e.email = 'Enter a valid email.'; }\n    }\n    return e;\n  }\n  function hasErrors(step) { return Object.keys(stepErrors(step)).length > 0; }\n\n  function setText(id, text, placeholder) {\n    var n = $(id);\n    n.textContent = text || placeholder;\n    n.className = text ? '' : 'muted';\n  }\n\n  function render() {\n    var panels = document.querySelectorAll('[data-panel]');\n    for (var i = 0; i < panels.length; i++) { panels[i].hidden = parseInt(panels[i].getAttribute('data-panel'), 10) !== state.step; }\n    var tabs = $('tabs').children;\n    for (var t = 0; t < tabs.length; t++) {\n      tabs[t].className = (t === state.step ? 'on' : '') + (state.tried[t] && !hasErrors(t) ? ' ok' : '');\n    }\n    ['area', 'frequency', 'platform', 'severity'].forEach(function (key) {\n      var kids = $(key).children;\n      for (var k = 0; k < kids.length; k++) {\n        var on = kids[k].getAttribute('data-v') === state[key];\n        kids[k].classList.toggle('on', on);\n        kids[k].setAttribute('aria-pressed', on ? 'true' : 'false');\n      }\n    });\n\n    var e = state.tried[state.step] ? stepErrors(state.step) : {};\n    [['summary', 'summary'], ['steps', 'steps'], ['device', 'device'], ['version', 'version'], ['email', 'email']].forEach(function (pair) {\n      $(pair[0] + 'Err').textContent = e[pair[1]] || '';\n      $(pair[0]).classList.toggle('bad', !!e[pair[1]]);\n    });\n    $('summaryCount').textContent = $('summary').value.length + ' / 120';\n    $('emailWrap').hidden = !$('contact').checked;\n    $('back').disabled = state.step === 0;\n    $('next').textContent = state.step === 2 ? 'Send bug report' : 'Next';\n    $('sent').hidden = !state.done;\n\n    setText('pTitle', $('summary').value.trim(), 'Summary appears here');\n    var labels = $('pLabels');\n    labels.textContent = '';\n    [state.area, state.severity, state.frequency, state.platform].forEach(function (text) {\n      var s = document.createElement('span'); s.textContent = text; labels.appendChild(s);\n    });\n    var lines = $('steps').value.split('\\n').map(function (l) { return l.trim(); }).filter(function (l) { return l; });\n    var box = $('pSteps');\n    box.textContent = '';\n    if (lines.length) {\n      var ol = document.createElement('ol');\n      lines.forEach(function (l) { var li = document.createElement('li'); li.textContent = l.replace(/^[0-9]+[.)]\\s*/, ''); ol.appendChild(li); });\n      box.appendChild(ol);\n    } else {\n      var p = document.createElement('p'); p.className = 'muted'; p.textContent = 'No steps yet'; box.appendChild(p);\n    }\n    setText('pExpected', $('expected').value.trim(), 'Not given');\n    setText('pActual', $('actual').value.trim(), 'Not given');\n    var env = [$('device').value.trim(), $('version').value.trim() ? 'app ' + $('version').value.trim() : ''].filter(function (x) { return x; }).join(' · ');\n    setText('pEnv', env, 'Not given');\n  }\n\n  $('tabs').addEventListener('click', function (e) {\n    var s = e.target.getAttribute('data-step');\n    if (s === null) { return; }\n    state.step = parseInt(s, 10);\n    render();\n  });\n  $('back').addEventListener('click', function () { if (state.step > 0) { state.step -= 1; render(); } });\n  $('next').addEventListener('click', function () {\n    state.tried[state.step] = true;\n    if (hasErrors(state.step)) { render(); return; }\n    if (state.step < 2) { state.step += 1; render(); return; }\n    // Final step: check the earlier ones too, and jump to the first that fails.\n    for (var i = 0; i < 2; i++) {\n      state.tried[i] = true;\n      if (hasErrors(i)) { state.step = i; render(); return; }\n    }\n    state.done = true;\n    render();\n  });\n  ['summary', 'steps', 'expected', 'actual', 'device', 'version', 'email'].forEach(function (id) {\n    $(id).addEventListener('input', function () { state.done = false; render(); });\n  });\n  $('contact').addEventListener('change', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_bug_report_21",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Collect a triage-ready bug report for the mobile app in three sections. What happened: one-sentence summary, app area, steps to reproduce, expected and actual behaviour, severity and frequency. Environment: platform, device and OS version, app version. Follow-up: whether the team may contact the reporter and, if so, an email address.",
+        "data": {
+          "areas": [
+            "login",
+            "checkout",
+            "search",
+            "notifications",
+            "profile",
+            "other"
+          ],
+          "latestAppVersion": "4.2.1"
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 120
+            },
+            "area": {
+              "type": "string",
+              "enum": [
+                "login",
+                "checkout",
+                "search",
+                "notifications",
+                "profile",
+                "other"
+              ]
+            },
+            "steps": {
+              "type": "string",
+              "minLength": 10
+            },
+            "expected": {
+              "type": "string"
+            },
+            "actual": {
+              "type": "string"
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "blocker",
+                "major",
+                "minor",
+                "cosmetic"
+              ]
+            },
+            "frequency": {
+              "type": "string",
+              "enum": [
+                "always",
+                "sometimes",
+                "once"
+              ]
+            },
+            "platform": {
+              "type": "string",
+              "enum": [
+                "ios",
+                "android"
+              ]
+            },
+            "device": {
+              "type": "string",
+              "minLength": 2
+            },
+            "appVersion": {
+              "type": "string",
+              "pattern": "^[0-9]+(\\.[0-9]+){1,2}$"
+            },
+            "canContact": {
+              "type": "boolean"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          "required": [
+            "summary",
+            "area",
+            "steps",
+            "severity",
+            "frequency",
+            "platform",
+            "device",
+            "canContact"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string",
+            "title": "Summary (one sentence)",
+            "minLength": 5,
+            "maxLength": 120
+          },
+          "area": {
+            "type": "string",
+            "title": "Where in the app?",
+            "oneOf": [
+              {
+                "const": "login",
+                "title": "Login"
+              },
+              {
+                "const": "checkout",
+                "title": "Checkout"
+              },
+              {
+                "const": "search",
+                "title": "Search"
+              },
+              {
+                "const": "notifications",
+                "title": "Notifications"
+              },
+              {
+                "const": "profile",
+                "title": "Profile"
+              },
+              {
+                "const": "other",
+                "title": "Somewhere else"
+              }
+            ]
+          },
+          "steps": {
+            "type": "string",
+            "title": "Steps to reproduce (one per line)",
+            "minLength": 10
+          },
+          "expected": {
+            "type": "string",
+            "title": "What did you expect?"
+          },
+          "actual": {
+            "type": "string",
+            "title": "What happened instead?"
+          },
+          "severity": {
+            "type": "string",
+            "title": "How bad is it?",
+            "oneOf": [
+              {
+                "const": "blocker",
+                "title": "Blocker: I cannot use the app"
+              },
+              {
+                "const": "major",
+                "title": "Major: a feature is broken"
+              },
+              {
+                "const": "minor",
+                "title": "Minor: there is a workaround"
+              },
+              {
+                "const": "cosmetic",
+                "title": "Cosmetic: it just looks wrong"
+              }
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "title": "How often?",
+            "oneOf": [
+              {
+                "const": "always",
+                "title": "Every time"
+              },
+              {
+                "const": "sometimes",
+                "title": "Sometimes"
+              },
+              {
+                "const": "once",
+                "title": "Once"
+              }
+            ]
+          },
+          "platform": {
+            "type": "string",
+            "title": "Platform",
+            "oneOf": [
+              {
+                "const": "ios",
+                "title": "iOS"
+              },
+              {
+                "const": "android",
+                "title": "Android"
+              }
+            ]
+          },
+          "device": {
+            "type": "string",
+            "title": "Device and OS version",
+            "minLength": 2,
+            "description": "For example: Pixel 8, Android 14"
+          },
+          "appVersion": {
+            "type": "string",
+            "title": "App version",
+            "pattern": "^[0-9]+(\\.[0-9]+){1,2}$",
+            "description": "Profile → Settings → About. For example 4.2.1"
+          },
+          "canContact": {
+            "type": "boolean",
+            "title": "The team may contact me about this report"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "format": "email"
+          }
+        },
+        "required": [
+          "summary",
+          "area",
+          "steps",
+          "severity",
+          "frequency",
+          "platform",
+          "device",
+          "canContact"
+        ]
+      },
+      "uiSchema": {
+        "type": "Categorization",
+        "elements": [
+          {
+            "type": "Category",
+            "label": "What happened",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/summary"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/area"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/steps",
+                "options": {
+                  "multi": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/expected"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/actual"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/severity",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/frequency",
+                "options": {
+                  "format": "radio"
+                }
+              }
+            ]
+          },
+          {
+            "type": "Category",
+            "label": "Your device",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/platform",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/device"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/appVersion"
+              }
+            ]
+          },
+          {
+            "type": "Category",
+            "label": "Follow-up",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/canContact"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/email",
+                "rule": {
+                  "effect": "SHOW",
+                  "condition": {
+                    "scope": "#/properties/canContact",
+                    "schema": {
+                      "const": true
+                    }
+                  }
+                }
+              },
+              {
+                "type": "Label",
+                "text": "Please do not include passwords or full card numbers."
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "area": "checkout",
+        "severity": "major",
+        "frequency": "always",
+        "platform": "ios",
+        "canContact": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A numbered list of what is needed, a fill-in template and a worked example; thorough, but validation is the honour system and the report arrives as free text.",
+    "a2ui": "Covers every field with required, length, regex and email checks and a gated submit button; the email field cannot be hidden when contact is off, only made conditional in its check.",
+    "html": "A three-step form with per-step validation, a character counter, a conditional email field and a live issue preview; the finished report still cannot leave the sandbox.",
+    "agui": "The strongest fit of the set: tabs per section, pattern and format validation straight from the schema, a rule that reveals the email field, and a validated typed report on submit."
+  }
+}

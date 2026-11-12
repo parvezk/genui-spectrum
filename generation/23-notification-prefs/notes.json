@@ -1,0 +1,6 @@
+{
+  "text": "Shows a default matrix as a table of ticks and crosses and takes changes as sentences; it describes settings and cannot be a settings screen.",
+  "a2ui": "A bound list of rows with three two-way checkboxes each makes a real matrix, and time inputs cover quiet hours; quiet-hour fields cannot be disabled when the switch is off.",
+  "html": "iOS-style switches in a grid, column headings that toggle a whole channel, a 24-hour quiet-hours bar and an unsaved-changes footer; saved state dies with the page.",
+  "agui": "Nested objects per activity with toggle controls and an ENABLE rule on the quiet-hour times return exactly the settings object the agent needs; the grid is four stacked groups."
+}

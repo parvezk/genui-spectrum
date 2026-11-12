@@ -1,0 +1,6 @@
+{
+  "text": "A numbered list of what is needed, a fill-in template and a worked example; thorough, but validation is the honour system and the report arrives as free text.",
+  "a2ui": "Covers every field with required, length, regex and email checks and a gated submit button; the email field cannot be hidden when contact is off, only made conditional in its check.",
+  "html": "A three-step form with per-step validation, a character counter, a conditional email field and a live issue preview; the finished report still cannot leave the sandbox.",
+  "agui": "The strongest fit of the set: tabs per section, pattern and format validation straight from the schema, a rule that reveals the email field, and a validated typed report on submit."
+}

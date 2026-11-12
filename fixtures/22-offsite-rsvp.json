@@ -1,0 +1,614 @@
+{
+  "id": "22-offsite-rsvp",
+  "index": 22,
+  "title": "Offsite RSVP",
+  "category": "input",
+  "prompt": "Collect my RSVP for the team offsite in Porto on 12–13 September: whether I'm coming, and if so my dietary needs, whether I need a hotel room, and my T-shirt size.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## RSVP: team offsite in Porto, 12–13 September\n\nFirst question: **are you coming?**\n\n- **No** — just reply \"No\" and that is all I need. An optional line on why helps the organisers, but you can skip it.\n- **Yes** — great. Then I need three more things:\n\n1. **Dietary needs.** None, vegetarian, vegan, gluten-free, halal, kosher, or something else. Please also mention any allergies.\n2. **Hotel room.** Do you need one? If yes, for which nights:\n   - 11 September (the night before, if you are arriving early)\n   - 12 September\n   - 13 September (if you are leaving the day after)\n3. **T-shirt size.** XS, S, M, L, XL or XXL.\n\nYou can answer in one line, for example:\n\n> Yes. Vegetarian, no allergies. Hotel on the 12th only. T-shirt M.\n\nor fill this in:\n\n```\nComing: yes / no\nDietary needs:\nAllergies:\nHotel room: yes / no\nNights: 11 Sep / 12 Sep / 13 Sep\nT-shirt size: XS / S / M / L / XL / XXL\n```\n\nIf you are not sure yet, tell me and I will record you as \"maybe\" and ask again closer to the date.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "offsite-rsvp",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "offsite-rsvp",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "form"
+            },
+            {
+              "id": "form",
+              "component": "Column",
+              "children": [
+                "header",
+                "when",
+                "attending",
+                "details-divider",
+                "details-note",
+                "dietary",
+                "allergies",
+                "hotel",
+                "nights",
+                "shirt",
+                "submit"
+              ]
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "header-icon",
+                "title"
+              ]
+            },
+            {
+              "id": "header-icon",
+              "component": "Icon",
+              "name": "event"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h3",
+              "weight": 1,
+              "text": "Team offsite in Porto"
+            },
+            {
+              "id": "when",
+              "component": "Text",
+              "variant": "caption",
+              "text": "12–13 September"
+            },
+            {
+              "id": "attending",
+              "component": "ChoicePicker",
+              "label": "Are you coming?",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Yes, I'll be there",
+                  "value": "yes"
+                },
+                {
+                  "label": "No, I can't make it",
+                  "value": "no"
+                }
+              ],
+              "value": {
+                "path": "/rsvp/attending"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/rsvp/attending"
+                      }
+                    }
+                  },
+                  "message": "Let us know either way."
+                }
+              ]
+            },
+            {
+              "id": "details-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "details-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "If you are coming, fill in the rest. If not, skip straight to Send."
+            },
+            {
+              "id": "dietary",
+              "component": "ChoicePicker",
+              "label": "Dietary needs",
+              "variant": "multipleSelection",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Vegetarian",
+                  "value": "vegetarian"
+                },
+                {
+                  "label": "Vegan",
+                  "value": "vegan"
+                },
+                {
+                  "label": "Gluten-free",
+                  "value": "gluten-free"
+                },
+                {
+                  "label": "Halal",
+                  "value": "halal"
+                },
+                {
+                  "label": "Kosher",
+                  "value": "kosher"
+                }
+              ],
+              "value": {
+                "path": "/rsvp/dietary"
+              }
+            },
+            {
+              "id": "allergies",
+              "component": "TextField",
+              "label": "Allergies or anything else (optional)",
+              "value": {
+                "path": "/rsvp/allergies"
+              }
+            },
+            {
+              "id": "hotel",
+              "component": "CheckBox",
+              "label": "I need a hotel room",
+              "value": {
+                "path": "/rsvp/needsHotel"
+              }
+            },
+            {
+              "id": "nights",
+              "component": "ChoicePicker",
+              "label": "Hotel nights (only if you need a room)",
+              "variant": "multipleSelection",
+              "options": [
+                {
+                  "label": "11 Sep (arriving the night before)",
+                  "value": "11 Sep"
+                },
+                {
+                  "label": "12 Sep",
+                  "value": "12 Sep"
+                },
+                {
+                  "label": "13 Sep (leaving the day after)",
+                  "value": "13 Sep"
+                }
+              ],
+              "value": {
+                "path": "/rsvp/nights"
+              }
+            },
+            {
+              "id": "shirt",
+              "component": "ChoicePicker",
+              "label": "T-shirt size",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "XS",
+                  "value": "XS"
+                },
+                {
+                  "label": "S",
+                  "value": "S"
+                },
+                {
+                  "label": "M",
+                  "value": "M"
+                },
+                {
+                  "label": "L",
+                  "value": "L"
+                },
+                {
+                  "label": "XL",
+                  "value": "XL"
+                },
+                {
+                  "label": "XXL",
+                  "value": "XXL"
+                }
+              ],
+              "value": {
+                "path": "/rsvp/shirt"
+              }
+            },
+            {
+              "id": "submit",
+              "component": "Button",
+              "variant": "primary",
+              "child": "submit-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/rsvp/attending"
+                      }
+                    }
+                  },
+                  "message": "Choose yes or no first."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "submit_offsite_rsvp",
+                  "context": {
+                    "attending": {
+                      "path": "/rsvp/attending"
+                    },
+                    "dietary": {
+                      "path": "/rsvp/dietary"
+                    },
+                    "allergies": {
+                      "path": "/rsvp/allergies"
+                    },
+                    "needsHotel": {
+                      "path": "/rsvp/needsHotel"
+                    },
+                    "nights": {
+                      "path": "/rsvp/nights"
+                    },
+                    "shirt": {
+                      "path": "/rsvp/shirt"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "submit-label",
+              "component": "Text",
+              "text": "Send RSVP"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "offsite-rsvp",
+          "path": "/rsvp",
+          "value": {
+            "attending": [],
+            "dietary": [],
+            "allergies": "",
+            "needsHotel": false,
+            "nights": [],
+            "shirt": []
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Offsite RSVP</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1b2a41; background: #fff7ed; }\n  .hero { background: linear-gradient(135deg, #0c4a6e, #0e7490 60%, #f59e0b); color: #fff; padding: 20px 16px 26px; }\n  .hero small { text-transform: uppercase; letter-spacing: .1em; font-size: 10px; opacity: .85; }\n  .hero h1 { margin: 2px 0; font-size: 22px; }\n  .hero p { margin: 0; opacity: .95; }\n  main { padding: 0 16px 16px; margin-top: -12px; }\n  .card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 2px 10px rgba(12,74,110,.08); margin-bottom: 12px; }\n  h2 { font-size: 14px; margin: 0 0 8px; }\n  .yn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }\n  .yn button { border: 2px solid #e2e8f0; background: #fff; border-radius: 12px; padding: 12px 6px; font: inherit; font-weight: 700; cursor: pointer; color: inherit; }\n  .yn button span { display: block; font-size: 22px; }\n  .yn button.on[data-v=yes] { border-color: #0e7490; background: #ecfeff; }\n  .yn button.on[data-v=no] { border-color: #94a3b8; background: #f1f5f9; }\n  .more { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .35s ease, opacity .25s ease; }\n  .more.open { max-height: 900px; opacity: 1; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; }\n  .chip { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; color: inherit; }\n  .chip.on { background: #0e7490; border-color: #0e7490; color: #fff; }\n  input[type=text] { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; margin-top: 8px; }\n  .switch { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }\n  .switch input { position: absolute; opacity: 0; }\n  .switch i { width: 42px; height: 24px; border-radius: 12px; background: #cbd5e1; position: relative; transition: background .2s; flex: none; }\n  .switch i::after { content: \"\"; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .2s; }\n  .switch input:checked + i { background: #0e7490; }\n  .switch input:checked + i::after { left: 21px; }\n  .switch input:focus-visible + i { outline: 2px solid #f59e0b; }\n  .nights { display: none; margin-top: 10px; }\n  .nights.open { display: block; }\n  .night { display: flex; gap: 8px; align-items: center; padding: 4px 0; cursor: pointer; }\n  .summary { background: #0c4a6e; color: #fff; border-radius: 14px; padding: 14px; }\n  .summary small { text-transform: uppercase; letter-spacing: .08em; font-size: 10px; opacity: .8; }\n  .summary p { margin: 2px 0 10px; font-size: 15px; }\n  .summary button { width: 100%; border: 0; border-radius: 10px; padding: 11px; font: inherit; font-weight: 700; background: #f59e0b; color: #1b2a41; cursor: pointer; }\n  .summary button:disabled { opacity: .5; cursor: default; }\n  .summary .after { font-size: 12px; opacity: .85; margin: 8px 0 0; }\n  .err { color: #fde68a; font-size: 12px; margin: 0 0 8px; }\n</style>\n</head>\n<body>\n  <div class=\"hero\">\n    <small>Team offsite</small>\n    <h1>Porto</h1>\n    <p>12–13 September</p>\n  </div>\n  <main>\n    <div class=\"card\">\n      <h2>Are you coming?</h2>\n      <div class=\"yn\" id=\"yn\">\n        <button type=\"button\" data-v=\"yes\"><span>🎉</span>Yes, I'll be there</button>\n        <button type=\"button\" data-v=\"no\"><span>😔</span>No, I can't make it</button>\n      </div>\n    </div>\n\n    <div class=\"more\" id=\"more\">\n      <div class=\"card\">\n        <h2>Dietary needs</h2>\n        <div class=\"chips\" id=\"diet\"></div>\n        <input type=\"text\" id=\"allergies\" placeholder=\"Allergies or anything else (optional)\" aria-label=\"Allergies or anything else\">\n      </div>\n      <div class=\"card\">\n        <label class=\"switch\"><h2 style=\"margin:0\">I need a hotel room</h2><input type=\"checkbox\" id=\"hotel\"><i></i></label>\n        <div class=\"nights\" id=\"nights\">\n          <label class=\"night\"><input type=\"checkbox\" data-night=\"11 Sep\"> 11 Sep <span style=\"color:#64748b\">(arriving the night before)</span></label>\n          <label class=\"night\"><input type=\"checkbox\" data-night=\"12 Sep\" checked> 12 Sep</label>\n          <label class=\"night\"><input type=\"checkbox\" data-night=\"13 Sep\"> 13 Sep <span style=\"color:#64748b\">(leaving the day after)</span></label>\n        </div>\n      </div>\n      <div class=\"card\">\n        <h2>T-shirt size</h2>\n        <div class=\"chips\" id=\"shirt\"></div>\n      </div>\n    </div>\n\n    <div class=\"summary\">\n      <small>Your RSVP</small>\n      <p id=\"sentence\"></p>\n      <p class=\"err\" id=\"err\"></p>\n      <button type=\"button\" id=\"send\">Send RSVP</button>\n      <p class=\"after\" id=\"after\"></p>\n    </div>\n  </main>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var state = { attending: null, diet: {}, shirt: null, sent: false };\n  var diets = ['Vegetarian', 'Vegan', 'Gluten-free', 'Halal', 'Kosher'];\n  var sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];\n\n  function chips(box, values) {\n    values.forEach(function (v) {\n      var b = document.createElement('button');\n      b.type = 'button'; b.className = 'chip'; b.textContent = v;\n      b.setAttribute('data-v', v);\n      box.appendChild(b);\n    });\n  }\n  chips($('diet'), diets);\n  chips($('shirt'), sizes);\n\n  function nights() {\n    var out = [];\n    var boxes = $('nights').querySelectorAll('input');\n    for (var i = 0; i < boxes.length; i++) { if (boxes[i].checked) { out.push(boxes[i].getAttribute('data-night')); } }\n    return out;\n  }\n\n  function problem() {\n    if (state.attending === null) { return 'Choose yes or no.'; }\n    if (state.attending === 'yes') {\n      if (!state.shirt) { return 'Pick a T-shirt size.'; }\n      if ($('hotel').checked && nights().length === 0) { return 'Pick at least one hotel night, or switch the hotel off.'; }\n    }\n    return '';\n  }\n\n  function sentence() {\n    if (state.attending === null) { return 'Not answered yet.'; }\n    if (state.attending === 'no') { return 'Not coming. Thanks for letting us know.'; }\n    var picked = diets.filter(function (d) { return state.diet[d]; });\n    var parts = ['Coming'];\n    parts.push(picked.length ? picked.join(', ').toLowerCase() : 'no dietary needs');\n    var allergy = $('allergies').value.trim();\n    if (allergy) { parts.push('note: ' + allergy); }\n    if ($('hotel').checked) {\n      var n = nights();\n      parts.push(n.length ? 'hotel for ' + n.length + (n.length === 1 ? ' night (' : ' nights (') + n.join(', ') + ')' : 'hotel (no nights picked)');\n    } else { parts.push('no hotel'); }\n    parts.push(state.shirt ? 'T-shirt ' + state.shirt : 'no T-shirt size yet');\n    return parts.join(' · ') + '.';\n  }\n\n  function render(showError) {\n    var yn = $('yn').children;\n    for (var i = 0; i < yn.length; i++) {\n      var on = yn[i].getAttribute('data-v') === state.attending;\n      yn[i].className = on ? 'on' : '';\n      yn[i].setAttribute('aria-pressed', on ? 'true' : 'false');\n    }\n    $('more').className = 'more' + (state.attending === 'yes' ? ' open' : '');\n    var d = $('diet').children;\n    for (var k = 0; k < d.length; k++) { d[k].className = 'chip' + (state.diet[d[k].getAttribute('data-v')] ? ' on' : ''); }\n    var s = $('shirt').children;\n    for (var m = 0; m < s.length; m++) { s[m].className = 'chip' + (s[m].getAttribute('data-v') === state.shirt ? ' on' : ''); }\n    $('nights').className = 'nights' + ($('hotel').checked ? ' open' : '');\n    $('sentence').textContent = sentence();\n    $('err').textContent = showError ? problem() : '';\n    $('send').textContent = state.sent ? 'Update RSVP' : 'Send RSVP';\n    $('after').textContent = state.sent ? 'Recorded on this page only: a sandboxed page cannot send it to the organisers.' : '';\n  }\n\n  $('yn').addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== $('yn') && !t.getAttribute('data-v')) { t = t.parentNode; }\n    if (!t || t === $('yn')) { return; }\n    state.attending = t.getAttribute('data-v');\n    state.sent = false;\n    render(false);\n  });\n  $('diet').addEventListener('click', function (e) {\n    var v = e.target.getAttribute('data-v');\n    if (!v) { return; }\n    state.diet[v] = !state.diet[v];\n    state.sent = false;\n    render(false);\n  });\n  $('shirt').addEventListener('click', function (e) {\n    var v = e.target.getAttribute('data-v');\n    if (!v) { return; }\n    state.shirt = v;\n    state.sent = false;\n    render(false);\n  });\n  $('hotel').addEventListener('change', function () { state.sent = false; render(false); });\n  $('nights').addEventListener('change', function () { state.sent = false; render(false); });\n  $('allergies').addEventListener('input', function () { state.sent = false; render(false); });\n  $('send').addEventListener('click', function () {\n    if (problem()) { render(true); return; }\n    state.sent = true;\n    render(false);\n  });\n  render(false);\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_offsite_rsvp_22",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Collect an RSVP for the team offsite in Porto on 12–13 September. Ask whether the person is attending. Only if they are, also ask for dietary needs and allergies, whether they need a hotel room and for which nights, and their T-shirt size.",
+        "data": {
+          "event": "Team offsite",
+          "city": "Porto",
+          "dates": [
+            "12 September",
+            "13 September"
+          ],
+          "hotelNights": [
+            "11 Sep",
+            "12 Sep",
+            "13 Sep"
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "attending": {
+              "type": "boolean"
+            },
+            "dietary": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "vegetarian",
+                  "vegan",
+                  "gluten-free",
+                  "halal",
+                  "kosher"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "allergies": {
+              "type": "string"
+            },
+            "needsHotel": {
+              "type": "boolean"
+            },
+            "hotelNights": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "11 Sep",
+                  "12 Sep",
+                  "13 Sep"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "shirtSize": {
+              "type": "string",
+              "enum": [
+                "XS",
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL"
+              ]
+            }
+          },
+          "required": [
+            "attending"
+          ],
+          "if": {
+            "properties": {
+              "attending": {
+                "const": true
+              }
+            },
+            "required": [
+              "attending"
+            ]
+          },
+          "then": {
+            "required": [
+              "needsHotel",
+              "shirtSize"
+            ]
+          }
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "attending": {
+            "type": "boolean",
+            "title": "I'm coming to the offsite"
+          },
+          "dietary": {
+            "type": "array",
+            "title": "Dietary needs",
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "vegetarian",
+                  "title": "Vegetarian"
+                },
+                {
+                  "const": "vegan",
+                  "title": "Vegan"
+                },
+                {
+                  "const": "gluten-free",
+                  "title": "Gluten-free"
+                },
+                {
+                  "const": "halal",
+                  "title": "Halal"
+                },
+                {
+                  "const": "kosher",
+                  "title": "Kosher"
+                }
+              ]
+            }
+          },
+          "allergies": {
+            "type": "string",
+            "title": "Allergies or anything else"
+          },
+          "needsHotel": {
+            "type": "boolean",
+            "title": "I need a hotel room"
+          },
+          "hotelNights": {
+            "type": "array",
+            "title": "Which nights?",
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "11 Sep",
+                  "title": "11 Sep (arriving the night before)"
+                },
+                {
+                  "const": "12 Sep",
+                  "title": "12 Sep"
+                },
+                {
+                  "const": "13 Sep",
+                  "title": "13 Sep (leaving the day after)"
+                }
+              ]
+            }
+          },
+          "shirtSize": {
+            "type": "string",
+            "title": "T-shirt size",
+            "enum": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ]
+          }
+        },
+        "required": [
+          "attending"
+        ],
+        "if": {
+          "properties": {
+            "attending": {
+              "const": true
+            }
+          },
+          "required": [
+            "attending"
+          ]
+        },
+        "then": {
+          "required": [
+            "needsHotel",
+            "shirtSize"
+          ]
+        }
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Team offsite in Porto, 12–13 September"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/attending",
+            "options": {
+              "toggle": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "A few details",
+            "rule": {
+              "effect": "SHOW",
+              "condition": {
+                "scope": "#/properties/attending",
+                "schema": {
+                  "const": true
+                }
+              }
+            },
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/dietary"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/allergies"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/needsHotel",
+                "options": {
+                  "toggle": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/hotelNights",
+                "rule": {
+                  "effect": "SHOW",
+                  "condition": {
+                    "scope": "#/properties/needsHotel",
+                    "schema": {
+                      "const": true
+                    }
+                  }
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/shirtSize"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "attending": false,
+        "dietary": [],
+        "needsHotel": false,
+        "hotelNights": []
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Handles the branch in words (reply No, or answer three more things) with a one-line example; fine for one person, awkward to collect consistently from a team.",
+    "a2ui": "All the inputs exist, but the basic catalog has no conditional visibility, so the if-you-are-coming questions are always shown with a caption telling people to skip them.",
+    "html": "The follow-up questions slide open only on Yes, hotel nights appear only with the hotel switch, and a live sentence reads the RSVP back before sending.",
+    "agui": "Rules show the details only when attending and the nights only when a hotel is needed, and the if/then in the output schema makes shirt size required only for attendees."
+  }
+}

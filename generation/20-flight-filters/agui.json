@@ -1,0 +1,125 @@
+{
+  "toolCall": {
+    "id": "call_flight_filters_20",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the six New York to Lisbon flights as a read-only table sorted by price, give the user filter controls (maximum price, stops, airlines) and have them pick the flight they want. Return the filters used and the selected flight number.",
+      "data": {
+        "route": "New York → Lisbon",
+        "flights": [
+          { "flight": "IB6252", "airline": "Iberia", "stops": "1 stop", "departs": "21:40", "price": 480 },
+          { "flight": "DL272", "airline": "Delta", "stops": "1 stop", "departs": "16:05", "price": 520 },
+          { "flight": "AF11", "airline": "Air France", "stops": "1 stop", "departs": "19:00", "price": 560 },
+          { "flight": "TP210", "airline": "TAP", "stops": "Nonstop", "departs": "22:55", "price": 590 },
+          { "flight": "TP202", "airline": "TAP", "stops": "Nonstop", "departs": "18:30", "price": 640 },
+          { "flight": "UA64", "airline": "United", "stops": "Nonstop", "departs": "20:15", "price": 710 }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "maxPrice": { "type": "integer", "minimum": 450, "maximum": 750 },
+          "stops": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["nonstop", "one-stop"] },
+            "uniqueItems": true
+          },
+          "airlines": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["TAP", "United", "Delta", "Iberia", "Air France"] },
+            "uniqueItems": true
+          },
+          "selectedFlight": { "type": "string", "enum": ["IB6252", "DL272", "AF11", "TP210", "TP202", "UA64"] }
+        },
+        "required": ["selectedFlight"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "maxPrice": { "type": "integer", "title": "Maximum price ($)", "minimum": 450, "maximum": 750, "default": 750 },
+        "stops": {
+          "type": "array",
+          "title": "Stops",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "const": "nonstop", "title": "Nonstop" },
+              { "const": "one-stop", "title": "1 stop" }
+            ]
+          }
+        },
+        "airlines": {
+          "type": "array",
+          "title": "Airlines",
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["TAP", "United", "Delta", "Iberia", "Air France"] }
+        },
+        "flights": {
+          "type": "array",
+          "title": "All flights, cheapest first",
+          "items": {
+            "type": "object",
+            "properties": {
+              "flight": { "type": "string", "title": "Flight" },
+              "airline": { "type": "string", "title": "Airline" },
+              "stops": { "type": "string", "title": "Stops" },
+              "departs": { "type": "string", "title": "Departs" },
+              "price": { "type": "integer", "title": "Price ($)" }
+            }
+          }
+        },
+        "selectedFlight": {
+          "type": "string",
+          "title": "Flight to book",
+          "oneOf": [
+            { "const": "IB6252", "title": "Iberia IB6252 · 21:40 · 1 stop · $480" },
+            { "const": "DL272", "title": "Delta DL272 · 16:05 · 1 stop · $520" },
+            { "const": "AF11", "title": "Air France AF11 · 19:00 · 1 stop · $560" },
+            { "const": "TP210", "title": "TAP TP210 · 22:55 · nonstop · $590" },
+            { "const": "TP202", "title": "TAP TP202 · 18:30 · nonstop · $640" },
+            { "const": "UA64", "title": "United UA64 · 20:15 · nonstop · $710" }
+          ]
+        }
+      },
+      "required": ["selectedFlight"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "New York → Lisbon: 6 flights" },
+        {
+          "type": "Group",
+          "label": "Filters",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/maxPrice", "options": { "slider": true } },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/stops" },
+                { "type": "Control", "scope": "#/properties/airlines" }
+              ]
+            }
+          ]
+        },
+        { "type": "Control", "scope": "#/properties/flights", "options": { "readonly": true } },
+        { "type": "Control", "scope": "#/properties/selectedFlight", "options": { "format": "radio" } }
+      ]
+    },
+    "initialData": {
+      "maxPrice": 750,
+      "stops": ["nonstop", "one-stop"],
+      "airlines": ["TAP", "United", "Delta", "Iberia", "Air France"],
+      "flights": [
+        { "flight": "IB6252", "airline": "Iberia", "stops": "1 stop", "departs": "21:40", "price": 480 },
+        { "flight": "DL272", "airline": "Delta", "stops": "1 stop", "departs": "16:05", "price": 520 },
+        { "flight": "AF11", "airline": "Air France", "stops": "1 stop", "departs": "19:00", "price": 560 },
+        { "flight": "TP210", "airline": "TAP", "stops": "Nonstop", "departs": "22:55", "price": 590 },
+        { "flight": "TP202", "airline": "TAP", "stops": "Nonstop", "departs": "18:30", "price": 640 },
+        { "flight": "UA64", "airline": "United", "stops": "Nonstop", "departs": "20:15", "price": 710 }
+      ]
+    }
+  }
+}

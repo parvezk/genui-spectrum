@@ -1,0 +1,6 @@
+{
+  "text": "With no controls, it pre-answers the likely filters (cheapest, nonstop, under $550) in prose and asks for the rest, turning one interaction into a conversation.",
+  "a2ui": "Has the right controls and a Select button on every flight that sends its bound flight number, but the list cannot react to the filters without an agent round trip.",
+  "html": "Filters apply instantly, the cheapest match is tagged, an empty state offers a reset and a tray tracks the pick; the pick then has nowhere to go from inside the sandbox.",
+  "agui": "Returns the cleanest result (typed filters plus one flight number), but rules cannot filter the table or the radio options, so the filter controls do nothing visible."
+}

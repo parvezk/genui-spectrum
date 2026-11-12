@@ -1,0 +1,6 @@
+{
+  "text": "Can only ask: it lists the six details, the valid time slots and a template to fill in, so the booking takes at least one more message.",
+  "a2ui": "A good fit: date input, time chips, party slider with a pluralised readout, validated name and phone, and a button that stays blocked until the checks pass, then sends one event.",
+  "html": "The most polished form (slot grid, stepper, inline errors, a ticket-style review), but a sandboxed page with no network has no way to hand the result to anyone.",
+  "agui": "The home turf: every field is typed and constrained by the output schema, the date and time get real pickers, and submit returns a validated tool result."
+}

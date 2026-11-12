@@ -1,0 +1,209 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "bug-report",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "bug-report",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["header", "intro", "what-card", "env-card", "contact-card", "submit", "privacy"] },
+        { "id": "header", "component": "Row", "align": "center", "children": ["header-icon", "title"] },
+        { "id": "header-icon", "component": "Icon", "name": "error" },
+        { "id": "title", "component": "Text", "variant": "h2", "weight": 1, "text": "Report a bug" },
+        { "id": "intro", "component": "Text", "variant": "caption", "text": "A summary, the steps and your device are enough for the team to start." },
+
+        { "id": "what-card", "component": "Card", "child": "what-col" },
+        { "id": "what-col", "component": "Column", "children": ["what-title", "summary", "area", "steps", "expected", "actual", "severity", "frequency"] },
+        { "id": "what-title", "component": "Text", "variant": "h5", "text": "What happened" },
+        {
+          "id": "summary",
+          "component": "TextField",
+          "label": "Summary (one sentence)",
+          "value": { "path": "/report/summary" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/report/summary" } } }, "message": "Describe the problem in a sentence." },
+            { "condition": { "call": "length", "args": { "value": { "path": "/report/summary" }, "max": 120 } }, "message": "Keep the summary under 120 characters." }
+          ]
+        },
+        {
+          "id": "area",
+          "component": "ChoicePicker",
+          "label": "Where in the app?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Login", "value": "login" },
+            { "label": "Checkout", "value": "checkout" },
+            { "label": "Search", "value": "search" },
+            { "label": "Notifications", "value": "notifications" },
+            { "label": "Profile", "value": "profile" },
+            { "label": "Other", "value": "other" }
+          ],
+          "value": { "path": "/report/area" }
+        },
+        {
+          "id": "steps",
+          "component": "TextField",
+          "label": "Steps to reproduce (one per line)",
+          "variant": "longText",
+          "value": { "path": "/report/steps" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/report/steps" } } }, "message": "List the steps that lead to the bug." }
+          ]
+        },
+        { "id": "expected", "component": "TextField", "label": "What did you expect?", "value": { "path": "/report/expected" } },
+        { "id": "actual", "component": "TextField", "label": "What happened instead?", "value": { "path": "/report/actual" } },
+        {
+          "id": "severity",
+          "component": "ChoicePicker",
+          "label": "How bad is it?",
+          "variant": "mutuallyExclusive",
+          "options": [
+            { "label": "Blocker: I cannot use the app", "value": "blocker" },
+            { "label": "Major: a feature is broken", "value": "major" },
+            { "label": "Minor: there is a workaround", "value": "minor" },
+            { "label": "Cosmetic: it just looks wrong", "value": "cosmetic" }
+          ],
+          "value": { "path": "/report/severity" }
+        },
+        {
+          "id": "frequency",
+          "component": "ChoicePicker",
+          "label": "How often?",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Every time", "value": "always" },
+            { "label": "Sometimes", "value": "sometimes" },
+            { "label": "Once", "value": "once" }
+          ],
+          "value": { "path": "/report/frequency" }
+        },
+
+        { "id": "env-card", "component": "Card", "child": "env-col" },
+        { "id": "env-col", "component": "Column", "children": ["env-title", "platform", "env-row"] },
+        { "id": "env-title", "component": "Text", "variant": "h5", "text": "Your device" },
+        {
+          "id": "platform",
+          "component": "ChoicePicker",
+          "label": "Platform",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "iOS", "value": "ios" },
+            { "label": "Android", "value": "android" }
+          ],
+          "value": { "path": "/report/platform" }
+        },
+        { "id": "env-row", "component": "Row", "children": ["device", "app-version"] },
+        {
+          "id": "device",
+          "component": "TextField",
+          "label": "Device and OS version",
+          "weight": 2,
+          "value": { "path": "/report/device" },
+          "checks": [
+            { "condition": { "call": "required", "args": { "value": { "path": "/report/device" } } }, "message": "For example: Pixel 8, Android 14." }
+          ]
+        },
+        {
+          "id": "app-version",
+          "component": "TextField",
+          "label": "App version",
+          "weight": 1,
+          "value": { "path": "/report/appVersion" },
+          "checks": [
+            {
+              "condition": {
+                "call": "or",
+                "args": {
+                  "values": [
+                    { "call": "not", "args": { "value": { "call": "required", "args": { "value": { "path": "/report/appVersion" } } } } },
+                    { "call": "regex", "args": { "value": { "path": "/report/appVersion" }, "pattern": "^[0-9]+(\\.[0-9]+){1,2}$" } }
+                  ]
+                }
+              },
+              "message": "Use the form 4.2 or 4.2.1."
+            }
+          ]
+        },
+
+        { "id": "contact-card", "component": "Card", "child": "contact-col" },
+        { "id": "contact-col", "component": "Column", "children": ["contact-title", "can-contact", "email"] },
+        { "id": "contact-title", "component": "Text", "variant": "h5", "text": "Follow-up" },
+        { "id": "can-contact", "component": "CheckBox", "label": "The team may contact me about this report", "value": { "path": "/report/canContact" } },
+        {
+          "id": "email",
+          "component": "TextField",
+          "label": "Email (only if you ticked the box)",
+          "value": { "path": "/report/email" },
+          "checks": [
+            {
+              "condition": {
+                "call": "or",
+                "args": {
+                  "values": [
+                    { "call": "not", "args": { "value": { "path": "/report/canContact" } } },
+                    { "call": "email", "args": { "value": { "path": "/report/email" } } }
+                  ]
+                }
+              },
+              "message": "Enter a valid email so the team can reach you."
+            }
+          ]
+        },
+
+        {
+          "id": "submit",
+          "component": "Button",
+          "variant": "primary",
+          "child": "submit-label",
+          "checks": [
+            {
+              "condition": {
+                "call": "and",
+                "args": {
+                  "values": [
+                    { "call": "required", "args": { "value": { "path": "/report/summary" } } },
+                    { "call": "required", "args": { "value": { "path": "/report/steps" } } },
+                    { "call": "required", "args": { "value": { "path": "/report/device" } } }
+                  ]
+                }
+              },
+              "message": "Add a summary, the steps and your device first."
+            }
+          ],
+          "action": { "event": { "name": "submit_bug_report", "context": { "report": { "path": "/report" } } } }
+        },
+        { "id": "submit-label", "component": "Text", "text": "Send bug report" },
+        { "id": "privacy", "component": "Text", "variant": "caption", "text": "Please do not include passwords or full card numbers." }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "bug-report",
+      "path": "/report",
+      "value": {
+        "summary": "",
+        "area": ["checkout"],
+        "steps": "",
+        "expected": "",
+        "actual": "",
+        "severity": ["major"],
+        "frequency": ["always"],
+        "platform": ["ios"],
+        "device": "",
+        "appVersion": "",
+        "canContact": false,
+        "email": ""
+      }
+    }
+  }
+]

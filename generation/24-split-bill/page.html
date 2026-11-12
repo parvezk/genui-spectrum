@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split the bill</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #f8fafc; background: #111827; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  .result { background: linear-gradient(135deg, #10b981, #059669); border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 14px; }
+  .result small { display: block; opacity: .9; font-size: 12px; }
+  .result b { display: block; font-size: 40px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .result span { font-size: 12px; opacity: .95; }
+  .card { background: #1f2937; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
+  .card h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9ca3af; margin: 0 0 8px; font-weight: 600; }
+  .bill { display: flex; align-items: center; gap: 6px; font-size: 26px; font-weight: 700; }
+  .bill input { flex: 1; min-width: 0; background: none; border: 0; border-bottom: 2px solid #374151; color: inherit; font: inherit; padding: 2px 0; font-variant-numeric: tabular-nums; }
+  .bill input:focus { outline: none; border-color: #10b981; }
+  .tips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .tips button { border: 1px solid #374151; background: #111827; color: inherit; border-radius: 10px; padding: 8px 0; font: inherit; font-weight: 600; cursor: pointer; }
+  .tips button.on { background: #10b981; border-color: #10b981; color: #052e1f; }
+  .custom { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-top: 10px; font-size: 12px; color: #9ca3af; }
+  .custom input { width: 100%; accent-color: #10b981; }
+  .people { display: flex; align-items: center; justify-content: space-between; }
+  .people .n { font-size: 26px; font-weight: 700; min-width: 40px; text-align: center; }
+  .people button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #374151; background: #111827; color: inherit; font-size: 20px; cursor: pointer; }
+  .people button:disabled { opacity: .3; cursor: default; }
+  .dots { flex: 1; text-align: center; font-size: 18px; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
+  .toggle { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .toggle input { width: 18px; height: 18px; accent-color: #10b981; }
+  dl { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; margin: 0; font-variant-numeric: tabular-nums; }
+  dt { color: #9ca3af; }
+  dd { margin: 0; text-align: right; font-weight: 600; }
+  dd.total, dt.total { border-top: 1px solid #374151; padding-top: 6px; color: #f8fafc; }
+  .warn { color: #fbbf24; font-size: 12px; margin: 6px 0 0; min-height: 16px; }
+</style>
+</head>
+<body>
+  <h1>Split the bill</h1>
+
+  <div class="result">
+    <small>Each person pays</small>
+    <b id="each"></b>
+    <span id="eachNote"></span>
+  </div>
+
+  <div class="card">
+    <h2>Bill</h2>
+    <div class="bill"><span>$</span><input id="bill" type="text" inputmode="decimal" value="186.40" aria-label="Bill total in dollars"></div>
+    <p class="warn" id="warn"></p>
+  </div>
+
+  <div class="card">
+    <h2>Tip</h2>
+    <div class="tips" id="tips"><button data-tip="0">0%</button><button data-tip="15">15%</button><button data-tip="18">18%</button><button data-tip="20">20%</button><button data-tip="25">25%</button></div>
+    <div class="custom"><input id="tip" type="range" min="0" max="35" step="1" value="18" aria-label="Tip percentage"><span id="tipOut"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>People</h2>
+    <div class="people"><button id="minus" aria-label="One fewer">−</button><span class="dots" id="dots"></span><span class="n" id="n"></span><button id="plus" aria-label="One more">+</button></div>
+  </div>
+
+  <div class="card">
+    <label class="toggle"><span>Round each share up to the next dollar</span><input type="checkbox" id="round"></label>
+  </div>
+
+  <div class="card">
+    <h2>Breakdown</h2>
+    <dl>
+      <dt>Bill</dt><dd id="dBill"></dd>
+      <dt id="tipLabel">Tip</dt><dd id="dTip"></dd>
+      <dt class="total">Total</dt><dd class="total" id="dTotal"></dd>
+      <dt>Collected</dt><dd id="dCollected"></dd>
+      <dt>Left over</dt><dd id="dExtra"></dd>
+    </dl>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var people = 4;
+  var lastGoodCents = 18640;
+
+  // All arithmetic is in whole cents to avoid floating-point drift.
+  function money(cents) {
+    var sign = cents < 0 ? '-' : '';
+    cents = Math.abs(cents);
+    var dollars = Math.floor(cents / 100);
+    var rest = cents % 100;
+    return sign + '$' + dollars.toLocaleString('en-US') + '.' + (rest < 10 ? '0' : '') + rest;
+  }
+  function parseBill(text) {
+    var clean = text.replace(/[$,\s]/g, '');
+    if (!/^[0-9]+(\.[0-9]{0,2})?$/.test(clean)) { return null; }
+    return Math.round(parseFloat(clean) * 100);
+  }
+
+  function render() {
+    var parsed = parseBill($('bill').value);
+    if (parsed === null) { $('warn').textContent = 'Enter an amount such as 186.40. Showing the last valid bill.'; }
+    else { $('warn').textContent = ''; lastGoodCents = parsed; }
+    var bill = lastGoodCents;
+    var tipPct = parseInt($('tip').value, 10);
+    var roundUp = $('round').checked;
+
+    var tip = Math.round(bill * tipPct / 100);
+    var total = bill + tip;
+    var each = Math.ceil(total / people);
+    if (roundUp) { each = Math.ceil(each / 100) * 100; }
+    var collected = each * people;
+    var extra = collected - total;
+    var effective = bill > 0 ? (collected - bill) / bill * 100 : 0;
+
+    $('each').textContent = money(each);
+    $('eachNote').textContent = people + ' people · ' + tipPct + '% tip' + (roundUp ? ' · rounded up' : '');
+    $('tipOut').textContent = tipPct + '%';
+    $('n').textContent = String(people);
+    var dots = '';
+    for (var i = 0; i < people; i++) { dots += '🧑'; }
+    $('dots').textContent = dots;
+    $('minus').disabled = people <= 2;
+    $('plus').disabled = people >= 12;
+
+    var chips = $('tips').children;
+    for (var c = 0; c < chips.length; c++) { chips[c].className = parseInt(chips[c].getAttribute('data-tip'), 10) === tipPct ? 'on' : ''; }
+
+    $('dBill').textContent = money(bill);
+    $('tipLabel').textContent = 'Tip (' + tipPct + '%)';
+    $('dTip').textContent = money(tip);
+    $('dTotal').textContent = money(total);
+    $('dCollected').textContent = money(collected) + ' (' + people + ' × ' + money(each) + ')';
+    $('dExtra').textContent = extra === 0 ? 'Nothing' : money(extra) + (roundUp ? ' extra tip, ' + effective.toFixed(1) + '% in all' : ' from rounding to the cent');
+  }
+
+  $('bill').addEventListener('input', render);
+  $('tip').addEventListener('input', render);
+  $('round').addEventListener('change', render);
+  $('tips').addEventListener('click', function (e) {
+    var t = e.target.getAttribute('data-tip');
+    if (t === null) { return; }
+    $('tip').value = t;
+    render();
+  });
+  $('minus').addEventListener('click', function () { if (people > 2) { people -= 1; render(); } });
+  $('plus').addEventListener('click', function () { if (people < 12) { people += 1; render(); } });
+  render();
+})();
+</script>
+</body>
+</html>

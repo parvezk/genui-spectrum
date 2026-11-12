@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a table at Luigi's Trattoria</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 Georgia, "Times New Roman", serif; color: #2b2118; background: #fdf8f0; }
+  .ui, button, input, textarea { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { text-align: center; border-bottom: 3px double #b23a2f; padding-bottom: 10px; margin-bottom: 14px; }
+  h1 { font-size: 24px; margin: 0; font-style: italic; color: #b23a2f; }
+  header small { color: #7a6a5a; letter-spacing: .08em; text-transform: uppercase; font-size: 10px; font-family: system-ui, sans-serif; }
+  fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+  legend, label.lbl { display: block; font: 600 12px system-ui, sans-serif; text-transform: uppercase; letter-spacing: .05em; color: #7a6a5a; margin-bottom: 5px; padding: 0; }
+  input[type=date], input[type=text], input[type=tel], textarea { width: 100%; padding: 8px 10px; border: 1px solid #d9cbb8; border-radius: 8px; font-size: 14px; background: #fff; color: inherit; }
+  textarea { resize: vertical; min-height: 54px; }
+  input.bad { border-color: #b23a2f; background: #fff5f3; }
+  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .slot, .seat { border: 1px solid #d9cbb8; background: #fff; border-radius: 8px; padding: 7px 0; font-size: 14px; cursor: pointer; color: inherit; }
+  .slot.on, .seat.on { background: #b23a2f; border-color: #b23a2f; color: #fff; font-weight: 600; }
+  .seats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stepper { display: flex; align-items: center; gap: 12px; }
+  .stepper button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d9cbb8; background: #fff; font-size: 18px; cursor: pointer; color: inherit; }
+  .stepper button:disabled { opacity: .35; cursor: default; }
+  .stepper b { font: 600 18px system-ui, sans-serif; min-width: 86px; text-align: center; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .err { color: #b23a2f; font: 12px system-ui, sans-serif; min-height: 16px; margin-top: 2px; }
+  .cta { width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #2b2118; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .ticket { background: #fff; border: 1px dashed #b23a2f; border-radius: 12px; padding: 14px; }
+  .ticket h2 { margin: 0 0 8px; font-size: 18px; font-style: italic; color: #b23a2f; }
+  .ticket dl { display: grid; grid-template-columns: 90px 1fr; gap: 4px 8px; margin: 0 0 10px; font-family: system-ui, sans-serif; font-size: 13px; }
+  .ticket dt { color: #7a6a5a; }
+  .ticket dd { margin: 0; font-weight: 600; }
+  .ticket p { font: 12px system-ui, sans-serif; color: #7a6a5a; margin: 0 0 10px; }
+  .link { background: none; border: 0; color: #b23a2f; text-decoration: underline; cursor: pointer; padding: 0; font-size: 13px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <header><small>Reserve a table</small><h1>Luigi's Trattoria</h1></header>
+
+  <div id="formView">
+    <fieldset>
+      <label class="lbl" for="date">Date</label>
+      <input type="date" id="date">
+      <div class="err" id="dateErr"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Time</legend>
+      <div class="slots" id="slots"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Party size</legend>
+      <div class="stepper"><button type="button" id="minus" aria-label="Fewer people">−</button><b id="party"></b><button type="button" id="plus" aria-label="More people">+</button></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Seating</legend>
+      <div class="seats" id="seats"><button type="button" class="seat on" data-seat="Indoors">Indoors</button><button type="button" class="seat" data-seat="Terrace">Terrace</button></div>
+    </fieldset>
+
+    <fieldset class="two">
+      <div><label class="lbl" for="name">Name</label><input type="text" id="name" autocomplete="name"><div class="err" id="nameErr"></div></div>
+      <div><label class="lbl" for="phone">Phone</label><input type="tel" id="phone" autocomplete="tel"><div class="err" id="phoneErr"></div></div>
+    </fieldset>
+
+    <fieldset>
+      <label class="lbl" for="notes">Anything they should know? (optional)</label>
+      <textarea id="notes" placeholder="Allergies, high chair, a birthday…"></textarea>
+    </fieldset>
+
+    <button type="button" class="cta" id="review">Review reservation</button>
+  </div>
+
+  <div id="doneView" hidden>
+    <div class="ticket">
+      <h2>Your reservation request</h2>
+      <dl id="summary"></dl>
+      <p>This page runs in a sandbox with no network access, so nothing has been sent to the restaurant. These are the details an assistant would submit for you.</p>
+      <button type="button" class="link" id="edit">Change something</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var times = ['17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'];
+  var state = { time: '19:30', party: 2, seat: 'Indoors' };
+  var tried = false;
+
+  // Earliest bookable day is today.
+  var now = new Date();
+  var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+  var today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  $('date').min = today;
+
+  times.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'slot';
+    b.textContent = t;
+    b.setAttribute('data-time', t);
+    $('slots').appendChild(b);
+  });
+
+  function errors() {
+    var e = {};
+    var d = $('date').value;
+    if (!d) { e.date = 'Pick a date.'; }
+    else if (d < today) { e.date = 'That date is in the past.'; }
+    if (!$('name').value.trim()) { e.name = 'Enter a name.'; }
+    var digits = $('phone').value.replace(/[^0-9]/g, '');
+    if (digits.length < 7) { e.phone = 'Enter at least 7 digits.'; }
+    return e;
+  }
+
+  function render() {
+    var slots = $('slots').children;
+    for (var i = 0; i < slots.length; i++) {
+      var on = slots[i].getAttribute('data-time') === state.time;
+      slots[i].className = 'slot' + (on ? ' on' : '');
+      slots[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var seats = $('seats').children;
+    for (var s = 0; s < seats.length; s++) {
+      var picked = seats[s].getAttribute('data-seat') === state.seat;
+      seats[s].className = 'seat' + (picked ? ' on' : '');
+      seats[s].setAttribute('aria-pressed', picked ? 'true' : 'false');
+    }
+    $('party').textContent = state.party + (state.party === 1 ? ' person' : ' people');
+    $('minus').disabled = state.party <= 1;
+    $('plus').disabled = state.party >= 8;
+
+    var e = tried ? errors() : {};
+    $('dateErr').textContent = e.date || '';
+    $('nameErr').textContent = e.name || '';
+    $('phoneErr').textContent = e.phone || '';
+    $('date').className = e.date ? 'bad' : '';
+    $('name').className = e.name ? 'bad' : '';
+    $('phone').className = e.phone ? 'bad' : '';
+  }
+
+  function prettyDate(iso) {
+    var parts = iso.split('-');
+    var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  $('slots').addEventListener('click', function (ev) {
+    var t = ev.target.getAttribute('data-time');
+    if (t) { state.time = t; render(); }
+  });
+  $('seats').addEventListener('click', function (ev) {
+    var s = ev.target.getAttribute('data-seat');
+    if (s) { state.seat = s; render(); }
+  });
+  $('minus').addEventListener('click', function () { if (state.party > 1) { state.party -= 1; render(); } });
+  $('plus').addEventListener('click', function () { if (state.party < 8) { state.party += 1; render(); } });
+  ['date', 'name', 'phone'].forEach(function (id) { $(id).addEventListener('input', render); });
+
+  $('review').addEventListener('click', function () {
+    tried = true;
+    render();
+    var e = errors();
+    if (e.date || e.name || e.phone) { return; }
+    var rows = [
+      ['Date', prettyDate($('date').value)],
+      ['Time', state.time],
+      ['Party', state.party + (state.party === 1 ? ' person' : ' people')],
+      ['Seating', state.seat],
+      ['Name', $('name').value.trim()],
+      ['Phone', $('phone').value.trim()],
+      ['Notes', $('notes').value.trim() || 'None']
+    ];
+    var dl = $('summary');
+    dl.textContent = '';
+    rows.forEach(function (r) {
+      var dt = document.createElement('dt'); dt.textContent = r[0];
+      var dd = document.createElement('dd'); dd.textContent = r[1];
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+    $('formView').hidden = true;
+    $('doneView').hidden = false;
+  });
+  $('edit').addEventListener('click', function () {
+    $('doneView').hidden = true;
+    $('formView').hidden = false;
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "split-bill",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "split-bill",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "answer-card", "options-card", "adjust-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Split the bill" },
+
+        { "id": "answer-card", "component": "Card", "child": "answer-col" },
+        { "id": "answer-col", "component": "Column", "align": "center", "children": ["answer-label", "answer-value", "answer-detail"] },
+        { "id": "answer-label", "component": "Text", "variant": "caption", "text": "Each person pays, with 18% tip" },
+        {
+          "id": "answer-value",
+          "component": "Text",
+          "variant": "h1",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/result/perPerson" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+        {
+          "id": "answer-detail",
+          "component": "Text",
+          "variant": "caption",
+          "text": {
+            "call": "formatString",
+            "args": {
+              "value": "${formatCurrency(value: ${/result/bill}, currency: 'USD', decimals: 2)} + ${formatCurrency(value: ${/result/tip}, currency: 'USD', decimals: 2)} tip = ${formatCurrency(value: ${/result/total}, currency: 'USD', decimals: 2)}, split 4 ways"
+            },
+            "returnType": "string"
+          }
+        },
+
+        { "id": "options-card", "component": "Card", "child": "options-col" },
+        { "id": "options-col", "component": "Column", "children": ["options-title", "options-head", "options-divider", "options-rows"] },
+        { "id": "options-title", "component": "Text", "variant": "h5", "text": "Other tip levels, 4 people" },
+        { "id": "options-head", "component": "Row", "children": ["oh-tip", "oh-amount", "oh-total", "oh-each"] },
+        { "id": "oh-tip", "component": "Text", "variant": "caption", "weight": 1, "text": "Tip" },
+        { "id": "oh-amount", "component": "Text", "variant": "caption", "weight": 1, "text": "Amount" },
+        { "id": "oh-total", "component": "Text", "variant": "caption", "weight": 1, "text": "Total" },
+        { "id": "oh-each", "component": "Text", "variant": "caption", "weight": 1, "text": "Each" },
+        { "id": "options-divider", "component": "Divider" },
+        { "id": "options-rows", "component": "List", "children": { "componentId": "option-row", "path": "/options" } },
+        { "id": "option-row", "component": "Row", "children": ["or-tip", "or-amount", "or-total", "or-each"] },
+        { "id": "or-tip", "component": "Text", "weight": 1, "text": { "path": "label" } },
+        {
+          "id": "or-amount",
+          "component": "Text",
+          "weight": 1,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "tip" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+        {
+          "id": "or-total",
+          "component": "Text",
+          "weight": 1,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "total" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+        {
+          "id": "or-each",
+          "component": "Text",
+          "weight": 1,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "each" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+
+        { "id": "adjust-card", "component": "Card", "child": "adjust-col" },
+        { "id": "adjust-col", "component": "Column", "children": ["adjust-title", "bill-field", "people-slider", "people-readout", "tip-slider", "tip-readout", "round-up", "recalc"] },
+        { "id": "adjust-title", "component": "Text", "variant": "h5", "text": "Change the numbers" },
+        {
+          "id": "bill-field",
+          "component": "TextField",
+          "label": "Bill total ($)",
+          "variant": "number",
+          "value": { "path": "/input/bill" },
+          "checks": [
+            {
+              "condition": { "call": "regex", "args": { "value": { "path": "/input/bill" }, "pattern": "^[0-9]+(\\.[0-9]{1,2})?$" } },
+              "message": "Enter an amount such as 186.40."
+            }
+          ]
+        },
+        { "id": "people-slider", "component": "Slider", "label": "People", "min": 2, "max": 12, "value": { "path": "/input/people" } },
+        {
+          "id": "people-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${/input/people} people" }, "returnType": "string" }
+        },
+        { "id": "tip-slider", "component": "Slider", "label": "Tip", "min": 0, "max": 30, "value": { "path": "/input/tipPercent" } },
+        {
+          "id": "tip-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${/input/tipPercent}% tip" }, "returnType": "string" }
+        },
+        { "id": "round-up", "component": "CheckBox", "label": "Round each share up to the next dollar", "value": { "path": "/input/roundUp" } },
+        {
+          "id": "recalc",
+          "component": "Button",
+          "variant": "primary",
+          "child": "recalc-label",
+          "checks": [
+            {
+              "condition": { "call": "regex", "args": { "value": { "path": "/input/bill" }, "pattern": "^[0-9]+(\\.[0-9]{1,2})?$" } },
+              "message": "Enter a valid bill total first."
+            }
+          ],
+          "action": {
+            "event": {
+              "name": "recalculate_split",
+              "context": {
+                "bill": { "path": "/input/bill" },
+                "people": { "path": "/input/people" },
+                "tipPercent": { "path": "/input/tipPercent" },
+                "roundUp": { "path": "/input/roundUp" }
+              }
+            }
+          }
+        },
+        { "id": "recalc-label", "component": "Text", "text": "Recalculate" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "split-bill",
+      "path": "/",
+      "value": {
+        "result": { "bill": 186.4, "tip": 33.55, "total": 219.95, "perPerson": 54.99 },
+        "options": [
+          { "label": "15%", "tip": 27.96, "total": 214.36, "each": 53.59 },
+          { "label": "18%", "tip": 33.55, "total": 219.95, "each": 54.99 },
+          { "label": "20%", "tip": 37.28, "total": 223.68, "each": 55.92 },
+          { "label": "25%", "tip": 46.6, "total": 233.0, "each": 58.25 }
+        ],
+        "input": { "bill": "186.40", "people": 4, "tipPercent": 18, "roundUp": false }
+      }
+    }
+  }
+]

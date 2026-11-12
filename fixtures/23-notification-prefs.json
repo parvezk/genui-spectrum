@@ -1,0 +1,729 @@
+{
+  "id": "23-notification-prefs",
+  "index": 23,
+  "title": "Notification preferences",
+  "category": "input",
+  "prompt": "Let me set my notification preferences: email, push and SMS for each of mentions, direct messages, weekly digest and product updates, plus quiet hours.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Notification preferences\n\nI cannot show switches in a text reply, so here is a sensible starting point. Tell me what to change and I will apply it.\n\n| | Email | Push | SMS |\n| --- | :---: | :---: | :---: |\n| **Mentions** | ✅ | ✅ | ❌ |\n| **Direct messages** | ❌ | ✅ | ❌ |\n| **Weekly digest** | ✅ | ❌ | ❌ |\n| **Product updates** | ✅ | ❌ | ❌ |\n\n**Quiet hours:** on, from 22:00 to 07:00. Push and SMS are held during quiet hours and delivered afterwards; email is not affected.\n\n### Why these defaults\n\n- **Mentions** and **direct messages** are time-sensitive, so they go to push. Mentions also go to email as a backup.\n- **Weekly digest** and **product updates** are not urgent, so they are email only.\n- **SMS is off everywhere.** It is the most intrusive channel; turn it on only for things you must not miss.\n\n### How to change them\n\nTell me in plain words, for example:\n\n- \"Turn on SMS for direct messages.\"\n- \"No product updates at all.\"\n- \"Quiet hours from 23:00 to 06:30.\"\n- \"Turn quiet hours off.\"\n- \"Email only for everything.\"\n\nOr copy this and edit it (`on` or `off` for email / push / SMS):\n\n```\nMentions:         on  / on  / off\nDirect messages:  off / on  / off\nWeekly digest:    on  / off / off\nProduct updates:  on  / off / off\nQuiet hours:      22:00 to 07:00\n```\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "notification-prefs",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
+          "sendDataModel": true
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "notification-prefs",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "header",
+                "intro",
+                "matrix-card",
+                "quiet-card",
+                "save"
+              ]
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "header-icon",
+                "title"
+              ]
+            },
+            {
+              "id": "header-icon",
+              "component": "Icon",
+              "name": "notifications"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "weight": 1,
+              "text": "Notifications"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Choose how you hear about each kind of activity."
+            },
+            {
+              "id": "matrix-card",
+              "component": "Card",
+              "child": "matrix"
+            },
+            {
+              "id": "matrix",
+              "component": "List",
+              "children": {
+                "componentId": "type-block",
+                "path": "/types"
+              }
+            },
+            {
+              "id": "type-block",
+              "component": "Column",
+              "children": [
+                "type-name",
+                "type-hint",
+                "type-channels",
+                "type-divider"
+              ]
+            },
+            {
+              "id": "type-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "path": "label"
+              }
+            },
+            {
+              "id": "type-hint",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "hint"
+              }
+            },
+            {
+              "id": "type-channels",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "type-email",
+                "type-push",
+                "type-sms"
+              ]
+            },
+            {
+              "id": "type-email",
+              "component": "CheckBox",
+              "label": "Email",
+              "value": {
+                "path": "email"
+              }
+            },
+            {
+              "id": "type-push",
+              "component": "CheckBox",
+              "label": "Push",
+              "value": {
+                "path": "push"
+              }
+            },
+            {
+              "id": "type-sms",
+              "component": "CheckBox",
+              "label": "SMS",
+              "value": {
+                "path": "sms"
+              }
+            },
+            {
+              "id": "type-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "quiet-card",
+              "component": "Card",
+              "child": "quiet-col"
+            },
+            {
+              "id": "quiet-col",
+              "component": "Column",
+              "children": [
+                "quiet-head",
+                "quiet-toggle",
+                "quiet-times",
+                "quiet-note"
+              ]
+            },
+            {
+              "id": "quiet-head",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "quiet-icon",
+                "quiet-title"
+              ]
+            },
+            {
+              "id": "quiet-icon",
+              "component": "Icon",
+              "name": "notificationsOff"
+            },
+            {
+              "id": "quiet-title",
+              "component": "Text",
+              "variant": "h5",
+              "weight": 1,
+              "text": "Quiet hours"
+            },
+            {
+              "id": "quiet-toggle",
+              "component": "CheckBox",
+              "label": "Hold push and SMS during quiet hours",
+              "value": {
+                "path": "/quiet/enabled"
+              }
+            },
+            {
+              "id": "quiet-times",
+              "component": "Row",
+              "children": [
+                "quiet-from",
+                "quiet-to"
+              ]
+            },
+            {
+              "id": "quiet-from",
+              "component": "DateTimeInput",
+              "label": "From",
+              "enableTime": true,
+              "weight": 1,
+              "value": {
+                "path": "/quiet/from"
+              }
+            },
+            {
+              "id": "quiet-to",
+              "component": "DateTimeInput",
+              "label": "To",
+              "enableTime": true,
+              "weight": 1,
+              "value": {
+                "path": "/quiet/to"
+              }
+            },
+            {
+              "id": "quiet-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Email is not affected by quiet hours."
+            },
+            {
+              "id": "save",
+              "component": "Button",
+              "variant": "primary",
+              "child": "save-label",
+              "action": {
+                "event": {
+                  "name": "save_notification_preferences",
+                  "context": {
+                    "types": {
+                      "path": "/types"
+                    },
+                    "quietEnabled": {
+                      "path": "/quiet/enabled"
+                    },
+                    "quietFrom": {
+                      "path": "/quiet/from"
+                    },
+                    "quietTo": {
+                      "path": "/quiet/to"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "save-label",
+              "component": "Text",
+              "text": "Save preferences"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "notification-prefs",
+          "path": "/",
+          "value": {
+            "types": [
+              {
+                "id": "mentions",
+                "label": "Mentions",
+                "hint": "Someone @mentions you",
+                "email": true,
+                "push": true,
+                "sms": false
+              },
+              {
+                "id": "direct-messages",
+                "label": "Direct messages",
+                "hint": "A new private message",
+                "email": false,
+                "push": true,
+                "sms": false
+              },
+              {
+                "id": "weekly-digest",
+                "label": "Weekly digest",
+                "hint": "A summary every Monday",
+                "email": true,
+                "push": false,
+                "sms": false
+              },
+              {
+                "id": "product-updates",
+                "label": "Product updates",
+                "hint": "New features and announcements",
+                "email": true,
+                "push": false,
+                "sms": false
+              }
+            ],
+            "quiet": {
+              "enabled": true,
+              "from": "22:00",
+              "to": "07:00"
+            }
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Notification preferences</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px 16px 84px; font: 14px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1d1d1f; background: #f5f5f7; }\n  h1 { font-size: 20px; margin: 0 0 2px; }\n  .lead { margin: 0 0 14px; color: #6e6e73; font-size: 13px; }\n  .card { background: #fff; border-radius: 14px; padding: 4px 14px; margin-bottom: 14px; }\n  table { width: 100%; border-collapse: collapse; }\n  th { font-size: 11px; font-weight: 600; color: #6e6e73; text-transform: uppercase; letter-spacing: .04em; padding: 10px 0 6px; text-align: center; width: 56px; }\n  th:first-child { text-align: left; width: auto; }\n  th button { border: 0; background: none; font: inherit; color: inherit; cursor: pointer; text-transform: inherit; letter-spacing: inherit; padding: 0; text-decoration: underline dotted; }\n  td { padding: 10px 0; border-top: 1px solid #f0f0f2; text-align: center; vertical-align: middle; }\n  td:first-child { text-align: left; }\n  td b { display: block; font-weight: 600; }\n  td small { color: #6e6e73; font-size: 12px; }\n  .sw { position: relative; display: inline-block; width: 40px; height: 24px; cursor: pointer; }\n  .sw input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }\n  .sw i { position: absolute; inset: 0; border-radius: 12px; background: #d2d2d7; transition: background .2s; pointer-events: none; }\n  .sw i::after { content: \"\"; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .2s; }\n  .sw input:checked + i { background: #34c759; }\n  .sw input:checked + i::after { left: 18px; }\n  .sw input:focus-visible + i { outline: 2px solid #0071e3; outline-offset: 2px; }\n  .row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }\n  .row + .row, .times, .dayline { border-top: 1px solid #f0f0f2; }\n  .times { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 0; }\n  .times label { font-size: 12px; color: #6e6e73; display: block; }\n  .times input { width: 100%; padding: 7px 8px; border: 1px solid #d2d2d7; border-radius: 8px; font: inherit; margin-top: 3px; }\n  .times.off { opacity: .4; }\n  .dayline { padding: 12px 0; }\n  .track { position: relative; height: 14px; border-radius: 7px; background: #e8f8ec; overflow: hidden; }\n  .track i { position: absolute; top: 0; height: 100%; background: #1d1d1f; opacity: .8; }\n  .ticks { display: flex; justify-content: space-between; font-size: 10px; color: #6e6e73; margin-top: 3px; }\n  .dayline p { margin: 6px 0 0; font-size: 12px; color: #6e6e73; }\n  .footer { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.95); border-top: 1px solid #d2d2d7; padding: 10px 16px; display: flex; gap: 10px; align-items: center; }\n  .footer span { flex: 1; font-size: 12px; color: #6e6e73; }\n  .footer button { border: 0; border-radius: 10px; padding: 9px 16px; font: inherit; font-weight: 600; cursor: pointer; background: #0071e3; color: #fff; }\n  .footer button:disabled { background: #d2d2d7; cursor: default; }\n  .footer button.ghost { background: none; color: #0071e3; padding: 9px 4px; }\n</style>\n</head>\n<body>\n  <h1>Notifications</h1>\n  <p class=\"lead\">Choose how you hear about each kind of activity. Tap a column heading to switch that whole channel on or off.</p>\n\n  <div class=\"card\">\n    <table>\n      <thead><tr><th>Activity</th><th><button type=\"button\" data-col=\"email\">Email</button></th><th><button type=\"button\" data-col=\"push\">Push</button></th><th><button type=\"button\" data-col=\"sms\">SMS</button></th></tr></thead>\n      <tbody id=\"rows\"></tbody>\n    </table>\n  </div>\n\n  <div class=\"card\">\n    <div class=\"row\"><div><b>Quiet hours</b><br><small style=\"color:#6e6e73\">Hold push and SMS; email is not affected</small></div><label class=\"sw\"><input type=\"checkbox\" id=\"quiet\" aria-label=\"Quiet hours\"><i></i></label></div>\n    <div class=\"times\" id=\"times\">\n      <label>From<input type=\"time\" id=\"from\"></label>\n      <label>To<input type=\"time\" id=\"to\"></label>\n    </div>\n    <div class=\"dayline\">\n      <div class=\"track\" id=\"track\"></div>\n      <div class=\"ticks\"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>\n      <p id=\"quietText\"></p>\n    </div>\n  </div>\n\n  <div class=\"footer\"><span id=\"status\"></span><button type=\"button\" class=\"ghost\" id=\"reset\">Reset</button><button type=\"button\" id=\"save\">Save</button></div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var types = [\n    { id: 'mentions', label: 'Mentions', hint: 'Someone @mentions you' },\n    { id: 'dms', label: 'Direct messages', hint: 'A new private message' },\n    { id: 'digest', label: 'Weekly digest', hint: 'A summary once a week' },\n    { id: 'updates', label: 'Product updates', hint: 'New features and news' }\n  ];\n  var channels = ['email', 'push', 'sms'];\n  function defaults() {\n    return {\n      mentions: { email: true, push: true, sms: false },\n      dms: { email: false, push: true, sms: false },\n      digest: { email: true, push: false, sms: false },\n      updates: { email: true, push: false, sms: false },\n      quiet: true, from: '22:00', to: '07:00'\n    };\n  }\n  var prefs = defaults();\n  var saved = JSON.stringify(prefs);\n  var justSaved = false;\n\n  types.forEach(function (t) {\n    var tr = document.createElement('tr');\n    var name = document.createElement('td');\n    var b = document.createElement('b'); b.textContent = t.label;\n    var s = document.createElement('small'); s.textContent = t.hint;\n    name.appendChild(b); name.appendChild(s);\n    tr.appendChild(name);\n    channels.forEach(function (c) {\n      var td = document.createElement('td');\n      var label = document.createElement('label'); label.className = 'sw';\n      var input = document.createElement('input'); input.type = 'checkbox';\n      input.setAttribute('data-type', t.id); input.setAttribute('data-channel', c);\n      input.setAttribute('aria-label', t.label + ' by ' + c);\n      var knob = document.createElement('i');\n      label.appendChild(input); label.appendChild(knob);\n      td.appendChild(label);\n      tr.appendChild(td);\n    });\n    $('rows').appendChild(tr);\n  });\n\n  function minutes(hhmm) {\n    var p = hhmm.split(':');\n    return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);\n  }\n\n  function render() {\n    var inputs = $('rows').querySelectorAll('input');\n    for (var i = 0; i < inputs.length; i++) {\n      inputs[i].checked = prefs[inputs[i].getAttribute('data-type')][inputs[i].getAttribute('data-channel')];\n    }\n    $('quiet').checked = prefs.quiet;\n    $('from').value = prefs.from;\n    $('to').value = prefs.to;\n    $('from').disabled = !prefs.quiet;\n    $('to').disabled = !prefs.quiet;\n    $('times').className = 'times' + (prefs.quiet ? '' : ' off');\n\n    var track = $('track');\n    track.textContent = '';\n    var text = 'Quiet hours are off. Push and SMS arrive at any time.';\n    if (prefs.quiet && prefs.from && prefs.to) {\n      var a = minutes(prefs.from), z = minutes(prefs.to), day = 1440;\n      var spans = a === z ? [] : (a < z ? [[a, z]] : [[a, day], [0, z]]);\n      spans.forEach(function (sp) {\n        var seg = document.createElement('i');\n        seg.style.left = (sp[0] / day * 100) + '%';\n        seg.style.width = ((sp[1] - sp[0]) / day * 100) + '%';\n        track.appendChild(seg);\n      });\n      var length = a === z ? 0 : (a < z ? z - a : day - a + z);\n      var hours = Math.floor(length / 60), mins = length % 60;\n      text = 'Quiet from ' + prefs.from + ' to ' + prefs.to + (a > z ? ' the next day' : '') + ': ' + hours + ' h' + (mins ? ' ' + mins + ' min' : '') + ' without push or SMS.';\n    }\n    $('quietText').textContent = text;\n\n    var dirty = JSON.stringify(prefs) !== saved;\n    $('save').disabled = !dirty;\n    var on = 0;\n    types.forEach(function (t) { channels.forEach(function (c) { if (prefs[t.id][c]) { on += 1; } }); });\n    $('status').textContent = dirty ? 'Unsaved changes · ' + on + ' of 12 switches on'\n      : (justSaved ? 'Saved on this page. A sandboxed page cannot store or send it.' : on + ' of 12 switches on');\n  }\n\n  $('rows').addEventListener('change', function (e) {\n    var t = e.target.getAttribute('data-type');\n    if (!t) { return; }\n    prefs[t][e.target.getAttribute('data-channel')] = e.target.checked;\n    justSaved = false;\n    render();\n  });\n  document.querySelector('thead').addEventListener('click', function (e) {\n    var c = e.target.getAttribute('data-col');\n    if (!c) { return; }\n    var allOn = types.every(function (t) { return prefs[t.id][c]; });\n    types.forEach(function (t) { prefs[t.id][c] = !allOn; });\n    justSaved = false;\n    render();\n  });\n  $('quiet').addEventListener('change', function () { prefs.quiet = $('quiet').checked; justSaved = false; render(); });\n  $('from').addEventListener('input', function () { prefs.from = $('from').value; justSaved = false; render(); });\n  $('to').addEventListener('input', function () { prefs.to = $('to').value; justSaved = false; render(); });\n  $('save').addEventListener('click', function () { saved = JSON.stringify(prefs); justSaved = true; render(); });\n  $('reset').addEventListener('click', function () { prefs = defaults(); justSaved = false; render(); });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_notification_prefs_23",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Let the user set notification preferences: for each of mentions, direct messages, weekly digest and product updates, switches for email, push and SMS. Add quiet hours with an on/off switch and a from and to time. Pre-fill with the user's current settings.",
+        "data": {
+          "current": {
+            "mentions": {
+              "email": true,
+              "push": true,
+              "sms": false
+            },
+            "directMessages": {
+              "email": false,
+              "push": true,
+              "sms": false
+            },
+            "weeklyDigest": {
+              "email": true,
+              "push": false,
+              "sms": false
+            },
+            "productUpdates": {
+              "email": true,
+              "push": false,
+              "sms": false
+            },
+            "quietHours": {
+              "enabled": true,
+              "from": "22:00:00",
+              "to": "07:00:00"
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "$defs": {
+            "channels": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "boolean"
+                },
+                "push": {
+                  "type": "boolean"
+                },
+                "sms": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "email",
+                "push",
+                "sms"
+              ]
+            }
+          },
+          "properties": {
+            "mentions": {
+              "$ref": "#/$defs/channels"
+            },
+            "directMessages": {
+              "$ref": "#/$defs/channels"
+            },
+            "weeklyDigest": {
+              "$ref": "#/$defs/channels"
+            },
+            "productUpdates": {
+              "$ref": "#/$defs/channels"
+            },
+            "quietHours": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled"
+              ]
+            }
+          },
+          "required": [
+            "mentions",
+            "directMessages",
+            "weeklyDigest",
+            "productUpdates",
+            "quietHours"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "$defs": {
+          "channels": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "boolean",
+                "title": "Email"
+              },
+              "push": {
+                "type": "boolean",
+                "title": "Push"
+              },
+              "sms": {
+                "type": "boolean",
+                "title": "SMS"
+              }
+            },
+            "required": [
+              "email",
+              "push",
+              "sms"
+            ]
+          }
+        },
+        "properties": {
+          "mentions": {
+            "$ref": "#/$defs/channels"
+          },
+          "directMessages": {
+            "$ref": "#/$defs/channels"
+          },
+          "weeklyDigest": {
+            "$ref": "#/$defs/channels"
+          },
+          "productUpdates": {
+            "$ref": "#/$defs/channels"
+          },
+          "quietHours": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "title": "Hold push and SMS during quiet hours"
+              },
+              "from": {
+                "type": "string",
+                "format": "time",
+                "title": "From"
+              },
+              "to": {
+                "type": "string",
+                "format": "time",
+                "title": "To"
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "mentions",
+          "directMessages",
+          "weeklyDigest",
+          "productUpdates",
+          "quietHours"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Group",
+            "label": "Mentions",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/mentions/properties/email",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/mentions/properties/push",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/mentions/properties/sms",
+                    "options": {
+                      "toggle": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Direct messages",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/directMessages/properties/email",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/directMessages/properties/push",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/directMessages/properties/sms",
+                    "options": {
+                      "toggle": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Weekly digest",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/weeklyDigest/properties/email",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/weeklyDigest/properties/push",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/weeklyDigest/properties/sms",
+                    "options": {
+                      "toggle": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Product updates",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/productUpdates/properties/email",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/productUpdates/properties/push",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/productUpdates/properties/sms",
+                    "options": {
+                      "toggle": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Quiet hours",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/quietHours/properties/enabled",
+                "options": {
+                  "toggle": true
+                }
+              },
+              {
+                "type": "HorizontalLayout",
+                "rule": {
+                  "effect": "ENABLE",
+                  "condition": {
+                    "scope": "#/properties/quietHours/properties/enabled",
+                    "schema": {
+                      "const": true
+                    }
+                  }
+                },
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/quietHours/properties/from"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/quietHours/properties/to"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "mentions": {
+          "email": true,
+          "push": true,
+          "sms": false
+        },
+        "directMessages": {
+          "email": false,
+          "push": true,
+          "sms": false
+        },
+        "weeklyDigest": {
+          "email": true,
+          "push": false,
+          "sms": false
+        },
+        "productUpdates": {
+          "email": true,
+          "push": false,
+          "sms": false
+        },
+        "quietHours": {
+          "enabled": true,
+          "from": "22:00:00",
+          "to": "07:00:00"
+        }
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Shows a default matrix as a table of ticks and crosses and takes changes as sentences; it describes settings and cannot be a settings screen.",
+    "a2ui": "A bound list of rows with three two-way checkboxes each makes a real matrix, and time inputs cover quiet hours; quiet-hour fields cannot be disabled when the switch is off.",
+    "html": "iOS-style switches in a grid, column headings that toggle a whole channel, a 24-hour quiet-hours bar and an unsaved-changes footer; saved state dies with the page.",
+    "agui": "Nested objects per activity with toggle controls and an ENABLE rule on the quiet-hour times return exactly the settings object the agent needs; the grid is four stacked groups."
+  }
+}

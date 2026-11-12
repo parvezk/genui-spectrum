@@ -1,0 +1,80 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "notification-prefs",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "notification-prefs",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["header", "intro", "matrix-card", "quiet-card", "save"] },
+        { "id": "header", "component": "Row", "align": "center", "children": ["header-icon", "title"] },
+        { "id": "header-icon", "component": "Icon", "name": "notifications" },
+        { "id": "title", "component": "Text", "variant": "h2", "weight": 1, "text": "Notifications" },
+        { "id": "intro", "component": "Text", "variant": "caption", "text": "Choose how you hear about each kind of activity." },
+
+        { "id": "matrix-card", "component": "Card", "child": "matrix" },
+        { "id": "matrix", "component": "List", "children": { "componentId": "type-block", "path": "/types" } },
+        { "id": "type-block", "component": "Column", "children": ["type-name", "type-hint", "type-channels", "type-divider"] },
+        { "id": "type-name", "component": "Text", "variant": "h5", "text": { "path": "label" } },
+        { "id": "type-hint", "component": "Text", "variant": "caption", "text": { "path": "hint" } },
+        { "id": "type-channels", "component": "Row", "justify": "spaceBetween", "children": ["type-email", "type-push", "type-sms"] },
+        { "id": "type-email", "component": "CheckBox", "label": "Email", "value": { "path": "email" } },
+        { "id": "type-push", "component": "CheckBox", "label": "Push", "value": { "path": "push" } },
+        { "id": "type-sms", "component": "CheckBox", "label": "SMS", "value": { "path": "sms" } },
+        { "id": "type-divider", "component": "Divider" },
+
+        { "id": "quiet-card", "component": "Card", "child": "quiet-col" },
+        { "id": "quiet-col", "component": "Column", "children": ["quiet-head", "quiet-toggle", "quiet-times", "quiet-note"] },
+        { "id": "quiet-head", "component": "Row", "align": "center", "children": ["quiet-icon", "quiet-title"] },
+        { "id": "quiet-icon", "component": "Icon", "name": "notificationsOff" },
+        { "id": "quiet-title", "component": "Text", "variant": "h5", "weight": 1, "text": "Quiet hours" },
+        { "id": "quiet-toggle", "component": "CheckBox", "label": "Hold push and SMS during quiet hours", "value": { "path": "/quiet/enabled" } },
+        { "id": "quiet-times", "component": "Row", "children": ["quiet-from", "quiet-to"] },
+        { "id": "quiet-from", "component": "DateTimeInput", "label": "From", "enableTime": true, "weight": 1, "value": { "path": "/quiet/from" } },
+        { "id": "quiet-to", "component": "DateTimeInput", "label": "To", "enableTime": true, "weight": 1, "value": { "path": "/quiet/to" } },
+        { "id": "quiet-note", "component": "Text", "variant": "caption", "text": "Email is not affected by quiet hours." },
+
+        {
+          "id": "save",
+          "component": "Button",
+          "variant": "primary",
+          "child": "save-label",
+          "action": {
+            "event": {
+              "name": "save_notification_preferences",
+              "context": {
+                "types": { "path": "/types" },
+                "quietEnabled": { "path": "/quiet/enabled" },
+                "quietFrom": { "path": "/quiet/from" },
+                "quietTo": { "path": "/quiet/to" }
+              }
+            }
+          }
+        },
+        { "id": "save-label", "component": "Text", "text": "Save preferences" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "notification-prefs",
+      "path": "/",
+      "value": {
+        "types": [
+          { "id": "mentions", "label": "Mentions", "hint": "Someone @mentions you", "email": true, "push": true, "sms": false },
+          { "id": "direct-messages", "label": "Direct messages", "hint": "A new private message", "email": false, "push": true, "sms": false },
+          { "id": "weekly-digest", "label": "Weekly digest", "hint": "A summary every Monday", "email": true, "push": false, "sms": false },
+          { "id": "product-updates", "label": "Product updates", "hint": "New features and announcements", "email": true, "push": false, "sms": false }
+        ],
+        "quiet": { "enabled": true, "from": "22:00", "to": "07:00" }
+      }
+    }
+  }
+]

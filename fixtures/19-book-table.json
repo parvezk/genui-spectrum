@@ -1,0 +1,650 @@
+{
+  "id": "19-book-table",
+  "index": 19,
+  "title": "Restaurant booking",
+  "category": "input",
+  "prompt": "Book me a table for dinner at Luigi's Trattoria. They take reservations from 17:30 to 21:30 in 30-minute slots, for 1 to 8 people, indoors or on the terrace.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Booking a table at Luigi's Trattoria\n\nHappy to book it. I need a few details first:\n\n1. **Date** — which evening?\n2. **Time** — they take dinner reservations every 30 minutes from 17:30 to 21:30:\n   `17:30` · `18:00` · `18:30` · `19:00` · `19:30` · `20:00` · `20:30` · `21:00` · `21:30`\n3. **Party size** — 1 to 8 people.\n4. **Seating** — indoors or on the terrace?\n5. **Name** for the reservation, and a **phone number** in case the restaurant needs to reach you.\n6. Anything they should know? (allergies, a high chair, a birthday…)\n\nYou can copy this, fill it in and send it back:\n\n```\nDate:\nTime:\nPeople:\nSeating: indoors / terrace\nName:\nPhone:\nNotes:\n```\n\nFor example: *\"Saturday, 19:30, 4 people, terrace, under Rossi, 555 0142, one vegetarian.\"*\n\n**Good to know**\n\n- Reservations go up to 8 people. For a larger group you would need to contact the restaurant directly.\n- If you choose the terrace, tell me whether an indoor table is an acceptable fallback.\n- A second-choice time helps in case your first slot is taken.\n\nOnce I have these I will make the request and confirm the details back to you.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "book-table",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
+          "sendDataModel": true
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "book-table",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "form"
+            },
+            {
+              "id": "form",
+              "component": "Column",
+              "children": [
+                "header",
+                "subtitle",
+                "date",
+                "time",
+                "party",
+                "party-readout",
+                "seating",
+                "divider",
+                "name",
+                "phone",
+                "notes",
+                "submit"
+              ]
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "header-icon",
+                "title"
+              ]
+            },
+            {
+              "id": "header-icon",
+              "component": "Icon",
+              "name": "event"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h3",
+              "weight": 1,
+              "text": "Luigi's Trattoria"
+            },
+            {
+              "id": "subtitle",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Dinner reservations 17:30–21:30 · up to 8 people · indoors or terrace"
+            },
+            {
+              "id": "date",
+              "component": "DateTimeInput",
+              "label": "Date",
+              "enableDate": true,
+              "value": {
+                "path": "/booking/date"
+              }
+            },
+            {
+              "id": "time",
+              "component": "ChoicePicker",
+              "label": "Time",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "17:30",
+                  "value": "17:30"
+                },
+                {
+                  "label": "18:00",
+                  "value": "18:00"
+                },
+                {
+                  "label": "18:30",
+                  "value": "18:30"
+                },
+                {
+                  "label": "19:00",
+                  "value": "19:00"
+                },
+                {
+                  "label": "19:30",
+                  "value": "19:30"
+                },
+                {
+                  "label": "20:00",
+                  "value": "20:00"
+                },
+                {
+                  "label": "20:30",
+                  "value": "20:30"
+                },
+                {
+                  "label": "21:00",
+                  "value": "21:00"
+                },
+                {
+                  "label": "21:30",
+                  "value": "21:30"
+                }
+              ],
+              "value": {
+                "path": "/booking/time"
+              }
+            },
+            {
+              "id": "party",
+              "component": "Slider",
+              "label": "Party size",
+              "min": 1,
+              "max": 8,
+              "value": {
+                "path": "/booking/partySize"
+              }
+            },
+            {
+              "id": "party-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Table for ${/booking/partySize} ${pluralize(value: ${/booking/partySize}, one: 'person', other: 'people')}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "seating",
+              "component": "ChoicePicker",
+              "label": "Seating",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Indoors",
+                  "value": "indoors"
+                },
+                {
+                  "label": "Terrace",
+                  "value": "terrace"
+                }
+              ],
+              "value": {
+                "path": "/booking/seating"
+              }
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "name",
+              "component": "TextField",
+              "label": "Name for the reservation",
+              "value": {
+                "path": "/booking/name"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/booking/name"
+                      }
+                    }
+                  },
+                  "message": "Enter a name."
+                }
+              ]
+            },
+            {
+              "id": "phone",
+              "component": "TextField",
+              "label": "Phone",
+              "value": {
+                "path": "/booking/phone"
+              },
+              "checks": [
+                {
+                  "condition": {
+                    "call": "regex",
+                    "args": {
+                      "value": {
+                        "path": "/booking/phone"
+                      },
+                      "pattern": "^\\+?[0-9 ()-]{7,20}$"
+                    }
+                  },
+                  "message": "Enter a phone number with at least 7 digits."
+                }
+              ]
+            },
+            {
+              "id": "notes",
+              "component": "TextField",
+              "label": "Anything they should know? (optional)",
+              "variant": "longText",
+              "value": {
+                "path": "/booking/notes"
+              }
+            },
+            {
+              "id": "submit",
+              "component": "Button",
+              "variant": "primary",
+              "child": "submit-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "and",
+                    "args": {
+                      "values": [
+                        {
+                          "call": "required",
+                          "args": {
+                            "value": {
+                              "path": "/booking/date"
+                            }
+                          }
+                        },
+                        {
+                          "call": "required",
+                          "args": {
+                            "value": {
+                              "path": "/booking/name"
+                            }
+                          }
+                        },
+                        {
+                          "call": "regex",
+                          "args": {
+                            "value": {
+                              "path": "/booking/phone"
+                            },
+                            "pattern": "^\\+?[0-9 ()-]{7,20}$"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "message": "Pick a date and enter a name and phone number to continue."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "book_table",
+                  "context": {
+                    "restaurant": "Luigi's Trattoria",
+                    "date": {
+                      "path": "/booking/date"
+                    },
+                    "time": {
+                      "path": "/booking/time"
+                    },
+                    "partySize": {
+                      "path": "/booking/partySize"
+                    },
+                    "seating": {
+                      "path": "/booking/seating"
+                    },
+                    "name": {
+                      "path": "/booking/name"
+                    },
+                    "phone": {
+                      "path": "/booking/phone"
+                    },
+                    "notes": {
+                      "path": "/booking/notes"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "submit-label",
+              "component": "Text",
+              "text": "Request table"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "book-table",
+          "path": "/booking",
+          "value": {
+            "date": "",
+            "time": [
+              "19:30"
+            ],
+            "partySize": 2,
+            "seating": [
+              "indoors"
+            ],
+            "name": "",
+            "phone": "",
+            "notes": ""
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Book a table at Luigi's Trattoria</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 Georgia, \"Times New Roman\", serif; color: #2b2118; background: #fdf8f0; }\n  .ui, button, input, textarea { font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif; }\n  header { text-align: center; border-bottom: 3px double #b23a2f; padding-bottom: 10px; margin-bottom: 14px; }\n  h1 { font-size: 24px; margin: 0; font-style: italic; color: #b23a2f; }\n  header small { color: #7a6a5a; letter-spacing: .08em; text-transform: uppercase; font-size: 10px; font-family: system-ui, sans-serif; }\n  fieldset { border: 0; padding: 0; margin: 0 0 14px; }\n  legend, label.lbl { display: block; font: 600 12px system-ui, sans-serif; text-transform: uppercase; letter-spacing: .05em; color: #7a6a5a; margin-bottom: 5px; padding: 0; }\n  input[type=date], input[type=text], input[type=tel], textarea { width: 100%; padding: 8px 10px; border: 1px solid #d9cbb8; border-radius: 8px; font-size: 14px; background: #fff; color: inherit; }\n  textarea { resize: vertical; min-height: 54px; }\n  input.bad { border-color: #b23a2f; background: #fff5f3; }\n  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }\n  .slot, .seat { border: 1px solid #d9cbb8; background: #fff; border-radius: 8px; padding: 7px 0; font-size: 14px; cursor: pointer; color: inherit; }\n  .slot.on, .seat.on { background: #b23a2f; border-color: #b23a2f; color: #fff; font-weight: 600; }\n  .seats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }\n  .stepper { display: flex; align-items: center; gap: 12px; }\n  .stepper button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d9cbb8; background: #fff; font-size: 18px; cursor: pointer; color: inherit; }\n  .stepper button:disabled { opacity: .35; cursor: default; }\n  .stepper b { font: 600 18px system-ui, sans-serif; min-width: 86px; text-align: center; }\n  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }\n  .err { color: #b23a2f; font: 12px system-ui, sans-serif; min-height: 16px; margin-top: 2px; }\n  .cta { width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #2b2118; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }\n  .ticket { background: #fff; border: 1px dashed #b23a2f; border-radius: 12px; padding: 14px; }\n  .ticket h2 { margin: 0 0 8px; font-size: 18px; font-style: italic; color: #b23a2f; }\n  .ticket dl { display: grid; grid-template-columns: 90px 1fr; gap: 4px 8px; margin: 0 0 10px; font-family: system-ui, sans-serif; font-size: 13px; }\n  .ticket dt { color: #7a6a5a; }\n  .ticket dd { margin: 0; font-weight: 600; }\n  .ticket p { font: 12px system-ui, sans-serif; color: #7a6a5a; margin: 0 0 10px; }\n  .link { background: none; border: 0; color: #b23a2f; text-decoration: underline; cursor: pointer; padding: 0; font-size: 13px; }\n  [hidden] { display: none !important; }\n</style>\n</head>\n<body>\n  <header><small>Reserve a table</small><h1>Luigi's Trattoria</h1></header>\n\n  <div id=\"formView\">\n    <fieldset>\n      <label class=\"lbl\" for=\"date\">Date</label>\n      <input type=\"date\" id=\"date\">\n      <div class=\"err\" id=\"dateErr\"></div>\n    </fieldset>\n\n    <fieldset>\n      <legend>Time</legend>\n      <div class=\"slots\" id=\"slots\"></div>\n    </fieldset>\n\n    <fieldset>\n      <legend>Party size</legend>\n      <div class=\"stepper\"><button type=\"button\" id=\"minus\" aria-label=\"Fewer people\">−</button><b id=\"party\"></b><button type=\"button\" id=\"plus\" aria-label=\"More people\">+</button></div>\n    </fieldset>\n\n    <fieldset>\n      <legend>Seating</legend>\n      <div class=\"seats\" id=\"seats\"><button type=\"button\" class=\"seat on\" data-seat=\"Indoors\">Indoors</button><button type=\"button\" class=\"seat\" data-seat=\"Terrace\">Terrace</button></div>\n    </fieldset>\n\n    <fieldset class=\"two\">\n      <div><label class=\"lbl\" for=\"name\">Name</label><input type=\"text\" id=\"name\" autocomplete=\"name\"><div class=\"err\" id=\"nameErr\"></div></div>\n      <div><label class=\"lbl\" for=\"phone\">Phone</label><input type=\"tel\" id=\"phone\" autocomplete=\"tel\"><div class=\"err\" id=\"phoneErr\"></div></div>\n    </fieldset>\n\n    <fieldset>\n      <label class=\"lbl\" for=\"notes\">Anything they should know? (optional)</label>\n      <textarea id=\"notes\" placeholder=\"Allergies, high chair, a birthday…\"></textarea>\n    </fieldset>\n\n    <button type=\"button\" class=\"cta\" id=\"review\">Review reservation</button>\n  </div>\n\n  <div id=\"doneView\" hidden>\n    <div class=\"ticket\">\n      <h2>Your reservation request</h2>\n      <dl id=\"summary\"></dl>\n      <p>This page runs in a sandbox with no network access, so nothing has been sent to the restaurant. These are the details an assistant would submit for you.</p>\n      <button type=\"button\" class=\"link\" id=\"edit\">Change something</button>\n    </div>\n  </div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var times = ['17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'];\n  var state = { time: '19:30', party: 2, seat: 'Indoors' };\n  var tried = false;\n\n  // Earliest bookable day is today.\n  var now = new Date();\n  var pad = function (n) { return n < 10 ? '0' + n : String(n); };\n  var today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());\n  $('date').min = today;\n\n  times.forEach(function (t) {\n    var b = document.createElement('button');\n    b.type = 'button';\n    b.className = 'slot';\n    b.textContent = t;\n    b.setAttribute('data-time', t);\n    $('slots').appendChild(b);\n  });\n\n  function errors() {\n    var e = {};\n    var d = $('date').value;\n    if (!d) { e.date = 'Pick a date.'; }\n    else if (d < today) { e.date = 'That date is in the past.'; }\n    if (!$('name').value.trim()) { e.name = 'Enter a name.'; }\n    var digits = $('phone').value.replace(/[^0-9]/g, '');\n    if (digits.length < 7) { e.phone = 'Enter at least 7 digits.'; }\n    return e;\n  }\n\n  function render() {\n    var slots = $('slots').children;\n    for (var i = 0; i < slots.length; i++) {\n      var on = slots[i].getAttribute('data-time') === state.time;\n      slots[i].className = 'slot' + (on ? ' on' : '');\n      slots[i].setAttribute('aria-pressed', on ? 'true' : 'false');\n    }\n    var seats = $('seats').children;\n    for (var s = 0; s < seats.length; s++) {\n      var picked = seats[s].getAttribute('data-seat') === state.seat;\n      seats[s].className = 'seat' + (picked ? ' on' : '');\n      seats[s].setAttribute('aria-pressed', picked ? 'true' : 'false');\n    }\n    $('party').textContent = state.party + (state.party === 1 ? ' person' : ' people');\n    $('minus').disabled = state.party <= 1;\n    $('plus').disabled = state.party >= 8;\n\n    var e = tried ? errors() : {};\n    $('dateErr').textContent = e.date || '';\n    $('nameErr').textContent = e.name || '';\n    $('phoneErr').textContent = e.phone || '';\n    $('date').className = e.date ? 'bad' : '';\n    $('name').className = e.name ? 'bad' : '';\n    $('phone').className = e.phone ? 'bad' : '';\n  }\n\n  function prettyDate(iso) {\n    var parts = iso.split('-');\n    var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));\n    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });\n  }\n\n  $('slots').addEventListener('click', function (ev) {\n    var t = ev.target.getAttribute('data-time');\n    if (t) { state.time = t; render(); }\n  });\n  $('seats').addEventListener('click', function (ev) {\n    var s = ev.target.getAttribute('data-seat');\n    if (s) { state.seat = s; render(); }\n  });\n  $('minus').addEventListener('click', function () { if (state.party > 1) { state.party -= 1; render(); } });\n  $('plus').addEventListener('click', function () { if (state.party < 8) { state.party += 1; render(); } });\n  ['date', 'name', 'phone'].forEach(function (id) { $(id).addEventListener('input', render); });\n\n  $('review').addEventListener('click', function () {\n    tried = true;\n    render();\n    var e = errors();\n    if (e.date || e.name || e.phone) { return; }\n    var rows = [\n      ['Date', prettyDate($('date').value)],\n      ['Time', state.time],\n      ['Party', state.party + (state.party === 1 ? ' person' : ' people')],\n      ['Seating', state.seat],\n      ['Name', $('name').value.trim()],\n      ['Phone', $('phone').value.trim()],\n      ['Notes', $('notes').value.trim() || 'None']\n    ];\n    var dl = $('summary');\n    dl.textContent = '';\n    rows.forEach(function (r) {\n      var dt = document.createElement('dt'); dt.textContent = r[0];\n      var dd = document.createElement('dd'); dd.textContent = r[1];\n      dl.appendChild(dt); dl.appendChild(dd);\n    });\n    $('formView').hidden = true;\n    $('doneView').hidden = false;\n  });\n  $('edit').addEventListener('click', function () {\n    $('doneView').hidden = true;\n    $('formView').hidden = false;\n  });\n\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_book_table_19",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Collect the details needed to reserve a dinner table at Luigi's Trattoria: date, time (30-minute slots from 17:30 to 21:30), party size (1 to 8), seating (indoors or terrace), a name and phone number for the reservation, and optional notes for the restaurant.",
+        "data": {
+          "restaurant": "Luigi's Trattoria",
+          "slots": [
+            "17:30",
+            "18:00",
+            "18:30",
+            "19:00",
+            "19:30",
+            "20:00",
+            "20:30",
+            "21:00",
+            "21:30"
+          ],
+          "maxPartySize": 8,
+          "seating": [
+            "indoors",
+            "terrace"
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date"
+            },
+            "time": {
+              "type": "string",
+              "enum": [
+                "17:30",
+                "18:00",
+                "18:30",
+                "19:00",
+                "19:30",
+                "20:00",
+                "20:30",
+                "21:00",
+                "21:30"
+              ]
+            },
+            "partySize": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "seating": {
+              "type": "string",
+              "enum": [
+                "indoors",
+                "terrace"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "phone": {
+              "type": "string",
+              "pattern": "^\\+?[0-9 ()-]{7,20}$"
+            },
+            "occasion": {
+              "type": "string",
+              "enum": [
+                "none",
+                "birthday",
+                "anniversary",
+                "business"
+              ]
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 300
+            }
+          },
+          "required": [
+            "date",
+            "time",
+            "partySize",
+            "seating",
+            "name",
+            "phone"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "time": {
+            "type": "string",
+            "title": "Time",
+            "enum": [
+              "17:30",
+              "18:00",
+              "18:30",
+              "19:00",
+              "19:30",
+              "20:00",
+              "20:30",
+              "21:00",
+              "21:30"
+            ]
+          },
+          "partySize": {
+            "type": "integer",
+            "title": "Party size",
+            "minimum": 1,
+            "maximum": 8,
+            "default": 2
+          },
+          "seating": {
+            "type": "string",
+            "title": "Seating",
+            "oneOf": [
+              {
+                "const": "indoors",
+                "title": "Indoors"
+              },
+              {
+                "const": "terrace",
+                "title": "Terrace"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name for the reservation",
+            "minLength": 1
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone",
+            "pattern": "^\\+?[0-9 ()-]{7,20}$"
+          },
+          "occasion": {
+            "type": "string",
+            "title": "Occasion",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "No special occasion"
+              },
+              {
+                "const": "birthday",
+                "title": "Birthday"
+              },
+              {
+                "const": "anniversary",
+                "title": "Anniversary"
+              },
+              {
+                "const": "business",
+                "title": "Business dinner"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "title": "Anything they should know?",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "date",
+          "time",
+          "partySize",
+          "seating",
+          "name",
+          "phone"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Reserve a table at Luigi's Trattoria"
+          },
+          {
+            "type": "HorizontalLayout",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/date"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/time"
+              }
+            ]
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/partySize",
+            "options": {
+              "slider": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/seating",
+            "options": {
+              "format": "radio"
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Your details",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/name"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/phone"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/occasion"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/notes",
+                "options": {
+                  "multi": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "time": "19:30",
+        "partySize": 2,
+        "seating": "indoors",
+        "occasion": "none"
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Can only ask: it lists the six details, the valid time slots and a template to fill in, so the booking takes at least one more message.",
+    "a2ui": "A good fit: date input, time chips, party slider with a pluralised readout, validated name and phone, and a button that stays blocked until the checks pass, then sends one event.",
+    "html": "The most polished form (slot grid, stepper, inline errors, a ticket-style review), but a sandboxed page with no network has no way to hand the result to anyone.",
+    "agui": "The home turf: every field is typed and constrained by the output schema, the date and time get real pickers, and submit returns a validated tool result."
+  }
+}
