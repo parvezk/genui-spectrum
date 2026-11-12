@@ -1,0 +1,6 @@
+{
+  "text": "Carries the whole explanation, but the exchange is only an ASCII sketch and a table; nothing can be stepped through.",
+  "a2ui": "Cards, tabs and a data-bound list organise the steps well, but the catalog has no diagram primitive, so the back-and-forth reads as a list and not a sequence.",
+  "html": "Drew the sequence diagram in SVG, made it steppable and let the reader change both starting numbers; every pixel of layout and styling had to be invented.",
+  "agui": "A form protocol has no home for an explanation: the segments become a disabled table, the prose shrinks to two labels, and the only real interaction is picking a follow-up."
+}

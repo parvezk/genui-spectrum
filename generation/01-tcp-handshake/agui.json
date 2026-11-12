@@ -1,0 +1,96 @@
+{
+  "toolCall": {
+    "id": "call_tcp_handshake_01",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the three segments of the TCP handshake as a read-only table (step, direction, flags, seq, ack) with a one-sentence explanation of why three steps are needed. Then ask the user which follow-up they want and how deep to go.",
+      "data": {
+        "segments": [
+          { "step": 1, "direction": "Client → Server", "flags": "SYN", "seq": 1000, "ack": "—" },
+          { "step": 2, "direction": "Server → Client", "flags": "SYN, ACK", "seq": 5000, "ack": "1001" },
+          { "step": 3, "direction": "Client → Server", "flags": "ACK", "seq": 1001, "ack": "5001" }
+        ],
+        "why": "Three segments are the minimum for each side to confirm the other received its starting sequence number."
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "followUp": {
+            "type": "string",
+            "enum": ["none", "teardown", "syn-flood", "sequence-numbers", "tls-on-top"]
+          },
+          "depth": { "type": "string", "enum": ["overview", "detailed"] }
+        },
+        "required": ["followUp", "depth"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "segments": {
+          "type": "array",
+          "title": "Handshake segments",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": { "type": "integer", "title": "Step" },
+              "direction": { "type": "string", "title": "Direction" },
+              "flags": { "type": "string", "title": "Flags" },
+              "seq": { "type": "integer", "title": "seq" },
+              "ack": { "type": "string", "title": "ack" }
+            }
+          }
+        },
+        "followUp": {
+          "type": "string",
+          "title": "What should I explain next?",
+          "oneOf": [
+            { "const": "none", "title": "Nothing, that covers it" },
+            { "const": "teardown", "title": "How a connection is closed (FIN)" },
+            { "const": "syn-flood", "title": "SYN floods and SYN cookies" },
+            { "const": "sequence-numbers", "title": "How sequence numbers are used after the handshake" },
+            { "const": "tls-on-top", "title": "How TLS adds its own handshake on top" }
+          ]
+        },
+        "depth": {
+          "type": "string",
+          "title": "Level of detail",
+          "oneOf": [
+            { "const": "overview", "title": "Overview" },
+            { "const": "detailed", "title": "Detailed" }
+          ]
+        }
+      },
+      "required": ["followUp", "depth"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "The TCP three-way handshake" },
+        {
+          "type": "Label",
+          "text": "Three segments are the minimum for each side to confirm the other received its starting sequence number."
+        },
+        { "type": "Control", "scope": "#/properties/segments", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Follow-up",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/followUp", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/depth", "options": { "format": "radio" } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "segments": [
+        { "step": 1, "direction": "Client → Server", "flags": "SYN", "seq": 1000, "ack": "—" },
+        { "step": 2, "direction": "Server → Client", "flags": "SYN, ACK", "seq": 5000, "ack": "1001" },
+        { "step": 3, "direction": "Client → Server", "flags": "ACK", "seq": 1001, "ack": "5001" }
+      ],
+      "depth": "overview"
+    }
+  }
+}

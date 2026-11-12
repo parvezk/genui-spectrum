@@ -1,0 +1,25 @@
+{
+  "a2ui": {
+    "version": "v0.9.1",
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+  },
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "fixtures": [
+    {
+      "id": "01-tcp-handshake",
+      "index": 1,
+      "title": "TCP three-way handshake",
+      "category": "answer",
+      "prompt": "Explain how the TCP three-way handshake works.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "tcp-handshake",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "tcp-handshake",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "intro", "tabs"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "The TCP three-way handshake" },
+        {
+          "id": "intro",
+          "component": "Text",
+          "text": "Before any data moves, client and server exchange three segments to agree on starting sequence numbers and prove that both directions work."
+        },
+        {
+          "id": "tabs",
+          "component": "Tabs",
+          "tabs": [
+            { "title": "The exchange", "child": "steps" },
+            { "title": "Why three?", "child": "why" },
+            { "title": "Worth knowing", "child": "extras" }
+          ]
+        },
+
+        { "id": "steps", "component": "List", "children": { "componentId": "step-card", "path": "/steps" } },
+        { "id": "step-card", "component": "Card", "child": "step-row" },
+        { "id": "step-row", "component": "Row", "align": "center", "children": ["step-icon", "step-body"] },
+        { "id": "step-icon", "component": "Icon", "name": { "path": "icon" } },
+        { "id": "step-body", "component": "Column", "weight": 1, "children": ["step-title", "step-direction", "step-numbers", "step-detail"] },
+        {
+          "id": "step-title",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatString", "args": { "value": "${number}. ${flags}" }, "returnType": "string" }
+        },
+        { "id": "step-direction", "component": "Text", "variant": "caption", "text": { "path": "direction" } },
+        { "id": "step-numbers", "component": "Text", "text": { "path": "numbers" } },
+        { "id": "step-detail", "component": "Text", "text": { "path": "detail" } },
+
+        { "id": "why", "component": "Column", "children": ["why-1", "why-2", "why-3"] },
+        { "id": "why-1", "component": "Card", "child": "why-1-col" },
+        { "id": "why-1-col", "component": "Column", "children": ["why-1-title", "why-1-text"] },
+        { "id": "why-1-title", "component": "Text", "variant": "h5", "text": "Both directions are confirmed" },
+        {
+          "id": "why-1-text",
+          "component": "Text",
+          "text": "Each side must learn that the other received its sequence number. Two messages would only prove the server can hear the client."
+        },
+        { "id": "why-2", "component": "Card", "child": "why-2-col" },
+        { "id": "why-2-col", "component": "Column", "children": ["why-2-title", "why-2-text"] },
+        { "id": "why-2-title", "component": "Text", "variant": "h5", "text": "Stale requests are rejected" },
+        {
+          "id": "why-2-text",
+          "component": "Text",
+          "text": "If an old, delayed SYN shows up, the server's SYN-ACK goes unanswered or is reset, so no phantom connection opens."
+        },
+        { "id": "why-3", "component": "Card", "child": "why-3-col" },
+        { "id": "why-3-col", "component": "Column", "children": ["why-3-title", "why-3-text"] },
+        { "id": "why-3-title", "component": "Text", "variant": "h5", "text": "Sequence numbers are synchronised" },
+        {
+          "id": "why-3-text",
+          "component": "Text",
+          "text": "Every later byte is numbered relative to the two starting values, which is what makes ordering and retransmission possible."
+        },
+
+        { "id": "extras", "component": "List", "children": { "componentId": "extra-row", "path": "/extras" } },
+        { "id": "extra-row", "component": "Row", "align": "start", "children": ["extra-icon", "extra-text"] },
+        { "id": "extra-icon", "component": "Icon", "name": "info" },
+        { "id": "extra-text", "component": "Text", "weight": 1, "text": { "path": "text" } }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "tcp-handshake",
+      "path": "/",
+      "value": {
+        "steps": [
+          {
+            "number": 1,
+            "flags": "SYN",
+            "icon": "arrowForward",
+            "direction": "Client → Server · client enters SYN-SENT",
+            "numbers": "seq = 1000",
+            "detail": "The client picks an initial sequence number and asks to open a connection."
+          },
+          {
+            "number": 2,
+            "flags": "SYN-ACK",
+            "icon": "arrowBack",
+            "direction": "Server → Client · server enters SYN-RECEIVED",
+            "numbers": "seq = 5000, ack = 1001",
+            "detail": "The server sends its own sequence number and acknowledges the client's (1000 + 1)."
+          },
+          {
+            "number": 3,
+            "flags": "ACK",
+            "icon": "arrowForward",
+            "direction": "Client → Server · both sides ESTABLISHED",
+            "numbers": "seq = 1001, ack = 5001",
+            "detail": "The client acknowledges the server's number (5000 + 1). Data can now flow both ways."
+          }
+        ],
+        "extras": [
+          { "text": "A SYN consumes one sequence number, which is why each ack is the received number plus one." },
+          { "text": "Initial sequence numbers are randomised so an off-path attacker cannot guess them." },
+          { "text": "Half-open connections wait in a queue for step 3. Flooding that queue is a SYN flood; SYN cookies are the usual defence." },
+          { "text": "Closing a connection is a separate exchange, normally four segments: FIN, ACK, FIN, ACK." }
+        ]
+      }
+    }
+  }
+]

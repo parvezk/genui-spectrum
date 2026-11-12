@@ -1,0 +1,569 @@
+{
+  "id": "01-tcp-handshake",
+  "index": 1,
+  "title": "TCP three-way handshake",
+  "category": "answer",
+  "prompt": "Explain how the TCP three-way handshake works.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## The TCP three-way handshake\n\nBefore two hosts exchange data over TCP, they agree on starting sequence numbers and confirm that each side can both send and receive. That takes three segments.\n\n### The three steps\n\n1. **SYN** — The client picks an initial sequence number (say `x = 1000`) and sends a segment with the `SYN` flag set. It moves to the `SYN-SENT` state.\n2. **SYN-ACK** — The server replies with its own initial sequence number (`y = 5000`) and acknowledges the client's: `SYN` and `ACK` flags, `ack = x + 1 = 1001`. It moves to `SYN-RECEIVED`.\n3. **ACK** — The client acknowledges the server's number: `ACK` flag, `seq = 1001`, `ack = y + 1 = 5001`. Both sides are now `ESTABLISHED` and data can flow.\n\n```\nClient                               Server\n  | ---- SYN       seq=1000 -------->  |\n  | <--- SYN-ACK   seq=5000 ack=1001 - |\n  | ---- ACK       seq=1001 ack=5001 > |\n  |          connection open           |\n```\n\n| Step | Direction | Flags | seq | ack |\n| --- | --- | --- | --- | --- |\n| 1 | Client → Server | SYN | 1000 | — |\n| 2 | Server → Client | SYN, ACK | 5000 | 1001 |\n| 3 | Client → Server | ACK | 1001 | 5001 |\n\n### Why three, and not two?\n\n- **Both directions must be confirmed.** Each side has to learn that the other received its sequence number. Two messages would only prove that the server can hear the client.\n- **Stale requests are rejected.** If an old, delayed `SYN` arrives, the server's `SYN-ACK` goes unanswered (or is reset), so no half-real connection is opened.\n- **Sequence numbers are synchronised.** Every later byte is numbered relative to `x` and `y`, which is what makes ordering and retransmission possible.\n\n### Worth knowing\n\n- A `SYN` consumes one sequence number, which is why each acknowledgement is \"the number I received plus one\".\n- Initial sequence numbers are randomised so that an off-path attacker cannot guess them.\n- A server keeps half-open connections in a queue while it waits for step 3. Flooding that queue is the classic **SYN flood** attack; SYN cookies are the usual defence.\n- Closing a connection is a separate exchange, normally four segments (`FIN`, `ACK`, `FIN`, `ACK`).\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "tcp-handshake",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "tcp-handshake",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "intro",
+                "tabs"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "The TCP three-way handshake"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "text": "Before any data moves, client and server exchange three segments to agree on starting sequence numbers and prove that both directions work."
+            },
+            {
+              "id": "tabs",
+              "component": "Tabs",
+              "tabs": [
+                {
+                  "title": "The exchange",
+                  "child": "steps"
+                },
+                {
+                  "title": "Why three?",
+                  "child": "why"
+                },
+                {
+                  "title": "Worth knowing",
+                  "child": "extras"
+                }
+              ]
+            },
+            {
+              "id": "steps",
+              "component": "List",
+              "children": {
+                "componentId": "step-card",
+                "path": "/steps"
+              }
+            },
+            {
+              "id": "step-card",
+              "component": "Card",
+              "child": "step-row"
+            },
+            {
+              "id": "step-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "step-icon",
+                "step-body"
+              ]
+            },
+            {
+              "id": "step-icon",
+              "component": "Icon",
+              "name": {
+                "path": "icon"
+              }
+            },
+            {
+              "id": "step-body",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "step-title",
+                "step-direction",
+                "step-numbers",
+                "step-detail"
+              ]
+            },
+            {
+              "id": "step-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${number}. ${flags}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "step-direction",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "direction"
+              }
+            },
+            {
+              "id": "step-numbers",
+              "component": "Text",
+              "text": {
+                "path": "numbers"
+              }
+            },
+            {
+              "id": "step-detail",
+              "component": "Text",
+              "text": {
+                "path": "detail"
+              }
+            },
+            {
+              "id": "why",
+              "component": "Column",
+              "children": [
+                "why-1",
+                "why-2",
+                "why-3"
+              ]
+            },
+            {
+              "id": "why-1",
+              "component": "Card",
+              "child": "why-1-col"
+            },
+            {
+              "id": "why-1-col",
+              "component": "Column",
+              "children": [
+                "why-1-title",
+                "why-1-text"
+              ]
+            },
+            {
+              "id": "why-1-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Both directions are confirmed"
+            },
+            {
+              "id": "why-1-text",
+              "component": "Text",
+              "text": "Each side must learn that the other received its sequence number. Two messages would only prove the server can hear the client."
+            },
+            {
+              "id": "why-2",
+              "component": "Card",
+              "child": "why-2-col"
+            },
+            {
+              "id": "why-2-col",
+              "component": "Column",
+              "children": [
+                "why-2-title",
+                "why-2-text"
+              ]
+            },
+            {
+              "id": "why-2-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Stale requests are rejected"
+            },
+            {
+              "id": "why-2-text",
+              "component": "Text",
+              "text": "If an old, delayed SYN shows up, the server's SYN-ACK goes unanswered or is reset, so no phantom connection opens."
+            },
+            {
+              "id": "why-3",
+              "component": "Card",
+              "child": "why-3-col"
+            },
+            {
+              "id": "why-3-col",
+              "component": "Column",
+              "children": [
+                "why-3-title",
+                "why-3-text"
+              ]
+            },
+            {
+              "id": "why-3-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Sequence numbers are synchronised"
+            },
+            {
+              "id": "why-3-text",
+              "component": "Text",
+              "text": "Every later byte is numbered relative to the two starting values, which is what makes ordering and retransmission possible."
+            },
+            {
+              "id": "extras",
+              "component": "List",
+              "children": {
+                "componentId": "extra-row",
+                "path": "/extras"
+              }
+            },
+            {
+              "id": "extra-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "extra-icon",
+                "extra-text"
+              ]
+            },
+            {
+              "id": "extra-icon",
+              "component": "Icon",
+              "name": "info"
+            },
+            {
+              "id": "extra-text",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "text"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "tcp-handshake",
+          "path": "/",
+          "value": {
+            "steps": [
+              {
+                "number": 1,
+                "flags": "SYN",
+                "icon": "arrowForward",
+                "direction": "Client → Server · client enters SYN-SENT",
+                "numbers": "seq = 1000",
+                "detail": "The client picks an initial sequence number and asks to open a connection."
+              },
+              {
+                "number": 2,
+                "flags": "SYN-ACK",
+                "icon": "arrowBack",
+                "direction": "Server → Client · server enters SYN-RECEIVED",
+                "numbers": "seq = 5000, ack = 1001",
+                "detail": "The server sends its own sequence number and acknowledges the client's (1000 + 1)."
+              },
+              {
+                "number": 3,
+                "flags": "ACK",
+                "icon": "arrowForward",
+                "direction": "Client → Server · both sides ESTABLISHED",
+                "numbers": "seq = 1001, ack = 5001",
+                "detail": "The client acknowledges the server's number (5000 + 1). Data can now flow both ways."
+              }
+            ],
+            "extras": [
+              {
+                "text": "A SYN consumes one sequence number, which is why each ack is the received number plus one."
+              },
+              {
+                "text": "Initial sequence numbers are randomised so an off-path attacker cannot guess them."
+              },
+              {
+                "text": "Half-open connections wait in a queue for step 3. Flooding that queue is a SYN flood; SYN cookies are the usual defence."
+              },
+              {
+                "text": "Closing a connection is a separate exchange, normally four segments: FIN, ACK, FIN, ACK."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>TCP three-way handshake</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1f2933; background: #f7f9fb; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  p.lead { margin: 0 0 12px; color: #52606d; }\n  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-bottom: 12px; }\n  label { display: flex; flex-direction: column; font-size: 12px; color: #52606d; gap: 2px; }\n  input[type=number] { width: 96px; padding: 5px 6px; border: 1px solid #cbd2d9; border-radius: 6px; font: inherit; }\n  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd2d9; background: #fff; font: inherit; cursor: pointer; }\n  button.primary { background: #0b69a3; border-color: #0b69a3; color: #fff; }\n  button:disabled { opacity: .45; cursor: default; }\n  .stage { background: #fff; border: 1px solid #e4e7eb; border-radius: 10px; padding: 8px; }\n  svg { width: 100%; height: auto; display: block; }\n  .life { stroke: #9aa5b1; stroke-width: 2; stroke-dasharray: 4 4; }\n  .host { font-weight: 600; font-size: 13px; fill: #1f2933; }\n  .state { font-size: 11px; fill: #0b69a3; font-weight: 600; }\n  .msg { opacity: 0; transition: opacity .35s ease; }\n  .msg.on { opacity: 1; }\n  .msg line { stroke-width: 2.5; }\n  .msg text { font-size: 11.5px; }\n  .msg .flag { font-weight: 700; }\n  .explain { margin-top: 12px; background: #fff; border: 1px solid #e4e7eb; border-left: 4px solid #0b69a3; border-radius: 8px; padding: 10px 12px; min-height: 76px; }\n  .explain h2 { font-size: 14px; margin: 0 0 4px; }\n  .explain p { margin: 0; color: #3e4c59; }\n  .dots { display: flex; gap: 6px; margin-top: 10px; }\n  .dot { width: 26px; height: 5px; border-radius: 3px; background: #cbd2d9; }\n  .dot.on { background: #0b69a3; }\n  details { margin-top: 12px; background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 8px 12px; }\n  summary { cursor: pointer; font-weight: 600; }\n  details ul { margin: 8px 0 2px; padding-left: 18px; color: #3e4c59; }\n</style>\n</head>\n<body>\n  <h1>The TCP three-way handshake</h1>\n  <p class=\"lead\">Step through the three segments that open a connection. Change the starting sequence numbers to see how the acknowledgements follow.</p>\n\n  <div class=\"controls\">\n    <label>Client ISN (x)<input id=\"isnClient\" type=\"number\" value=\"1000\" min=\"0\" max=\"99999\"></label>\n    <label>Server ISN (y)<input id=\"isnServer\" type=\"number\" value=\"5000\" min=\"0\" max=\"99999\"></label>\n    <button id=\"prev\">Back</button>\n    <button id=\"next\" class=\"primary\">Next step</button>\n    <button id=\"reset\">Reset</button>\n  </div>\n\n  <div class=\"stage\">\n    <svg viewBox=\"0 0 360 250\" role=\"img\" aria-label=\"Sequence diagram of the TCP handshake\">\n      <defs>\n        <marker id=\"arrowBlue\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"#0b69a3\"/></marker>\n        <marker id=\"arrowGreen\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"#18794e\"/></marker>\n      </defs>\n      <text class=\"host\" x=\"50\" y=\"18\" text-anchor=\"middle\">Client</text>\n      <text class=\"host\" x=\"310\" y=\"18\" text-anchor=\"middle\">Server</text>\n      <text class=\"state\" id=\"stateClient\" x=\"50\" y=\"34\" text-anchor=\"middle\">CLOSED</text>\n      <text class=\"state\" id=\"stateServer\" x=\"310\" y=\"34\" text-anchor=\"middle\">LISTEN</text>\n      <line class=\"life\" x1=\"50\" y1=\"42\" x2=\"50\" y2=\"240\"/>\n      <line class=\"life\" x1=\"310\" y1=\"42\" x2=\"310\" y2=\"240\"/>\n\n      <g class=\"msg\" id=\"msg1\">\n        <line x1=\"54\" y1=\"70\" x2=\"306\" y2=\"100\" stroke=\"#0b69a3\" marker-end=\"url(#arrowBlue)\"/>\n        <text x=\"180\" y=\"72\" text-anchor=\"middle\" fill=\"#0b69a3\"><tspan class=\"flag\">SYN</tspan> <tspan id=\"m1nums\"></tspan></text>\n      </g>\n      <g class=\"msg\" id=\"msg2\">\n        <line x1=\"306\" y1=\"125\" x2=\"54\" y2=\"155\" stroke=\"#18794e\" marker-end=\"url(#arrowGreen)\"/>\n        <text x=\"180\" y=\"127\" text-anchor=\"middle\" fill=\"#18794e\"><tspan class=\"flag\">SYN-ACK</tspan> <tspan id=\"m2nums\"></tspan></text>\n      </g>\n      <g class=\"msg\" id=\"msg3\">\n        <line x1=\"54\" y1=\"180\" x2=\"306\" y2=\"210\" stroke=\"#0b69a3\" marker-end=\"url(#arrowBlue)\"/>\n        <text x=\"180\" y=\"182\" text-anchor=\"middle\" fill=\"#0b69a3\"><tspan class=\"flag\">ACK</tspan> <tspan id=\"m3nums\"></tspan></text>\n      </g>\n    </svg>\n  </div>\n\n  <div class=\"explain\" aria-live=\"polite\">\n    <h2 id=\"stepTitle\"></h2>\n    <p id=\"stepText\"></p>\n    <div class=\"dots\"><span class=\"dot\" id=\"dot1\"></span><span class=\"dot\" id=\"dot2\"></span><span class=\"dot\" id=\"dot3\"></span></div>\n  </div>\n\n  <details>\n    <summary>Why three steps and not two?</summary>\n    <ul>\n      <li><b>Both directions are confirmed.</b> Each side must learn the other received its sequence number.</li>\n      <li><b>Stale requests are rejected.</b> A delayed old SYN gets a SYN-ACK that nobody answers, so nothing opens.</li>\n      <li><b>Numbers are synchronised.</b> All later bytes are counted from x and y, which enables ordering and retransmission.</li>\n    </ul>\n  </details>\n\n<script>\n(function () {\n  var step = 0;\n  var el = function (id) { return document.getElementById(id); };\n\n  function isn(id, fallback) {\n    var n = parseInt(el(id).value, 10);\n    return isNaN(n) || n < 0 ? fallback : n;\n  }\n\n  function render() {\n    var x = isn('isnClient', 1000);\n    var y = isn('isnServer', 5000);\n\n    el('m1nums').textContent = 'seq=' + x;\n    el('m2nums').textContent = 'seq=' + y + ' ack=' + (x + 1);\n    el('m3nums').textContent = 'seq=' + (x + 1) + ' ack=' + (y + 1);\n\n    for (var i = 1; i <= 3; i++) {\n      el('msg' + i).classList.toggle('on', step >= i);\n      el('dot' + i).classList.toggle('on', step >= i);\n    }\n\n    var clientStates = ['CLOSED', 'SYN-SENT', 'SYN-SENT', 'ESTABLISHED'];\n    var serverStates = ['LISTEN', 'LISTEN', 'SYN-RECEIVED', 'ESTABLISHED'];\n    el('stateClient').textContent = clientStates[step];\n    el('stateServer').textContent = serverStates[step];\n\n    var titles = [\n      'Ready',\n      'Step 1: SYN',\n      'Step 2: SYN-ACK',\n      'Step 3: ACK, connection established'\n    ];\n    var texts = [\n      'The server is listening. Press \"Next step\" to send the first segment.',\n      'The client picks its initial sequence number x = ' + x + ' and sends a segment with the SYN flag. It now waits in SYN-SENT.',\n      'The server answers with its own number y = ' + y + ' and acknowledges the client: ack = x + 1 = ' + (x + 1) + '. A SYN uses up one sequence number, hence the +1.',\n      'The client acknowledges the server: ack = y + 1 = ' + (y + 1) + '. Both sides know the other can send and receive, so data can flow.'\n    ];\n    el('stepTitle').textContent = titles[step];\n    el('stepText').textContent = texts[step];\n\n    el('prev').disabled = step === 0;\n    el('next').disabled = step === 3;\n  }\n\n  el('next').addEventListener('click', function () { if (step < 3) { step += 1; render(); } });\n  el('prev').addEventListener('click', function () { if (step > 0) { step -= 1; render(); } });\n  el('reset').addEventListener('click', function () { step = 0; render(); });\n  el('isnClient').addEventListener('input', render);\n  el('isnServer').addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_tcp_handshake_01",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the three segments of the TCP handshake as a read-only table (step, direction, flags, seq, ack) with a one-sentence explanation of why three steps are needed. Then ask the user which follow-up they want and how deep to go.",
+        "data": {
+          "segments": [
+            {
+              "step": 1,
+              "direction": "Client → Server",
+              "flags": "SYN",
+              "seq": 1000,
+              "ack": "—"
+            },
+            {
+              "step": 2,
+              "direction": "Server → Client",
+              "flags": "SYN, ACK",
+              "seq": 5000,
+              "ack": "1001"
+            },
+            {
+              "step": 3,
+              "direction": "Client → Server",
+              "flags": "ACK",
+              "seq": 1001,
+              "ack": "5001"
+            }
+          ],
+          "why": "Three segments are the minimum for each side to confirm the other received its starting sequence number."
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "followUp": {
+              "type": "string",
+              "enum": [
+                "none",
+                "teardown",
+                "syn-flood",
+                "sequence-numbers",
+                "tls-on-top"
+              ]
+            },
+            "depth": {
+              "type": "string",
+              "enum": [
+                "overview",
+                "detailed"
+              ]
+            }
+          },
+          "required": [
+            "followUp",
+            "depth"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "segments": {
+            "type": "array",
+            "title": "Handshake segments",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "title": "Step"
+                },
+                "direction": {
+                  "type": "string",
+                  "title": "Direction"
+                },
+                "flags": {
+                  "type": "string",
+                  "title": "Flags"
+                },
+                "seq": {
+                  "type": "integer",
+                  "title": "seq"
+                },
+                "ack": {
+                  "type": "string",
+                  "title": "ack"
+                }
+              }
+            }
+          },
+          "followUp": {
+            "type": "string",
+            "title": "What should I explain next?",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "Nothing, that covers it"
+              },
+              {
+                "const": "teardown",
+                "title": "How a connection is closed (FIN)"
+              },
+              {
+                "const": "syn-flood",
+                "title": "SYN floods and SYN cookies"
+              },
+              {
+                "const": "sequence-numbers",
+                "title": "How sequence numbers are used after the handshake"
+              },
+              {
+                "const": "tls-on-top",
+                "title": "How TLS adds its own handshake on top"
+              }
+            ]
+          },
+          "depth": {
+            "type": "string",
+            "title": "Level of detail",
+            "oneOf": [
+              {
+                "const": "overview",
+                "title": "Overview"
+              },
+              {
+                "const": "detailed",
+                "title": "Detailed"
+              }
+            ]
+          }
+        },
+        "required": [
+          "followUp",
+          "depth"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "The TCP three-way handshake"
+          },
+          {
+            "type": "Label",
+            "text": "Three segments are the minimum for each side to confirm the other received its starting sequence number."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/segments",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Follow-up",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/followUp",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/depth",
+                "options": {
+                  "format": "radio"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "segments": [
+          {
+            "step": 1,
+            "direction": "Client → Server",
+            "flags": "SYN",
+            "seq": 1000,
+            "ack": "—"
+          },
+          {
+            "step": 2,
+            "direction": "Server → Client",
+            "flags": "SYN, ACK",
+            "seq": 5000,
+            "ack": "1001"
+          },
+          {
+            "step": 3,
+            "direction": "Client → Server",
+            "flags": "ACK",
+            "seq": 1001,
+            "ack": "5001"
+          }
+        ],
+        "depth": "overview"
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Carries the whole explanation, but the exchange is only an ASCII sketch and a table; nothing can be stepped through.",
+    "a2ui": "Cards, tabs and a data-bound list organise the steps well, but the catalog has no diagram primitive, so the back-and-forth reads as a list and not a sequence.",
+    "html": "Drew the sequence diagram in SVG, made it steppable and let the reader change both starting numbers; every pixel of layout and styling had to be invented.",
+    "agui": "A form protocol has no home for an explanation: the segments become a disabled table, the prose shrinks to two labels, and the only real interaction is picking a follow-up."
+  }
+}

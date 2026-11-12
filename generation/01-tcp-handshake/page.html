@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCP three-way handshake</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2933; background: #f7f9fb; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.lead { margin: 0 0 12px; color: #52606d; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-bottom: 12px; }
+  label { display: flex; flex-direction: column; font-size: 12px; color: #52606d; gap: 2px; }
+  input[type=number] { width: 96px; padding: 5px 6px; border: 1px solid #cbd2d9; border-radius: 6px; font: inherit; }
+  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd2d9; background: #fff; font: inherit; cursor: pointer; }
+  button.primary { background: #0b69a3; border-color: #0b69a3; color: #fff; }
+  button:disabled { opacity: .45; cursor: default; }
+  .stage { background: #fff; border: 1px solid #e4e7eb; border-radius: 10px; padding: 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .life { stroke: #9aa5b1; stroke-width: 2; stroke-dasharray: 4 4; }
+  .host { font-weight: 600; font-size: 13px; fill: #1f2933; }
+  .state { font-size: 11px; fill: #0b69a3; font-weight: 600; }
+  .msg { opacity: 0; transition: opacity .35s ease; }
+  .msg.on { opacity: 1; }
+  .msg line { stroke-width: 2.5; }
+  .msg text { font-size: 11.5px; }
+  .msg .flag { font-weight: 700; }
+  .explain { margin-top: 12px; background: #fff; border: 1px solid #e4e7eb; border-left: 4px solid #0b69a3; border-radius: 8px; padding: 10px 12px; min-height: 76px; }
+  .explain h2 { font-size: 14px; margin: 0 0 4px; }
+  .explain p { margin: 0; color: #3e4c59; }
+  .dots { display: flex; gap: 6px; margin-top: 10px; }
+  .dot { width: 26px; height: 5px; border-radius: 3px; background: #cbd2d9; }
+  .dot.on { background: #0b69a3; }
+  details { margin-top: 12px; background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 8px 12px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details ul { margin: 8px 0 2px; padding-left: 18px; color: #3e4c59; }
+</style>
+</head>
+<body>
+  <h1>The TCP three-way handshake</h1>
+  <p class="lead">Step through the three segments that open a connection. Change the starting sequence numbers to see how the acknowledgements follow.</p>
+
+  <div class="controls">
+    <label>Client ISN (x)<input id="isnClient" type="number" value="1000" min="0" max="99999"></label>
+    <label>Server ISN (y)<input id="isnServer" type="number" value="5000" min="0" max="99999"></label>
+    <button id="prev">Back</button>
+    <button id="next" class="primary">Next step</button>
+    <button id="reset">Reset</button>
+  </div>
+
+  <div class="stage">
+    <svg viewBox="0 0 360 250" role="img" aria-label="Sequence diagram of the TCP handshake">
+      <defs>
+        <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0b69a3"/></marker>
+        <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#18794e"/></marker>
+      </defs>
+      <text class="host" x="50" y="18" text-anchor="middle">Client</text>
+      <text class="host" x="310" y="18" text-anchor="middle">Server</text>
+      <text class="state" id="stateClient" x="50" y="34" text-anchor="middle">CLOSED</text>
+      <text class="state" id="stateServer" x="310" y="34" text-anchor="middle">LISTEN</text>
+      <line class="life" x1="50" y1="42" x2="50" y2="240"/>
+      <line class="life" x1="310" y1="42" x2="310" y2="240"/>
+
+      <g class="msg" id="msg1">
+        <line x1="54" y1="70" x2="306" y2="100" stroke="#0b69a3" marker-end="url(#arrowBlue)"/>
+        <text x="180" y="72" text-anchor="middle" fill="#0b69a3"><tspan class="flag">SYN</tspan> <tspan id="m1nums"></tspan></text>
+      </g>
+      <g class="msg" id="msg2">
+        <line x1="306" y1="125" x2="54" y2="155" stroke="#18794e" marker-end="url(#arrowGreen)"/>
+        <text x="180" y="127" text-anchor="middle" fill="#18794e"><tspan class="flag">SYN-ACK</tspan> <tspan id="m2nums"></tspan></text>
+      </g>
+      <g class="msg" id="msg3">
+        <line x1="54" y1="180" x2="306" y2="210" stroke="#0b69a3" marker-end="url(#arrowBlue)"/>
+        <text x="180" y="182" text-anchor="middle" fill="#0b69a3"><tspan class="flag">ACK</tspan> <tspan id="m3nums"></tspan></text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="explain" aria-live="polite">
+    <h2 id="stepTitle"></h2>
+    <p id="stepText"></p>
+    <div class="dots"><span class="dot" id="dot1"></span><span class="dot" id="dot2"></span><span class="dot" id="dot3"></span></div>
+  </div>
+
+  <details>
+    <summary>Why three steps and not two?</summary>
+    <ul>
+      <li><b>Both directions are confirmed.</b> Each side must learn the other received its sequence number.</li>
+      <li><b>Stale requests are rejected.</b> A delayed old SYN gets a SYN-ACK that nobody answers, so nothing opens.</li>
+      <li><b>Numbers are synchronised.</b> All later bytes are counted from x and y, which enables ordering and retransmission.</li>
+    </ul>
+  </details>
+
+<script>
+(function () {
+  var step = 0;
+  var el = function (id) { return document.getElementById(id); };
+
+  function isn(id, fallback) {
+    var n = parseInt(el(id).value, 10);
+    return isNaN(n) || n < 0 ? fallback : n;
+  }
+
+  function render() {
+    var x = isn('isnClient', 1000);
+    var y = isn('isnServer', 5000);
+
+    el('m1nums').textContent = 'seq=' + x;
+    el('m2nums').textContent = 'seq=' + y + ' ack=' + (x + 1);
+    el('m3nums').textContent = 'seq=' + (x + 1) + ' ack=' + (y + 1);
+
+    for (var i = 1; i <= 3; i++) {
+      el('msg' + i).classList.toggle('on', step >= i);
+      el('dot' + i).classList.toggle('on', step >= i);
+    }
+
+    var clientStates = ['CLOSED', 'SYN-SENT', 'SYN-SENT', 'ESTABLISHED'];
+    var serverStates = ['LISTEN', 'LISTEN', 'SYN-RECEIVED', 'ESTABLISHED'];
+    el('stateClient').textContent = clientStates[step];
+    el('stateServer').textContent = serverStates[step];
+
+    var titles = [
+      'Ready',
+      'Step 1: SYN',
+      'Step 2: SYN-ACK',
+      'Step 3: ACK, connection established'
+    ];
+    var texts = [
+      'The server is listening. Press "Next step" to send the first segment.',
+      'The client picks its initial sequence number x = ' + x + ' and sends a segment with the SYN flag. It now waits in SYN-SENT.',
+      'The server answers with its own number y = ' + y + ' and acknowledges the client: ack = x + 1 = ' + (x + 1) + '. A SYN uses up one sequence number, hence the +1.',
+      'The client acknowledges the server: ack = y + 1 = ' + (y + 1) + '. Both sides know the other can send and receive, so data can flow.'
+    ];
+    el('stepTitle').textContent = titles[step];
+    el('stepText').textContent = texts[step];
+
+    el('prev').disabled = step === 0;
+    el('next').disabled = step === 3;
+  }
+
+  el('next').addEventListener('click', function () { if (step < 3) { step += 1; render(); } });
+  el('prev').addEventListener('click', function () { if (step > 0) { step -= 1; render(); } });
+  el('reset').addEventListener('click', function () { step = 0; render(); });
+  el('isnClient').addEventListener('input', render);
+  el('isnServer').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>
