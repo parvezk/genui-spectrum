@@ -19,7 +19,7 @@ const outDir = path.join(root, "fixtures");
 const GENERATION = {
   generator: "Claude",
   method:
-    "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime.",
+    "Written directly by Claude in an agent session; no model API is called from code, at build time or at runtime. Each rendering was validated after it was written and none was changed after validation. Before validation, seven text answers were corrected for factual or wording slips, assumed weekdays were removed from all four renderings of prompt 22, and one JSON Forms rule in prompt 25 was tightened.",
 };
 
 const read = (file) => (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null);
@@ -110,9 +110,14 @@ prompts.forEach((p, i) => {
   }
 });
 
+// One short paragraph per approach, written after all 25 prompts were generated.
+const summaryPath = path.join(genDir, "_summary.json");
+const summary = fs.existsSync(summaryPath) ? JSON.parse(fs.readFileSync(summaryPath, "utf8")) : null;
+
 const index = {
   a2ui: { version: A2UI_VERSION, catalogId: BASIC_CATALOG_ID },
   generation: GENERATION,
+  summary,
   fixtures: summaries,
 };
 fs.writeFileSync(path.join(outDir, "index.json"), JSON.stringify(index, null, 2) + "\n");

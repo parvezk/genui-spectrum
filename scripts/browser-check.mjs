@@ -321,9 +321,10 @@ for (const summary of index.fixtures) {
   }
 
   // Errors and network attempts are page-wide. Attribute what can be attributed.
-  for (const e of pageErrors) result.html.problems.push(`Uncaught error: ${e}`), (result.html.rendered = false);
   const csp = consoleErrors.filter((e) => /Content Security Policy|Refused to/i.test(e));
-  for (const e of csp) result.html.problems.push(`Blocked by the sandbox policy: ${e}`), (result.html.rendered = false);
+  for (const e of pageErrors) result.html.problems.push(`Uncaught error: ${e}`);
+  for (const e of csp) result.html.problems.push(`Blocked by the sandbox policy: ${e}`);
+  if (pageErrors.length || csp.length) result.html.rendered = false;
   result.page = {
     consoleErrors: consoleErrors.filter((e) => !csp.includes(e)),
     externalRequests: external,
