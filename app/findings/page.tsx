@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { loadAllFixtures } from "@/lib/fixtures";
+import { approachSummary, browserCheck, loadAllFixtures } from "@/lib/fixtures";
 import { APPROACHES, CATEGORY_LABEL, type Approach, type Fixture, type ValidationIssue } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -21,6 +21,20 @@ function collect(fixtures: Fixture[], kind: "errors" | "warnings"): Row[] {
 }
 
 const label = (key: Approach) => APPROACHES.find((a) => a.key === key)?.label ?? key;
+
+/** The raw output the model had to write for one approach, for size comparisons. */
+function sourceOf(f: Fixture, key: Approach): string {
+  if (key === "text") return f.text.markdown;
+  if (key === "html") return f.html.document;
+  if (key === "a2ui") return JSON.stringify(f.a2ui.messages);
+  return JSON.stringify({ toolCall: f.agui.toolCall, ui: f.agui.ui });
+}
+
+function median(values: number[]): number {
+  const sorted = [...values].sort((x, y) => x - y);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+}
 
 function IssueTable({ rows, tone }: { rows: Row[]; tone: "red" | "amber" }) {
   const color = tone === "red" ? "text-red-700" : "text-amber-700";
@@ -62,6 +76,17 @@ export default async function FindingsPage() {
   const failures = collect(fixtures, "errors");
   const warnings = collect(fixtures, "warnings");
   const checks = APPROACHES.map(({ key }) => ({ key, checks: fixtures[0]?.[key].validation.checks ?? [] }));
+  const browserProblems = fixtures.flatMap((fixture) =>
+    APPROACHES.flatMap(({ key }) =>
+      (browserCheck.results[fixture.id]?.[key].problems ?? []).map((problem) => ({ fixture, approach: key, problem })),
+    ),
+  );
+  const pageIssues = fixtures.flatMap((fixture) => {
+    const page = browserCheck.results[fixture.id]?.page;
+    return [...(page?.consoleErrors ?? []), ...(page?.externalRequests ?? []).map((u) => `External request: ${u}`)].map(
+      (problem) => ({ fixture, problem }),
+    );
+  });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
@@ -72,7 +97,26 @@ export default async function FindingsPage() {
       </p>
       {fixtures[0] && <p className="mt-2 max-w-3xl text-sm text-zinc-500">{fixtures[0].generation.method}</p>}
 
-      <section className="mt-8">
+      {approachSummary && (
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold text-zinc-950">In short</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {APPROACHES.map(({ key, label: name }) => (
+              <div key={key} className="rounded-lg border border-zinc-200 bg-white p-4" data-testid={`in-short-${key}`}>
+                <p className="flex items-baseline justify-between gap-2 text-sm font-medium text-zinc-950">
+                  {name}
+                  <span className="text-xs font-normal tabular-nums text-zinc-500">
+                    median output {median(fixtures.map((f) => sourceOf(f, key).length)).toLocaleString("en-US")} characters
+                  </span>
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-700">{approachSummary?.[key]}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="mt-10">
         <h2 className="text-lg font-semibold text-zinc-950">Validation summary</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {APPROACHES.map(({ key, label: name }) => {
@@ -120,7 +164,82 @@ export default async function FindingsPage() {
       )}
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold text-zinc-950">What was checked</h2>
+        <h2 className="text-lg font-semibold text-zinc-950">Browser check</h2>
+        <p className="mt-1 max-w-3xl text-sm text-zinc-600">
+          Validation reads the output; this runs it. Every prompt page was opened in a real browser and each panel
+          was exercised. {browserCheck.checkedWith}.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {APPROACHES.map(({ key, label: name }) => {
+            const ok = fixtures.filter((f) => browserCheck.results[f.id]?.[key].rendered).length;
+            return (
+              <div key={key} className="rounded-lg border border-zinc-200 bg-white p-4" data-testid={`browser-${key}`}>
+                <p className="text-sm font-medium text-zinc-950">{name}</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums text-zinc-950">
+                  {ok}
+                  <span className="text-base font-normal text-zinc-400"> / {fixtures.length} rendered and responded</span>
+                </p>
+              </div>
+            );
+          })}
+        </div>
+        <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-zinc-600">
+          {browserCheck.what.map((w) => (
+            <li key={w}>{w}</li>
+          ))}
+        </ul>
+        {browserProblems.length + pageIssues.length === 0 ? (
+          <p className="mt-4 rounded-lg border border-zinc-200 bg-white p-4 text-sm text-zinc-600">
+            No panel rendered blank, threw an error, was blocked by the sandbox policy or made an external request.
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-2 text-sm">
+            {browserProblems.map(({ fixture, approach, problem }, i) => (
+              <li key={i} className="rounded-lg border border-red-200 bg-red-50 p-3 text-red-900">
+                <Link href={`/p/${fixture.id}`} className="font-medium hover:underline">
+                  {String(fixture.index).padStart(2, "0")} {fixture.title}
+                </Link>{" "}
+                · {label(approach)}: {problem}
+              </li>
+            ))}
+            {pageIssues.map(({ fixture, problem }, i) => (
+              <li key={`page-${i}`} className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-900">
+                <Link href={`/p/${fixture.id}`} className="font-medium hover:underline">
+                  {String(fixture.index).padStart(2, "0")} {fixture.title}
+                </Link>{" "}
+                · page: {problem}
+              </li>
+            ))}
+          </ul>
+        )}
+        <details className="mt-4 rounded-lg border border-zinc-200 bg-white">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-zinc-800">
+            What the browser observed, prompt by prompt
+          </summary>
+          <div className="divide-y divide-zinc-100 border-t border-zinc-200">
+            {fixtures.map((f) => (
+              <div key={f.id} className="px-4 py-3 text-xs">
+                <p className="font-medium text-zinc-900">
+                  {String(f.index).padStart(2, "0")} {f.title}
+                </p>
+                <dl className="mt-1 grid gap-x-3 gap-y-1 md:grid-cols-[6rem_1fr]">
+                  {APPROACHES.map(({ key, label: name }) => (
+                    <div key={key} className="contents">
+                      <dt className="text-zinc-500">{name}</dt>
+                      <dd className="break-words text-zinc-700">
+                        {(browserCheck.results[f.id]?.[key].observed ?? []).join(" · ")}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </details>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-semibold text-zinc-950">What validation checks</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {checks.map(({ key, checks: list }) => (
             <div key={key} className="rounded-lg border border-zinc-200 bg-white p-4">

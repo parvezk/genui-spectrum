@@ -70,3 +70,19 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   data: "Data view",
   input: "Input task",
 };
+
+export interface PanelCheck {
+  /** True when the panel painted real content and behaved as expected. */
+  rendered: boolean;
+  problems: string[];
+  observed: string[];
+}
+
+export interface BrowserCheck {
+  checkedWith: string;
+  what: string[];
+  results: Record<
+    string,
+    Record<Approach, PanelCheck> & { page: { consoleErrors: string[]; externalRequests: string[] } }
+  >;
+}
