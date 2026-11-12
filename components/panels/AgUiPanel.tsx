@@ -46,8 +46,11 @@ export default function AgUiPanel({ agui }: { agui: Fixture["agui"] }) {
   const [data, setData] = useState<unknown>(ui.initialData);
   const [formErrors, setFormErrors] = useState<ErrorObject[]>([]);
   const [result, setResult] = useState<Result>({ status: "idle" });
+  // Field errors stay hidden until the first submit, so an empty form does not open covered in red.
+  const [submitted, setSubmitted] = useState(false);
 
   const submit = () => {
+    setSubmitted(true);
     const errors = formErrors.map(describe);
     if (validateOutput && !validateOutput(data)) {
       for (const e of validateOutput.errors ?? []) {
@@ -84,10 +87,12 @@ export default function AgUiPanel({ agui }: { agui: Fixture["agui"] }) {
           renderers={materialRenderers}
           cells={materialCells}
           ajv={ajv}
-          validationMode="ValidateAndShow"
+          validationMode={submitted ? "ValidateAndShow" : "ValidateAndHide"}
           onChange={({ data: next, errors }) => {
             setData(next);
             setFormErrors((errors ?? []) as ErrorObject[]);
+            // A result on screen describes the data as it was submitted; editing invalidates it.
+            setResult((prev) => (prev.status === "idle" || next === data ? prev : { status: "idle" }));
           }}
         />
 

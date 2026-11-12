@@ -1,8 +1,7 @@
 // Validates the AG-UI rendering: a generateUserInterface tool call
 // {description, data, output} and the generated JSON Forms UI
 // {schema, uiSchema, initialData}.
-import Ajv from "ajv";
-import addFormats from "ajv-formats";
+import { createAjv } from "@jsonforms/core";
 
 const isObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 
@@ -10,11 +9,8 @@ const LAYOUTS = new Set(["VerticalLayout", "HorizontalLayout", "Group", "Categor
 const ELEMENTS = new Set([...LAYOUTS, "Control", "Label"]);
 const EFFECTS = new Set(["SHOW", "HIDE", "ENABLE", "DISABLE"]);
 
-function makeAjv() {
-  const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
-  return ajv;
-}
+// The Ajv instance JSON Forms itself validates with, so a schema that compiles here compiles in the panel.
+const makeAjv = () => createAjv();
 
 function pointer(root, ref) {
   let cur = root;

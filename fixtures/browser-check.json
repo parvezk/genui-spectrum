@@ -1,0 +1,973 @@
+{
+  "checkedWith": "Headless Chromium 141.0.7390.37 via Playwright, against a production build",
+  "what": [
+    "Each panel painted real content (not blank).",
+    "A2UI: the renderer reported no processing errors and no unresolved bindings. If the surface has buttons, one is clicked and must dispatch its event; when checks disable every button, the form is first filled with valid test values.",
+    "HTML: the iframe sandbox is exactly \"allow-scripts\", no uncaught errors, nothing blocked by the deny-all CSP, and the page reacts to a slider, a text field, a button or a checkbox.",
+    "AG-UI: JSON Forms rendered controls and Submit behaved as the schemas predict for the initial data. A form rejected as incomplete is then filled with test values and must be accepted.",
+    "No request left the app origin."
+  ],
+  "results": {
+    "01-tcp-handshake": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1949 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "686 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "409 characters of rendered text",
+          "type in field: page updated",
+          "click \"Next step\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "22 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'followUp')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"segments\": [ { \"step\": 1, \"direction\": \"Client → Server\", \"flags\": \"SYN\", \"seq\": 1000, \"ack\": \"—\" }, { \"step\": 2, \"direction\": \"Server → Client\", \"flags\": \"SYN, ACK\", \"seq\": 5000, \"ack\": \"1001\" }, { \"step\": 3, \"direction\": \"Client → Server\", \"flags\": \"ACK\", \"seq\": 1001, \"ack\": \"5001\" } ], \"depth\": \"overview\", \"followUp\": \"none\" }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "02-compound-interest": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1330 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "970 characters of rendered text",
+          "\"Recalculate\" dispatched: { \"name\": \"recalculate_compound_interest\", \"sourceComponentId\": \"recalc\", \"context\": { \"principal\": 5000, \"ratePercent\": 6, \"years\": 20 } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "546 characters of rendered text",
+          "drag slider: page updated",
+          "type in field: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "16 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "03-sourdough-starter": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1870 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1519 characters of rendered text",
+          "\"Remind me every day\" dispatched: { \"name\": \"set_feeding_reminder\", \"sourceComponentId\": \"reminder-button\", \"context\": { \"time\": \"09:00\" } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "647 characters of rendered text",
+          "type in field: page updated",
+          "click \"1Mix\": no change",
+          "click \"2Rest\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "21 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'startDate')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"plan\": [ { \"day\": 1, \"do\": \"Mix 50 g whole-wheat flour + 50 g water\" }, { \"day\": 2, \"do\": \"Rest. Stir once\" }, { \"day\": 3, \"do\": \"Discard to 50 g, feed 50 g + 50 g\" }, { \"day\": 4, \"do\": \"Discard to 50 g, feed 50 g + 50 g\" }, { \"day\": 5, \"do\": \"Feed twice, 12 hours apart\" }, { \"day\": 6, \"do\": \"Feed twice, 12 hours apart\" }, { \"day\": 7, \"do\": \"Feed and test: doubles in 4–8 h\" } ], \"flour\": \"whole"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "04-http-status-codes": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1842 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1615 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "930 characters of rendered text",
+          "type in field: page updated",
+          "click \"1xx Informational\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "21 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "05-binary-search": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1714 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1021 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "605 characters of rendered text",
+          "drag slider: page updated",
+          "type in field: page updated",
+          "click \"Step\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "27 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "06-flat-tire": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "2020 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1479 characters of rendered text",
+          "\"call\n\nRequest roadside assistance\" dispatched: { \"name\": \"request_roadside_assistance\", \"sourceComponentId\": \"help-button\", \"context\": { \"location\": \"\" } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1432 characters of rendered text",
+          "click \"Done, next\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "8 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'spare')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"safety\": [], \"change\": [], \"after\": [], \"needHelp\": false, \"spare\": \"space-saver\" }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "07-rest-vs-graphql": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "2490 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1133 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1545 characters of rendered text",
+          "click \"Replay\": no change",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "25 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "08-phone-plans": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1286 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1020 characters of rendered text",
+          "\"Choose this plan\" dispatched: { \"name\": \"select_phone_plan\", \"sourceComponentId\": \"choose-button\", \"context\": { \"plan\": [ \"plus\" ] } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "665 characters of rendered text",
+          "drag slider: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "17 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "09-sorting-algorithms": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1781 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "724 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "564 characters of rendered text",
+          "drag slider: page updated",
+          "click \"Run race\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "22 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "10-ev-vs-gas": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1557 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "810 characters of rendered text",
+          "\"Recalculate\" dispatched: { \"name\": \"recalculate_ownership_cost\", \"sourceComponentId\": \"recalc\", \"context\": { \"milesPerYear\": 12000, \"years\": 5 } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "577 characters of rendered text",
+          "drag slider: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "17 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "11-scrum-kanban-waterfall": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "2307 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "893 characters of rendered text",
+          "\"What if we prefer Scrum?\" opened a modal.",
+          "\"What if we prefer Scrum?\" dispatched: { \"name\": \"open_scrum_alternative\", \"sourceComponentId\": \"more-button\", \"context\": {} }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1072 characters of rendered text",
+          "click \"Rarely\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "20 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "12-weekend-cities": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1274 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "638 characters of rendered text",
+          "Buttons were disabled by their checks until the form was filled with test values.",
+          "\"Find flights and hotels\" dispatched: { \"name\": \"plan_weekend_trip\", \"sourceComponentId\": \"book-button\", \"context\": { \"city\": [ \"prague\" ], \"departure\": \"2030-06-15\", \"nights\": 3 } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "655 characters of rendered text",
+          "drag slider: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "24 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'departure')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"cities\": [ { \"city\": \"Prague\", \"flight\": 140, \"hotel\": 270, \"food\": 105, \"total\": 515, \"highC\": 19 }, { \"city\": \"Lisbon\", \"flight\": 180, \"hotel\": 360, \"food\": 135, \"total\": 675, \"highC\": 22 }, { \"city\": \"Copenhagen\", \"flight\": 210, \"hotel\": 570, \"food\": 210, \"total\": 990, \"highC\": 16 } ], \"city\": \"prague\", \"travellers\": 1, \"departure\": \"2030-06-15\", \"budgetCap\": 3 }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "13-monthly-revenue": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1438 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "704 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "356 characters of rendered text",
+          "click \"Months\": no change",
+          "click \"Quarters\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "41 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "14-weather-week": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1086 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "652 characters of rendered text",
+          "\"Remind me on Tuesday morning\" dispatched: { \"name\": \"set_beach_reminder\", \"sourceComponentId\": \"remind-button\", \"context\": { \"day\": \"Tuesday\", \"city\": \"Lisbon\" } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "251 characters of rendered text",
+          "click \"°C\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "33 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "15-task-board": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1183 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "363 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "442 characters of rendered text",
+          "click \"All\": no change",
+          "click \"Maya\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "48 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "16-expense-breakdown": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1236 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "579 characters of rendered text"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "425 characters of rendered text",
+          "click \"Hide rent\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "30 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "17-service-health": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1334 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "577 characters of rendered text",
+          "\"Investigate\" dispatched: { \"name\": \"investigate_service\", \"sourceComponentId\": \"service-button\", \"context\": { \"service\": \"auth\" } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "433 characters of rendered text",
+          "drag slider: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "35 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "18-team-directory": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1001 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "585 characters of rendered text",
+          "\"search\n\nSearch and sort\" dispatched: { \"name\": \"filter_directory\", \"sourceComponentId\": \"apply-button\", \"context\": { \"text\": \"\", \"departments\": [], \"sortBy\": [ \"name\" ] } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "356 characters of rendered text",
+          "type in field: page updated",
+          "click \"Engineering3\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "32 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "19-book-table": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1023 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "354 characters of rendered text",
+          "Buttons were disabled by their checks until the form was filled with test values.",
+          "\"Request table\" dispatched: { \"name\": \"book_table\", \"sourceComponentId\": \"submit\", \"context\": { \"restaurant\": \"Luigi's Trattoria\", \"date\": \"2030-06-15\", \"time\": [ \"19:30\" ], \"partySize\": 2, \"seating\": [ \"indoors\" ], \"name\": \"Test value\", \"phone\": \"+1 555 0142\", \"notes\": \"Test value\" } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "213 characters of rendered text",
+          "type in field: page updated",
+          "click \"17:30\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "10 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'date'; / must have required property 'name'; / must have required property 'phone')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"time\": \"19:30\", \"partySize\": 2, \"seating\": \"indoors\", \"occasion\": \"none\", \"date\": \"2030-06-15\", \"name\": \"Test value for this field\", \"phone\": \"+1 555 0142\", \"notes\": \"Test value for this field\" }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "20-flight-filters": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1396 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "477 characters of rendered text",
+          "\"Select\" dispatched: { \"name\": \"select_flight\", \"sourceComponentId\": \"flight-select\", \"context\": { \"flight\": \"UA64\", \"airline\": \"United\", \"price\": 710 } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "522 characters of rendered text",
+          "drag slider: page updated",
+          "click \"Any\": no change",
+          "click \"Nonstop only\": page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "44 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'selectedFlight')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"maxPrice\": 750, \"stops\": [ \"nonstop\", \"one-stop\" ], \"airlines\": [ \"TAP\", \"United\", \"Delta\", \"Iberia\", \"Air France\" ], \"flights\": [ { \"flight\": \"IB6252\", \"airline\": \"Iberia\", \"stops\": \"1 stop\", \"departs\": \"21:40\", \"price\": 480 }, { \"flight\": \"DL272\", \"airline\": \"Delta\", \"stops\": \"1 stop\", \"departs\": \"16:05\", \"price\": 520 }, { \"flight\": \"AF11\", \"airline\": \"Air France\", \"stops\": \"1 stop\", \"departs"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "21-bug-report": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1654 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "770 characters of rendered text",
+          "Buttons were disabled by their checks until the form was filled with test values.",
+          "\"Send bug report\" dispatched: { \"name\": \"submit_bug_report\", \"sourceComponentId\": \"submit\", \"context\": { \"report\": { \"summary\": \"Test value\", \"area\": [ \"checkout\" ], \"steps\": \"Test value\", \"expected\": \"Test value\", \"actual\": \"Test value\", \"severity\": [ \"major\" ], \"frequency\": [ \"always\" ], \"platform\": [ \"ios\" ], \"device\": \"4.2.1\", \"appVersion\": \"4.2.1\", \"canContact\": false, \"email\": \"ana@example.com\" } } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "532 characters of rendered text",
+          "type in field: page updated",
+          "click \"1 What happened\": no change",
+          "click \"2 Your device\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "13 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'summary'; / must have required property 'steps'; / must have required property 'device')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"area\": \"checkout\", \"severity\": \"major\", \"frequency\": \"always\", \"platform\": \"ios\", \"canContact\": false, \"summary\": \"Test value for this field\", \"steps\": \"Test value for this field\", \"expected\": \"Test value for this field\", \"actual\": \"Test value for this field\", \"device\": \"Test value for this field\", \"appVersion\": \"4.2.1\" }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "22-offsite-rsvp": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "936 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "454 characters of rendered text",
+          "Buttons were disabled by their checks until the form was filled with test values.",
+          "\"Send RSVP\" dispatched: { \"name\": \"submit_offsite_rsvp\", \"sourceComponentId\": \"submit\", \"context\": { \"attending\": [ \"yes\" ], \"dietary\": [ \"vegetarian\" ], \"allergies\": \"Test value\", \"needsHotel\": false, \"nights\": [ \"11 Sep\" ], \"shirt\": [ \"XS\" ] } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "242 characters of rendered text",
+          "type in field: page updated",
+          "click \"🎉Yes, I'll be there\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "23-notification-prefs": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1119 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "413 characters of rendered text",
+          "\"Save preferences\" dispatched: { \"name\": \"save_notification_preferences\", \"sourceComponentId\": \"save\", \"context\": { \"types\": [ { \"id\": \"mentions\", \"label\": \"Mentions\", \"hint\": \"Someone @mentions you\", \"email\": true, \"push\": true, \"sms\": false }, { \"id\": \"direct-messages\", \"label\": \"Direct messages\", \"hint\": \"A new private message\", \"email\": false, \"push\": true, \"sms\": false }, { \"id\": \"weekly-digest\", \"label\": \"Weekly digest\", "
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "493 characters of rendered text",
+          "click \"Email\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "15 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "24-split-bill": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1095 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "351 characters of rendered text",
+          "\"Recalculate\" dispatched: { \"name\": \"recalculate_split\", \"sourceComponentId\": \"recalc\", \"context\": { \"bill\": \"186.40\", \"people\": 4, \"tipPercent\": 18, \"roundUp\": false } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "280 characters of rendered text",
+          "drag slider: page updated",
+          "type in field: page updated",
+          "click \"0%\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "20 form controls",
+          "Submit with the initial data: accepted, validated data shown"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    },
+    "25-csat-survey": {
+      "text": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "1602 characters of rendered text"
+        ]
+      },
+      "a2ui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "589 characters of rendered text",
+          "Buttons were disabled by their checks until the form was filled with test values.",
+          "\"Send feedback\" dispatched: { \"name\": \"submit_support_survey\", \"sourceComponentId\": \"submit\", \"context\": { \"satisfaction\": [ \"1\" ], \"resolved\": [ \"yes\" ], \"effort\": [ \"1\" ], \"recommend\": 8, \"comment\": \"Test value\", \"mayContact\": false } }"
+        ]
+      },
+      "html": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "540 characters of rendered text",
+          "type in field: page updated",
+          "click \"1, very dissatisfied\": page updated",
+          "toggle checkbox: page updated"
+        ]
+      },
+      "agui": {
+        "rendered": true,
+        "problems": [],
+        "observed": [
+          "13 form controls",
+          "Submit with the initial data: rejected (/ must have required property 'satisfaction'; / must have required property 'resolved')",
+          "After filling the empty fields with test values: accepted. Tool result: { \"effort\": 3, \"recommend\": 8, \"mayContact\": false, \"satisfaction\": 1, \"resolved\": \"yes\", \"whatWentWrong\": \"Test value for this field\", \"comment\": \"Test value for this field\" }"
+        ]
+      },
+      "page": {
+        "consoleErrors": [],
+        "externalRequests": []
+      }
+    }
+  }
+}
