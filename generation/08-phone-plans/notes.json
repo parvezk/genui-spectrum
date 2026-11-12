@@ -1,0 +1,6 @@
+{
+  "text": "The table and worked sums give the answer and the break-even points; changing an assumption means redoing the arithmetic yourself.",
+  "a2ui": "Plan cards, currency formatting and a pick-and-confirm button fit the catalog well; every figure had to be precomputed by the agent because the client cannot do the sums.",
+  "html": "Two sliders recompute all three plans, flag the ones that stop working and move the best-for-you badge live, so the break-even points can be found by dragging.",
+  "agui": "Choosing a plan is a clean typed result (plan, keep number, start date); the comparison is a disabled table and the recommendation is a single label."
+}

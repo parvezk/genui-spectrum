@@ -1,0 +1,90 @@
+{
+  "toolCall": {
+    "id": "call_ev_vs_gas_10",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the five-year ownership cost of the EV and the gas car at 12,000 miles a year as a read-only table (near tie: gas ahead by $100, EV breaks even at about 5.1 years). Then let the user adjust the assumptions (miles per year, years of ownership, energy and fuel cost per mile) and ask for a recalculation.",
+      "data": {
+        "costs": [
+          { "item": "Purchase", "ev": 38000, "gas": 30000 },
+          { "item": "Energy or fuel, 5 years", "ev": 2400, "gas": 7800 },
+          { "item": "Maintenance, 5 years", "ev": 2000, "gas": 4500 },
+          { "item": "Total after 5 years", "ev": 42400, "gas": 42300 }
+        ],
+        "breakEvenYears": 5.1
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "milesPerYear": { "type": "integer", "minimum": 1000, "maximum": 50000 },
+          "years": { "type": "integer", "minimum": 1, "maximum": 15 },
+          "evCostPerMile": { "type": "number", "minimum": 0 },
+          "gasCostPerMile": { "type": "number", "minimum": 0 },
+          "includeResale": { "type": "boolean" }
+        },
+        "required": ["milesPerYear", "years", "evCostPerMile", "gasCostPerMile"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "costs": {
+          "type": "array",
+          "title": "Five years at 12,000 miles a year",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": { "type": "string", "title": "Cost" },
+              "ev": { "type": "number", "title": "EV ($)" },
+              "gas": { "type": "number", "title": "Gas ($)" }
+            }
+          }
+        },
+        "milesPerYear": { "type": "integer", "title": "Miles per year", "minimum": 1000, "maximum": 50000 },
+        "years": { "type": "integer", "title": "Years of ownership", "minimum": 1, "maximum": 15, "default": 5 },
+        "evCostPerMile": { "type": "number", "title": "EV energy ($ per mile)", "minimum": 0 },
+        "gasCostPerMile": { "type": "number", "title": "Gas fuel ($ per mile)", "minimum": 0 },
+        "includeResale": { "type": "boolean", "title": "Estimate resale value too" }
+      },
+      "required": ["milesPerYear", "years", "evCostPerMile", "gasCostPerMile"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Almost a tie: gas is ahead by $100 after five years. The EV breaks even at about 5.1 years." },
+        { "type": "Control", "scope": "#/properties/costs", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Change the assumptions",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/milesPerYear" },
+            { "type": "Control", "scope": "#/properties/years", "options": { "slider": true } },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/evCostPerMile" },
+                { "type": "Control", "scope": "#/properties/gasCostPerMile" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/includeResale" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "costs": [
+        { "item": "Purchase", "ev": 38000, "gas": 30000 },
+        { "item": "Energy or fuel, 5 years", "ev": 2400, "gas": 7800 },
+        { "item": "Maintenance, 5 years", "ev": 2000, "gas": 4500 },
+        { "item": "Total after 5 years", "ev": 42400, "gas": 42300 }
+      ],
+      "milesPerYear": 12000,
+      "years": 5,
+      "evCostPerMile": 0.04,
+      "gasCostPerMile": 0.13,
+      "includeResale": false
+    }
+  }
+}

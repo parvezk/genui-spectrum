@@ -1,0 +1,112 @@
+{
+  "toolCall": {
+    "id": "call_rest_vs_graphql_07",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show a compact read-only comparison of REST and GraphQL (aspect, REST, GraphQL), then ask about the user's mobile app so the recommendation can be tailored: which clients it has, whether screens aggregate several resources, how much it relies on HTTP caching, whether it needs real-time updates and whether the team has run GraphQL before.",
+      "data": {
+        "comparison": [
+          { "aspect": "Fetching a screen", "rest": "Several round trips", "graphql": "One query, exact fields" },
+          { "aspect": "Caching", "rest": "HTTP/CDN out of the box", "graphql": "In the client library" },
+          { "aspect": "Versioning", "rest": "/v1, /v2", "graphql": "Deprecate fields" },
+          { "aspect": "Real-time", "rest": "Add WebSockets/SSE", "graphql": "Subscriptions" },
+          { "aspect": "Learning curve", "rest": "Low", "graphql": "Higher" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "clients": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["ios", "android", "web", "third-party"] },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "screensAggregate": { "type": "boolean" },
+          "caching": { "type": "string", "enum": ["low", "medium", "high"] },
+          "realtime": { "type": "boolean" },
+          "teamKnowsGraphql": { "type": "boolean" }
+        },
+        "required": ["clients", "screensAggregate", "caching", "realtime", "teamKnowsGraphql"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "comparison": {
+          "type": "array",
+          "title": "At a glance",
+          "items": {
+            "type": "object",
+            "properties": {
+              "aspect": { "type": "string", "title": "Aspect" },
+              "rest": { "type": "string", "title": "REST" },
+              "graphql": { "type": "string", "title": "GraphQL" }
+            }
+          }
+        },
+        "clients": {
+          "type": "array",
+          "title": "Who will call the API?",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              { "const": "ios", "title": "iOS app" },
+              { "const": "android", "title": "Android app" },
+              { "const": "web", "title": "Web app" },
+              { "const": "third-party", "title": "Third-party developers" }
+            ]
+          }
+        },
+        "screensAggregate": { "type": "boolean", "title": "Screens combine several resources (feeds, profiles, dashboards)" },
+        "caching": {
+          "type": "string",
+          "title": "How much do you rely on HTTP or CDN caching?",
+          "oneOf": [
+            { "const": "low", "title": "Hardly: most data is per-user" },
+            { "const": "medium", "title": "Somewhat" },
+            { "const": "high", "title": "Heavily: lots of public content" }
+          ]
+        },
+        "realtime": { "type": "boolean", "title": "Needs live updates (chat, presence, notifications)" },
+        "teamKnowsGraphql": { "type": "boolean", "title": "The team has run GraphQL in production before" }
+      },
+      "required": ["clients", "screensAggregate", "caching", "realtime", "teamKnowsGraphql"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "REST vs GraphQL for a mobile backend" },
+        { "type": "Control", "scope": "#/properties/comparison", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Tell me about your app",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/clients" },
+            { "type": "Control", "scope": "#/properties/screensAggregate" },
+            { "type": "Control", "scope": "#/properties/realtime" },
+            { "type": "Control", "scope": "#/properties/caching", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/teamKnowsGraphql" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "comparison": [
+        { "aspect": "Fetching a screen", "rest": "Several round trips", "graphql": "One query, exact fields" },
+        { "aspect": "Caching", "rest": "HTTP/CDN out of the box", "graphql": "In the client library" },
+        { "aspect": "Versioning", "rest": "/v1, /v2", "graphql": "Deprecate fields" },
+        { "aspect": "Real-time", "rest": "Add WebSockets/SSE", "graphql": "Subscriptions" },
+        { "aspect": "Learning curve", "rest": "Low", "graphql": "Higher" }
+      ],
+      "clients": ["ios", "android"],
+      "screensAggregate": false,
+      "caching": "medium",
+      "realtime": false,
+      "teamKnowsGraphql": false
+    }
+  }
+}

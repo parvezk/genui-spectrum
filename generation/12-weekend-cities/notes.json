@@ -1,0 +1,6 @@
+{
+  "text": "The totals table and a plain verdict answer the question; the cost-versus-weather trade-off is argued in prose and cannot be re-weighted.",
+  "a2ui": "Bound city cards with currency formatting, then a chip picker, date input and a button whose check blocks submission until a date is set; no way to rank or re-sort.",
+  "html": "A cost-versus-weather slider re-scores and physically reorders the cards, with stacked bars showing where each city's money goes; Lisbon overtakes once the cost weight drops below about 60%.",
+  "agui": "Turns the comparison into a booking step with typed city, travellers, date and budget, which is a real next action; the six-column table is too wide for its panel."
+}

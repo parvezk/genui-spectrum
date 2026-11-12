@@ -1,0 +1,90 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "rest-vs-graphql",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "rest-vs-graphql",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "summary", "tabs"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "REST vs GraphQL for a mobile backend" },
+        {
+          "id": "summary",
+          "component": "Text",
+          "text": "**GraphQL** suits screens that stitch several resources together for several clients. **REST** suits simple CRUD, heavy caching and small teams."
+        },
+        {
+          "id": "tabs",
+          "component": "Tabs",
+          "tabs": [
+            { "title": "Side by side", "child": "compare" },
+            { "title": "Pick REST if", "child": "rest-col" },
+            { "title": "Pick GraphQL if", "child": "gql-col" }
+          ]
+        },
+
+        { "id": "compare", "component": "List", "children": { "componentId": "aspect-card", "path": "/aspects" } },
+        { "id": "aspect-card", "component": "Card", "child": "aspect-col" },
+        { "id": "aspect-col", "component": "Column", "children": ["aspect-name", "aspect-row"] },
+        { "id": "aspect-name", "component": "Text", "variant": "h5", "text": { "path": "aspect" } },
+        { "id": "aspect-row", "component": "Row", "align": "start", "children": ["aspect-rest", "aspect-gql"] },
+        { "id": "aspect-rest", "component": "Column", "weight": 1, "children": ["aspect-rest-label", "aspect-rest-text"] },
+        { "id": "aspect-rest-label", "component": "Text", "variant": "caption", "text": "REST" },
+        { "id": "aspect-rest-text", "component": "Text", "text": { "path": "rest" } },
+        { "id": "aspect-gql", "component": "Column", "weight": 1, "children": ["aspect-gql-label", "aspect-gql-text"] },
+        { "id": "aspect-gql-label", "component": "Text", "variant": "caption", "text": "GraphQL" },
+        { "id": "aspect-gql-text", "component": "Text", "text": { "path": "graphql" } },
+
+        { "id": "rest-col", "component": "Column", "children": ["rest-list", "rest-note"] },
+        { "id": "rest-list", "component": "List", "children": { "componentId": "rest-item", "path": "/pickRest" } },
+        { "id": "rest-item", "component": "Row", "align": "start", "children": ["rest-item-icon", "rest-item-text"] },
+        { "id": "rest-item-icon", "component": "Icon", "name": "check" },
+        { "id": "rest-item-text", "component": "Text", "weight": 1, "text": { "path": "text" } },
+        { "id": "rest-note", "component": "Text", "variant": "caption", "text": "Watch out for: several round trips per screen on slow mobile networks." },
+
+        { "id": "gql-col", "component": "Column", "children": ["gql-list", "gql-note"] },
+        { "id": "gql-list", "component": "List", "children": { "componentId": "gql-item", "path": "/pickGraphql" } },
+        { "id": "gql-item", "component": "Row", "align": "start", "children": ["gql-item-icon", "gql-item-text"] },
+        { "id": "gql-item-icon", "component": "Icon", "name": "check" },
+        { "id": "gql-item-text", "component": "Text", "weight": 1, "text": { "path": "text" } },
+        { "id": "gql-note", "component": "Text", "variant": "caption", "text": "Watch out for: harder caching, expensive queries, and a steeper learning curve." }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "rest-vs-graphql",
+      "path": "/",
+      "value": {
+        "aspects": [
+          { "aspect": "Shape of the API", "rest": "Many endpoints, one per resource.", "graphql": "One endpoint and a typed schema; the client writes the query." },
+          { "aspect": "Fetching a screen", "rest": "Often several round trips, or a custom endpoint per screen.", "graphql": "One request returns exactly the fields the screen needs." },
+          { "aspect": "Caching", "rest": "HTTP caching and CDNs work out of the box.", "graphql": "Harder: caching moves into the client library." },
+          { "aspect": "Versioning", "rest": "/v1, /v2, or careful additive changes.", "graphql": "Evolve the schema and deprecate fields; no versions." },
+          { "aspect": "Typing and tooling", "rest": "Optional, via OpenAPI.", "graphql": "Built in: introspection and generated client types." },
+          { "aspect": "Real-time", "rest": "Add WebSockets or SSE yourself.", "graphql": "Subscriptions are part of the spec." },
+          { "aspect": "Errors and monitoring", "rest": "HTTP status codes map cleanly to dashboards.", "graphql": "Often 200 OK with an errors array; needs extra tooling." },
+          { "aspect": "Learning curve", "rest": "Low. Everyone knows it.", "graphql": "Higher: schema design, resolvers, client cache." }
+        ],
+        "pickRest": [
+          { "text": "The app is mostly forms and lists over a few resources." },
+          { "text": "You lean on CDN and HTTP caching for public content." },
+          { "text": "Third parties will consume the API." },
+          { "text": "A small team needs to ship quickly with familiar tools." }
+        ],
+        "pickGraphql": [
+          { "text": "Screens are rich and nested: feeds, profiles, dashboards." },
+          { "text": "iOS, Android and web each want different fields." },
+          { "text": "Users are on slow or metered networks, so round trips and payload size matter." },
+          { "text": "Old app versions stay in use for years and the API must evolve without breaking them." }
+        ]
+      }
+    }
+  }
+]

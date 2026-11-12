@@ -1,0 +1,6 @@
+{
+  "text": "The complexity table is exactly what Markdown tables are for, and the when-to-use advice has room to breathe; the behaviour is asserted and never shown.",
+  "a2ui": "Weighted rows fake a four-column table and tabs hold the per-algorithm advice; superscripts work only because they are plain Unicode, and nothing can be animated.",
+  "html": "Races all three on the same list, tick by tick with comparison and write counters, and lets you feed them reversed or nearly sorted input to trigger best and worst cases.",
+  "agui": "A constraints questionnaire maps well to four typed fields, and the stable column even renders as checkboxes, but the comparison is otherwise a disabled grid."
+}

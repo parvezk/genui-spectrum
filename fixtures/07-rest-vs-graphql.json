@@ -1,0 +1,631 @@
+{
+  "id": "07-rest-vs-graphql",
+  "index": 7,
+  "title": "REST vs GraphQL",
+  "category": "comparison",
+  "prompt": "Compare REST and GraphQL for the backend of a mobile app.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## REST vs GraphQL for a mobile app backend\n\n**Short version:** choose **GraphQL** when your screens stitch together data from several resources and you serve more than one client; choose **REST** when the API is mostly simple CRUD, caching matters, or the team is small and wants the least machinery.\n\n| | REST | GraphQL |\n| --- | --- | --- |\n| **Shape of the API** | Many endpoints, one per resource (`/users/42`, `/users/42/posts`) | One endpoint, a typed schema, the client writes the query |\n| **Fetching a screen** | Often several round trips, or a custom endpoint per screen | One request returns exactly the fields the screen needs |\n| **Over- and under-fetching** | Common: fixed payloads carry unused fields or miss related data | Avoided: the client asks for specific fields |\n| **Caching** | Simple: HTTP caching and CDNs work out of the box | Harder: usually `POST` to one URL, so caching moves into the client library |\n| **Versioning** | `/v1`, `/v2`, or careful additive changes | Evolve the schema; deprecate fields without versions |\n| **Typing and tooling** | Optional (OpenAPI) | Built in: schema, introspection, generated client types |\n| **Real-time** | Add WebSockets or SSE yourself | Subscriptions are part of the spec |\n| **File uploads** | Straightforward multipart | Needs an extension or a separate REST endpoint |\n| **Errors and monitoring** | HTTP status codes map cleanly to dashboards | Often `200 OK` with an `errors` array; needs extra tooling |\n| **Server cost and risk** | Predictable per endpoint | Must guard against expensive queries (depth limits, N+1) |\n| **Learning curve** | Low; everyone knows it | Higher: schema design, resolvers, client cache |\n\n### Why mobile changes the calculation\n\n- **Round trips are expensive** on cellular networks. Three sequential REST calls for a profile screen can become one GraphQL query.\n- **App versions live for years.** You cannot force users to update, so being able to add fields without breaking old clients matters. Both can do it, but GraphQL makes it the default.\n- **Payload size affects battery and data plans.** Asking only for the fields on screen helps.\n\n### Recommendation\n\n- Pick **GraphQL** if you have rich, nested screens (feeds, profiles, dashboards), an iOS app, an Android app and a web client that each want different fields, and a team willing to invest in schema design.\n- Pick **REST** if the app is mostly forms and lists over a few resources, you lean on CDN caching for public content, third parties will use the API, or you need to ship quickly with a small team.\n- A common middle path: **REST for simple and public endpoints, plus a GraphQL layer (or a \"backend for frontend\") for the screens that aggregate data.**\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "rest-vs-graphql",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "rest-vs-graphql",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "summary",
+                "tabs"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "REST vs GraphQL for a mobile backend"
+            },
+            {
+              "id": "summary",
+              "component": "Text",
+              "text": "**GraphQL** suits screens that stitch several resources together for several clients. **REST** suits simple CRUD, heavy caching and small teams."
+            },
+            {
+              "id": "tabs",
+              "component": "Tabs",
+              "tabs": [
+                {
+                  "title": "Side by side",
+                  "child": "compare"
+                },
+                {
+                  "title": "Pick REST if",
+                  "child": "rest-col"
+                },
+                {
+                  "title": "Pick GraphQL if",
+                  "child": "gql-col"
+                }
+              ]
+            },
+            {
+              "id": "compare",
+              "component": "List",
+              "children": {
+                "componentId": "aspect-card",
+                "path": "/aspects"
+              }
+            },
+            {
+              "id": "aspect-card",
+              "component": "Card",
+              "child": "aspect-col"
+            },
+            {
+              "id": "aspect-col",
+              "component": "Column",
+              "children": [
+                "aspect-name",
+                "aspect-row"
+              ]
+            },
+            {
+              "id": "aspect-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "path": "aspect"
+              }
+            },
+            {
+              "id": "aspect-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "aspect-rest",
+                "aspect-gql"
+              ]
+            },
+            {
+              "id": "aspect-rest",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "aspect-rest-label",
+                "aspect-rest-text"
+              ]
+            },
+            {
+              "id": "aspect-rest-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "REST"
+            },
+            {
+              "id": "aspect-rest-text",
+              "component": "Text",
+              "text": {
+                "path": "rest"
+              }
+            },
+            {
+              "id": "aspect-gql",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "aspect-gql-label",
+                "aspect-gql-text"
+              ]
+            },
+            {
+              "id": "aspect-gql-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "GraphQL"
+            },
+            {
+              "id": "aspect-gql-text",
+              "component": "Text",
+              "text": {
+                "path": "graphql"
+              }
+            },
+            {
+              "id": "rest-col",
+              "component": "Column",
+              "children": [
+                "rest-list",
+                "rest-note"
+              ]
+            },
+            {
+              "id": "rest-list",
+              "component": "List",
+              "children": {
+                "componentId": "rest-item",
+                "path": "/pickRest"
+              }
+            },
+            {
+              "id": "rest-item",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "rest-item-icon",
+                "rest-item-text"
+              ]
+            },
+            {
+              "id": "rest-item-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "rest-item-text",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "text"
+              }
+            },
+            {
+              "id": "rest-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Watch out for: several round trips per screen on slow mobile networks."
+            },
+            {
+              "id": "gql-col",
+              "component": "Column",
+              "children": [
+                "gql-list",
+                "gql-note"
+              ]
+            },
+            {
+              "id": "gql-list",
+              "component": "List",
+              "children": {
+                "componentId": "gql-item",
+                "path": "/pickGraphql"
+              }
+            },
+            {
+              "id": "gql-item",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "gql-item-icon",
+                "gql-item-text"
+              ]
+            },
+            {
+              "id": "gql-item-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "gql-item-text",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "text"
+              }
+            },
+            {
+              "id": "gql-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Watch out for: harder caching, expensive queries, and a steeper learning curve."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "rest-vs-graphql",
+          "path": "/",
+          "value": {
+            "aspects": [
+              {
+                "aspect": "Shape of the API",
+                "rest": "Many endpoints, one per resource.",
+                "graphql": "One endpoint and a typed schema; the client writes the query."
+              },
+              {
+                "aspect": "Fetching a screen",
+                "rest": "Often several round trips, or a custom endpoint per screen.",
+                "graphql": "One request returns exactly the fields the screen needs."
+              },
+              {
+                "aspect": "Caching",
+                "rest": "HTTP caching and CDNs work out of the box.",
+                "graphql": "Harder: caching moves into the client library."
+              },
+              {
+                "aspect": "Versioning",
+                "rest": "/v1, /v2, or careful additive changes.",
+                "graphql": "Evolve the schema and deprecate fields; no versions."
+              },
+              {
+                "aspect": "Typing and tooling",
+                "rest": "Optional, via OpenAPI.",
+                "graphql": "Built in: introspection and generated client types."
+              },
+              {
+                "aspect": "Real-time",
+                "rest": "Add WebSockets or SSE yourself.",
+                "graphql": "Subscriptions are part of the spec."
+              },
+              {
+                "aspect": "Errors and monitoring",
+                "rest": "HTTP status codes map cleanly to dashboards.",
+                "graphql": "Often 200 OK with an errors array; needs extra tooling."
+              },
+              {
+                "aspect": "Learning curve",
+                "rest": "Low. Everyone knows it.",
+                "graphql": "Higher: schema design, resolvers, client cache."
+              }
+            ],
+            "pickRest": [
+              {
+                "text": "The app is mostly forms and lists over a few resources."
+              },
+              {
+                "text": "You lean on CDN and HTTP caching for public content."
+              },
+              {
+                "text": "Third parties will consume the API."
+              },
+              {
+                "text": "A small team needs to ship quickly with familiar tools."
+              }
+            ],
+            "pickGraphql": [
+              {
+                "text": "Screens are rich and nested: feeds, profiles, dashboards."
+              },
+              {
+                "text": "iOS, Android and web each want different fields."
+              },
+              {
+                "text": "Users are on slow or metered networks, so round trips and payload size matter."
+              },
+              {
+                "text": "Old app versions stay in use for years and the API must evolve without breaking them."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>REST vs GraphQL</title>\n<style>\n  * { box-sizing: border-box; }\n  :root { --rest: #0e7490; --gql: #be185d; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1f2937; background: #f8fafc; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  h2 { font-size: 14px; margin: 0 0 8px; }\n  .lead { margin: 0 0 12px; color: #64748b; }\n  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .rest { color: var(--rest); } .gql { color: var(--gql); }\n  .lane { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; }\n  .lane b { font-size: 13px; }\n  .track { position: relative; height: 54px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }\n  .req { position: absolute; height: 14px; border-radius: 3px; width: 0; color: #fff; font-size: 10px; line-height: 14px; padding-left: 4px; white-space: nowrap; overflow: hidden; transition: width .5s linear; }\n  .track.rest .req { background: var(--rest); }\n  .track.gql .req { background: var(--gql); height: 22px; line-height: 22px; top: 16px; left: 0; }\n  .r1 { top: 3px; left: 0; } .r2 { top: 20px; left: 33.3%; transition-delay: .5s !important; } .r3 { top: 37px; left: 66.6%; transition-delay: 1s !important; }\n  .play .track.rest .req { width: 33.3%; }\n  .play .track.gql .req { width: 40%; }\n  .cap { font-size: 12px; color: #64748b; margin: 4px 0 0; }\n  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font: inherit; cursor: pointer; }\n  .q { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-top: 1px solid #f1f5f9; cursor: pointer; }\n  .q:first-of-type { border-top: 0; }\n  .q input { margin-top: 3px; width: 16px; height: 16px; flex: none; }\n  .score { display: grid; grid-template-columns: 64px 1fr 24px; gap: 8px; align-items: center; margin-top: 6px; font-weight: 600; }\n  .meter { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; }\n  .meter i { display: block; height: 100%; width: 0; transition: width .25s; }\n  .verdict { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f1f5f9; font-weight: 600; }\n  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }\n  th, td { text-align: left; vertical-align: top; padding: 6px; border-top: 1px solid #f1f5f9; }\n  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }\n  td:first-child { font-weight: 600; width: 26%; }\n  tr.hl td { background: #fefce8; }\n</style>\n</head>\n<body>\n  <h1>REST vs GraphQL for a mobile backend</h1>\n  <p class=\"lead\">See what loading one screen costs, then answer a few questions about your app to get a recommendation.</p>\n\n  <div class=\"card\" id=\"demo\">\n    <h2>Loading a profile screen (user + posts + followers)</h2>\n    <div class=\"lane\"><b class=\"rest\">REST</b>\n      <div class=\"track rest\"><span class=\"req r1\">GET /users/42</span><span class=\"req r2\">GET /users/42/posts</span><span class=\"req r3\">GET /users/42/followers</span></div>\n    </div>\n    <div class=\"lane\"><b class=\"gql\">GraphQL</b>\n      <div class=\"track gql\"><span class=\"req\">query { user { posts followers } }</span></div>\n    </div>\n    <button id=\"replay\">Replay</button>\n    <p class=\"cap\">Three sequential round trips versus one. On a cellular connection each round trip can cost 100–300 ms.</p>\n  </div>\n\n  <div class=\"card\">\n    <h2>Which fits your app?</h2>\n    <div id=\"questions\"></div>\n    <div class=\"score\"><span class=\"rest\">REST</span><div class=\"meter\"><i id=\"mRest\" style=\"background:var(--rest)\"></i></div><span id=\"sRest\">0</span></div>\n    <div class=\"score\"><span class=\"gql\">GraphQL</span><div class=\"meter\"><i id=\"mGql\" style=\"background:var(--gql)\"></i></div><span id=\"sGql\">0</span></div>\n    <div class=\"verdict\" id=\"verdict\"></div>\n  </div>\n\n  <div class=\"card\">\n    <h2>Side by side</h2>\n    <table>\n      <thead><tr><th></th><th class=\"rest\">REST</th><th class=\"gql\">GraphQL</th></tr></thead>\n      <tbody id=\"rows\"></tbody>\n    </table>\n    <p class=\"cap\">Rows tied to your answers are highlighted.</p>\n  </div>\n\n<script>\n(function () {\n  var questions = [\n    { text: 'Screens combine data from several resources (feeds, profiles, dashboards)', side: 'gql', points: 2, row: 1 },\n    { text: 'iOS, Android and web each need different fields', side: 'gql', points: 2, row: 1 },\n    { text: 'Many users are on slow or metered mobile networks', side: 'gql', points: 1, row: 1 },\n    { text: 'You need live updates (chat, presence, notifications)', side: 'gql', points: 1, row: 5 },\n    { text: 'The API is mostly simple CRUD on a few resources', side: 'rest', points: 2, row: 0 },\n    { text: 'You rely on HTTP or CDN caching for public content', side: 'rest', points: 2, row: 2 },\n    { text: 'Third parties will consume the API', side: 'rest', points: 1, row: 4 },\n    { text: 'The team is small and has not run GraphQL before', side: 'rest', points: 2, row: 6 }\n  ];\n  var rows = [\n    ['Shape', 'Many endpoints, one per resource', 'One endpoint, typed schema, client writes the query'],\n    ['Fetching a screen', 'Several round trips or a custom endpoint', 'One request with exactly the fields needed'],\n    ['Caching', 'HTTP and CDN caching just work', 'Harder; moves into the client library'],\n    ['Versioning', '/v1, /v2 or additive changes', 'Deprecate fields, no versions'],\n    ['Tooling', 'Optional OpenAPI; status codes map to dashboards', 'Introspection and generated types; errors need extra tooling'],\n    ['Real-time', 'Add WebSockets or SSE yourself', 'Subscriptions in the spec'],\n    ['Learning curve', 'Low', 'Higher: schema, resolvers, client cache']\n  ];\n  var $ = function (id) { return document.getElementById(id); };\n  var checked = questions.map(function () { return false; });\n\n  var qBox = $('questions');\n  questions.forEach(function (q, i) {\n    var label = document.createElement('label');\n    label.className = 'q';\n    var input = document.createElement('input');\n    input.type = 'checkbox';\n    input.setAttribute('data-i', String(i));\n    var span = document.createElement('span');\n    span.textContent = q.text;\n    label.appendChild(input);\n    label.appendChild(span);\n    qBox.appendChild(label);\n  });\n\n  var body = $('rows');\n  rows.forEach(function (r) {\n    var tr = document.createElement('tr');\n    r.forEach(function (text) {\n      var td = document.createElement('td');\n      td.textContent = text;\n      tr.appendChild(td);\n    });\n    body.appendChild(tr);\n  });\n\n  function render() {\n    var rest = 0, gql = 0, touched = {};\n    questions.forEach(function (q, i) {\n      if (!checked[i]) { return; }\n      if (q.side === 'rest') { rest += q.points; } else { gql += q.points; }\n      touched[q.row] = true;\n    });\n    $('sRest').textContent = String(rest);\n    $('sGql').textContent = String(gql);\n    $('mRest').style.width = (rest / 7 * 100) + '%';\n    $('mGql').style.width = (gql / 6 * 100) + '%';\n    var v;\n    if (rest === 0 && gql === 0) { v = 'Tick what applies to your app.'; }\n    else if (gql - rest >= 2) { v = 'Recommendation: GraphQL. Your screens and clients benefit from asking for exactly what they need.'; }\n    else if (rest - gql >= 2) { v = 'Recommendation: REST. Simpler to build, cache and operate for this kind of app.'; }\n    else { v = 'Close call: start with REST and add a GraphQL layer for the screens that aggregate data.'; }\n    $('verdict').textContent = v;\n    var trs = body.children;\n    for (var i = 0; i < trs.length; i++) { trs[i].className = touched[i] ? 'hl' : ''; }\n  }\n\n  qBox.addEventListener('change', function (e) {\n    var i = e.target.getAttribute('data-i');\n    if (i === null) { return; }\n    checked[parseInt(i, 10)] = e.target.checked;\n    render();\n  });\n\n  function play() {\n    var demo = $('demo');\n    demo.classList.remove('play');\n    // Force a reflow so the transition restarts.\n    void demo.offsetWidth;\n    demo.classList.add('play');\n  }\n  $('replay').addEventListener('click', play);\n\n  render();\n  setTimeout(play, 300);\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_rest_vs_graphql_07",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show a compact read-only comparison of REST and GraphQL (aspect, REST, GraphQL), then ask about the user's mobile app so the recommendation can be tailored: which clients it has, whether screens aggregate several resources, how much it relies on HTTP caching, whether it needs real-time updates and whether the team has run GraphQL before.",
+        "data": {
+          "comparison": [
+            {
+              "aspect": "Fetching a screen",
+              "rest": "Several round trips",
+              "graphql": "One query, exact fields"
+            },
+            {
+              "aspect": "Caching",
+              "rest": "HTTP/CDN out of the box",
+              "graphql": "In the client library"
+            },
+            {
+              "aspect": "Versioning",
+              "rest": "/v1, /v2",
+              "graphql": "Deprecate fields"
+            },
+            {
+              "aspect": "Real-time",
+              "rest": "Add WebSockets/SSE",
+              "graphql": "Subscriptions"
+            },
+            {
+              "aspect": "Learning curve",
+              "rest": "Low",
+              "graphql": "Higher"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "clients": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ios",
+                  "android",
+                  "web",
+                  "third-party"
+                ]
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "screensAggregate": {
+              "type": "boolean"
+            },
+            "caching": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            },
+            "realtime": {
+              "type": "boolean"
+            },
+            "teamKnowsGraphql": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "clients",
+            "screensAggregate",
+            "caching",
+            "realtime",
+            "teamKnowsGraphql"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "comparison": {
+            "type": "array",
+            "title": "At a glance",
+            "items": {
+              "type": "object",
+              "properties": {
+                "aspect": {
+                  "type": "string",
+                  "title": "Aspect"
+                },
+                "rest": {
+                  "type": "string",
+                  "title": "REST"
+                },
+                "graphql": {
+                  "type": "string",
+                  "title": "GraphQL"
+                }
+              }
+            }
+          },
+          "clients": {
+            "type": "array",
+            "title": "Who will call the API?",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "ios",
+                  "title": "iOS app"
+                },
+                {
+                  "const": "android",
+                  "title": "Android app"
+                },
+                {
+                  "const": "web",
+                  "title": "Web app"
+                },
+                {
+                  "const": "third-party",
+                  "title": "Third-party developers"
+                }
+              ]
+            }
+          },
+          "screensAggregate": {
+            "type": "boolean",
+            "title": "Screens combine several resources (feeds, profiles, dashboards)"
+          },
+          "caching": {
+            "type": "string",
+            "title": "How much do you rely on HTTP or CDN caching?",
+            "oneOf": [
+              {
+                "const": "low",
+                "title": "Hardly: most data is per-user"
+              },
+              {
+                "const": "medium",
+                "title": "Somewhat"
+              },
+              {
+                "const": "high",
+                "title": "Heavily: lots of public content"
+              }
+            ]
+          },
+          "realtime": {
+            "type": "boolean",
+            "title": "Needs live updates (chat, presence, notifications)"
+          },
+          "teamKnowsGraphql": {
+            "type": "boolean",
+            "title": "The team has run GraphQL in production before"
+          }
+        },
+        "required": [
+          "clients",
+          "screensAggregate",
+          "caching",
+          "realtime",
+          "teamKnowsGraphql"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "REST vs GraphQL for a mobile backend"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/comparison",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Tell me about your app",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/clients"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/screensAggregate"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/realtime"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/caching",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/teamKnowsGraphql"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "comparison": [
+          {
+            "aspect": "Fetching a screen",
+            "rest": "Several round trips",
+            "graphql": "One query, exact fields"
+          },
+          {
+            "aspect": "Caching",
+            "rest": "HTTP/CDN out of the box",
+            "graphql": "In the client library"
+          },
+          {
+            "aspect": "Versioning",
+            "rest": "/v1, /v2",
+            "graphql": "Deprecate fields"
+          },
+          {
+            "aspect": "Real-time",
+            "rest": "Add WebSockets/SSE",
+            "graphql": "Subscriptions"
+          },
+          {
+            "aspect": "Learning curve",
+            "rest": "Low",
+            "graphql": "Higher"
+          }
+        ],
+        "clients": [
+          "ios",
+          "android"
+        ],
+        "screensAggregate": false,
+        "caching": "medium",
+        "realtime": false,
+        "teamKnowsGraphql": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "An eleven-row table and a clear recommendation cover the ground; it is the densest version and the only one that cannot adapt to the reader's app.",
+    "a2ui": "With no table component, each aspect becomes a card with two weighted columns, and tabs split out the pick-this-if lists; readable, but long to scroll.",
+    "html": "Animates three REST round trips against one GraphQL query and turns the advice into a live scoring quiz that highlights the table rows behind it.",
+    "agui": "Asking about the app is a natural fit for a form, so the questionnaire is strong; the comparison itself is a cramped disabled table and the answer arrives only after submit."
+  }
+}

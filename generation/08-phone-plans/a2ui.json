@@ -1,0 +1,133 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "phone-plans",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "phone-plans",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "usage", "verdict-card", "plans", "change-card", "choose-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Phone plans compared" },
+        { "id": "usage", "component": "Text", "variant": "caption", "text": "For about 12 GB a month and two one-week trips abroad a year (14 roaming days)." },
+
+        { "id": "verdict-card", "component": "Card", "child": "verdict-row" },
+        { "id": "verdict-row", "component": "Row", "align": "start", "children": ["verdict-icon", "verdict-col"] },
+        { "id": "verdict-icon", "component": "Icon", "name": "star" },
+        { "id": "verdict-col", "component": "Column", "weight": 1, "children": ["verdict-title", "verdict-text"] },
+        { "id": "verdict-title", "component": "Text", "variant": "h4", "text": "Recommendation: Plus" },
+        {
+          "id": "verdict-text",
+          "component": "Text",
+          "text": "12 GB fits inside its 20 GB, and with roaming it costs **$550 a year**. That is $170 less than Max and $590 less than Basic."
+        },
+
+        { "id": "plans", "component": "List", "children": { "componentId": "plan-card", "path": "/plans" } },
+        { "id": "plan-card", "component": "Card", "child": "plan-col" },
+        { "id": "plan-col", "component": "Column", "children": ["plan-head", "plan-features", "plan-divider", "plan-monthly-row", "plan-roaming-row", "plan-yearly-row", "plan-note"] },
+        { "id": "plan-head", "component": "Row", "justify": "spaceBetween", "align": "center", "children": ["plan-name", "plan-price"] },
+        { "id": "plan-name", "component": "Text", "variant": "h4", "text": { "path": "name" } },
+        {
+          "id": "plan-price",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "$${price}/month" }, "returnType": "string" }
+        },
+        { "id": "plan-features", "component": "Text", "text": { "path": "features" } },
+        { "id": "plan-divider", "component": "Divider" },
+        { "id": "plan-monthly-row", "component": "Row", "justify": "spaceBetween", "children": ["plan-monthly-label", "plan-monthly-value"] },
+        { "id": "plan-monthly-label", "component": "Text", "text": "Monthly cost at 12 GB" },
+        {
+          "id": "plan-monthly-value",
+          "component": "Text",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "monthlyAtUsage" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "plan-roaming-row", "component": "Row", "justify": "spaceBetween", "children": ["plan-roaming-label", "plan-roaming-value"] },
+        { "id": "plan-roaming-label", "component": "Text", "text": "Roaming, 14 days" },
+        { "id": "plan-roaming-value", "component": "Text", "text": { "path": "roaming" } },
+        { "id": "plan-yearly-row", "component": "Row", "justify": "spaceBetween", "children": ["plan-yearly-label", "plan-yearly-value"] },
+        { "id": "plan-yearly-label", "component": "Text", "variant": "h5", "text": "Per year" },
+        {
+          "id": "plan-yearly-value",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "yearly" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "plan-note", "component": "Text", "variant": "caption", "text": { "path": "note" } },
+
+        { "id": "change-card", "component": "Card", "child": "change-col" },
+        { "id": "change-col", "component": "Column", "children": ["change-title", "change-1", "change-2"] },
+        { "id": "change-title", "component": "Text", "variant": "h5", "text": "When the answer would change" },
+        { "id": "change-1", "component": "Text", "text": "**Max** wins if you roam more than 48 days a year or use more than 20 GB a month." },
+        { "id": "change-2", "component": "Text", "text": "**Basic** only makes sense at 5 GB or less with no travel. Past 6.5 GB a month it costs more than Plus." },
+
+        { "id": "choose-card", "component": "Card", "child": "choose-col" },
+        { "id": "choose-col", "component": "Column", "children": ["choose-picker", "choose-button"] },
+        {
+          "id": "choose-picker",
+          "component": "ChoicePicker",
+          "label": "Switch to",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Basic", "value": "basic" },
+            { "label": "Plus", "value": "plus" },
+            { "label": "Max", "value": "max" }
+          ],
+          "value": { "path": "/choice" }
+        },
+        {
+          "id": "choose-button",
+          "component": "Button",
+          "variant": "primary",
+          "child": "choose-button-label",
+          "action": { "event": { "name": "select_phone_plan", "context": { "plan": { "path": "/choice" } } } }
+        },
+        { "id": "choose-button-label", "component": "Text", "text": "Choose this plan" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "phone-plans",
+      "path": "/",
+      "value": {
+        "choice": ["plus"],
+        "plans": [
+          {
+            "name": "Basic",
+            "price": 25,
+            "features": "5 GB · extra data $10 per GB · no roaming",
+            "monthlyAtUsage": 95,
+            "roaming": "Not available",
+            "yearly": 1140,
+            "note": "7 GB over the allowance adds $70 a month, and it does not work abroad."
+          },
+          {
+            "name": "Plus (recommended)",
+            "price": 40,
+            "features": "20 GB · roaming $5 per day",
+            "monthlyAtUsage": 40,
+            "roaming": "$70",
+            "yearly": 550,
+            "note": "$480 for the plan plus 14 roaming days at $5."
+          },
+          {
+            "name": "Max",
+            "price": 60,
+            "features": "Unlimited data · roaming included",
+            "monthlyAtUsage": 60,
+            "roaming": "Included",
+            "yearly": 720,
+            "note": "Simple, but you pay $170 a year for headroom you do not use."
+          }
+        ]
+      }
+    }
+  }
+]

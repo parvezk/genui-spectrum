@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EV vs gas: cost of ownership</title>
+<style>
+  * { box-sizing: border-box; }
+  :root { --ev: #059669; --gas: #dc2626; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1c1917; background: #fafaf9; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #57534e; }
+  .card { background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .slider { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin-bottom: 8px; }
+  .slider:last-child { margin-bottom: 0; }
+  .slider input { grid-column: 1 / -1; width: 100%; accent-color: #1c1917; }
+  .slider output { font-weight: 700; }
+  .totals { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .total { border-radius: 10px; padding: 10px; color: #fff; }
+  .total.ev { background: var(--ev); } .total.gas { background: var(--gas); }
+  .total small { display: block; opacity: .85; font-size: 11px; }
+  .total b { font-size: 20px; }
+  .total span { display: block; font-size: 11px; opacity: .9; }
+  .verdict { font-weight: 600; text-align: center; }
+  svg { width: 100%; height: auto; display: block; }
+  .axis { font-size: 9px; fill: #78716c; }
+  .legend { display: flex; gap: 14px; font-size: 12px; color: #57534e; margin-top: 6px; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+  .small { font-size: 12px; color: #78716c; margin: 0; }
+</style>
+</head>
+<body>
+  <h1>EV vs gas: cost of ownership</h1>
+  <p class="lead">$38,000 EV at $0.04 a mile and $400 a year, against a $30,000 gas car at $0.13 a mile and $900 a year. Drag to change mileage and how long you keep the car.</p>
+
+  <div class="card">
+    <div class="slider"><label for="miles">Miles per year</label><output id="milesOut"></output><input id="miles" type="range" min="4000" max="25000" step="500" value="12000"></div>
+    <div class="slider"><label for="years">Years of ownership</label><output id="yearsOut"></output><input id="years" type="range" min="1" max="12" step="1" value="5"></div>
+  </div>
+
+  <div class="totals">
+    <div class="total ev"><small>EV total</small><b id="evTotal"></b><span id="evRun"></span></div>
+    <div class="total gas"><small>Gas total</small><b id="gasTotal"></b><span id="gasRun"></span></div>
+  </div>
+
+  <div class="card verdict" id="verdict"></div>
+
+  <div class="card">
+    <svg viewBox="0 0 340 190" role="img" aria-label="Cumulative cost of each car over twelve years">
+      <line x1="46" y1="10" x2="46" y2="160" stroke="#d6d3d1"/>
+      <line x1="46" y1="160" x2="332" y2="160" stroke="#d6d3d1"/>
+      <text class="axis" id="yTop" x="42" y="14" text-anchor="end"></text>
+      <text class="axis" id="yBottom" x="42" y="163" text-anchor="end"></text>
+      <text class="axis" x="46" y="174">Year 0</text>
+      <text class="axis" x="332" y="174" text-anchor="end">Year 12</text>
+      <rect id="window" x="46" y="10" width="0" height="150" fill="#1c1917" opacity=".05"/>
+      <path id="gasLine" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+      <path id="evLine" fill="none" stroke="#059669" stroke-width="2.5"/>
+      <line id="beLine" y1="10" y2="160" stroke="#1c1917" stroke-dasharray="3 3"/>
+      <text class="axis" id="beLabel" y="186" text-anchor="middle" style="font-weight:700; fill:#1c1917"></text>
+    </svg>
+    <div class="legend"><span><i style="background:var(--ev)"></i>EV</span><span><i style="background:var(--gas)"></i>Gas</span><span><i style="background:#1c1917"></i>Break-even</span><span>Shaded: your ownership period</span></div>
+  </div>
+
+  <p class="small">Not included: resale value, incentives, insurance, charger installation and financing.</p>
+
+<script>
+(function () {
+  var EV = { price: 38000, perMile: 0.04, maint: 400 };
+  var GAS = { price: 30000, perMile: 0.13, maint: 900 };
+  var MAX_YEARS = 12;
+  var $ = function (id) { return document.getElementById(id); };
+  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  function render() {
+    var miles = parseInt($('miles').value, 10);
+    var years = parseInt($('years').value, 10);
+    $('milesOut').textContent = miles.toLocaleString('en-US');
+    $('yearsOut').textContent = years + (years === 1 ? ' year' : ' years');
+
+    var evRun = miles * EV.perMile + EV.maint;
+    var gasRun = miles * GAS.perMile + GAS.maint;
+    var evTotal = EV.price + years * evRun;
+    var gasTotal = GAS.price + years * gasRun;
+    var breakEven = (EV.price - GAS.price) / (gasRun - evRun);
+
+    $('evTotal').textContent = usd(evTotal);
+    $('gasTotal').textContent = usd(gasTotal);
+    $('evRun').textContent = usd(evRun) + ' a year to run';
+    $('gasRun').textContent = usd(gasRun) + ' a year to run';
+
+    var diff = gasTotal - evTotal;
+    var text;
+    if (Math.abs(diff) < 1) { text = 'Dead even after ' + years + ' years.'; }
+    else if (diff > 0) { text = 'EV is cheaper by ' + usd(diff) + ' after ' + years + (years === 1 ? ' year.' : ' years.'); }
+    else { text = 'Gas is cheaper by ' + usd(-diff) + ' after ' + years + (years === 1 ? ' year.' : ' years.'); }
+    text += ' Break-even at ' + breakEven.toFixed(1) + ' years (' + Math.round(breakEven * miles / 100) * 100 + ' miles).';
+    $('verdict').textContent = text;
+
+    var left = 46, right = 332, top = 10, bottom = 160;
+    var lo = 28000;
+    var hi = Math.max(EV.price + MAX_YEARS * evRun, GAS.price + MAX_YEARS * gasRun);
+    var px = function (y) { return left + (right - left) * (y / MAX_YEARS); };
+    var py = function (v) { return bottom - (bottom - top) * ((v - lo) / (hi - lo)); };
+    $('evLine').setAttribute('d', 'M' + px(0) + ' ' + py(EV.price).toFixed(1) + ' L' + px(MAX_YEARS) + ' ' + py(EV.price + MAX_YEARS * evRun).toFixed(1));
+    $('gasLine').setAttribute('d', 'M' + px(0) + ' ' + py(GAS.price).toFixed(1) + ' L' + px(MAX_YEARS) + ' ' + py(GAS.price + MAX_YEARS * gasRun).toFixed(1));
+    $('window').setAttribute('width', String(px(years) - left));
+    $('yTop').textContent = usd(hi);
+    $('yBottom').textContent = usd(lo);
+
+    var show = breakEven <= MAX_YEARS;
+    $('beLine').style.display = show ? '' : 'none';
+    $('beLabel').style.display = show ? '' : 'none';
+    if (show) {
+      var bx = px(breakEven);
+      $('beLine').setAttribute('x1', bx.toFixed(1));
+      $('beLine').setAttribute('x2', bx.toFixed(1));
+      $('beLabel').setAttribute('x', Math.min(Math.max(bx, 80), 300).toFixed(1));
+      $('beLabel').textContent = 'Break-even: ' + breakEven.toFixed(1) + ' years';
+    }
+  }
+
+  $('miles').addEventListener('input', render);
+  $('years').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

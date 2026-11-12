@@ -1,0 +1,6 @@
+{
+  "text": "Shows every sum and a year-by-year table, so the near tie and the 5.1-year break-even are fully explained, for one mileage only.",
+  "a2ui": "Side-by-side cards with formatted totals and a bound year table read well; the sliders are honest about needing an agent round trip because the client cannot multiply.",
+  "html": "Two crossing cost lines with a moving break-even marker and a shaded ownership window make the tie obvious, and both sliders recompute everything instantly.",
+  "agui": "Typed, range-checked assumptions are exactly what a recalculation tool call needs, but the cost table is disabled number inputs and there is no chart."
+}

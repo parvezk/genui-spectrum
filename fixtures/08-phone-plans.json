@@ -1,0 +1,627 @@
+{
+  "id": "08-phone-plans",
+  "index": 8,
+  "title": "Phone plans",
+  "category": "comparison",
+  "prompt": "Compare these phone plans and recommend one for someone who uses about 12 GB a month and takes two one-week trips abroad a year. Basic: $25/month, 5 GB, extra data $10 per GB, no roaming. Plus: $40/month, 20 GB, roaming $5 per day. Max: $60/month, unlimited data, roaming included.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Which phone plan for 12 GB a month and two weeks abroad?\n\n**Recommendation: Plus.** It covers 12 GB with room to spare and costs **$550 a year** including roaming, against $720 for Max. Basic is the most expensive of the three for this usage and does not work abroad at all.\n\n| | Basic | **Plus** | Max |\n| --- | ---: | ---: | ---: |\n| Monthly price | $25 | $40 | $60 |\n| Data included | 5 GB | 20 GB | Unlimited |\n| Extra data | $10 per GB | — | — |\n| Roaming | Not available | $5 per day | Included |\n| **Monthly cost at 12 GB** | **$95** | **$40** | **$60** |\n| Roaming for 14 days | Not possible | $70 | $0 |\n| **Cost per year** | **$1,140** + no service abroad | **$550** | **$720** |\n\n### How the numbers work out\n\n- **Basic:** you would use 7 GB over the 5 GB allowance. 7 × $10 = $70 in overage, so $25 becomes **$95 a month**, or $1,140 a year. And there is no roaming for the two trips.\n- **Plus:** 12 GB fits inside 20 GB, so it stays at $40 a month, $480 a year. Two one-week trips are 14 roaming days × $5 = $70. Total **$550**.\n- **Max:** $60 × 12 = **$720**, with data and roaming included.\n\nPlus saves **$170 a year** over Max and **$590** over Basic.\n\n### When the answer would change\n\n- **Choose Max** if you spend more than **48 days a year** abroad (48 × $5 = $240, the price gap between Plus and Max), or if your usage grows past 20 GB a month.\n- **Choose Basic** only if you use 5 GB or less and never travel. It becomes more expensive than Plus as soon as you pass 6.5 GB a month.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "phone-plans",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "phone-plans",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "usage",
+                "verdict-card",
+                "plans",
+                "change-card",
+                "choose-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Phone plans compared"
+            },
+            {
+              "id": "usage",
+              "component": "Text",
+              "variant": "caption",
+              "text": "For about 12 GB a month and two one-week trips abroad a year (14 roaming days)."
+            },
+            {
+              "id": "verdict-card",
+              "component": "Card",
+              "child": "verdict-row"
+            },
+            {
+              "id": "verdict-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "verdict-icon",
+                "verdict-col"
+              ]
+            },
+            {
+              "id": "verdict-icon",
+              "component": "Icon",
+              "name": "star"
+            },
+            {
+              "id": "verdict-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "verdict-title",
+                "verdict-text"
+              ]
+            },
+            {
+              "id": "verdict-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Recommendation: Plus"
+            },
+            {
+              "id": "verdict-text",
+              "component": "Text",
+              "text": "12 GB fits inside its 20 GB, and with roaming it costs **$550 a year**. That is $170 less than Max and $590 less than Basic."
+            },
+            {
+              "id": "plans",
+              "component": "List",
+              "children": {
+                "componentId": "plan-card",
+                "path": "/plans"
+              }
+            },
+            {
+              "id": "plan-card",
+              "component": "Card",
+              "child": "plan-col"
+            },
+            {
+              "id": "plan-col",
+              "component": "Column",
+              "children": [
+                "plan-head",
+                "plan-features",
+                "plan-divider",
+                "plan-monthly-row",
+                "plan-roaming-row",
+                "plan-yearly-row",
+                "plan-note"
+              ]
+            },
+            {
+              "id": "plan-head",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "align": "center",
+              "children": [
+                "plan-name",
+                "plan-price"
+              ]
+            },
+            {
+              "id": "plan-name",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "plan-price",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "$${price}/month"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "plan-features",
+              "component": "Text",
+              "text": {
+                "path": "features"
+              }
+            },
+            {
+              "id": "plan-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "plan-monthly-row",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "plan-monthly-label",
+                "plan-monthly-value"
+              ]
+            },
+            {
+              "id": "plan-monthly-label",
+              "component": "Text",
+              "text": "Monthly cost at 12 GB"
+            },
+            {
+              "id": "plan-monthly-value",
+              "component": "Text",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "monthlyAtUsage"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "plan-roaming-row",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "plan-roaming-label",
+                "plan-roaming-value"
+              ]
+            },
+            {
+              "id": "plan-roaming-label",
+              "component": "Text",
+              "text": "Roaming, 14 days"
+            },
+            {
+              "id": "plan-roaming-value",
+              "component": "Text",
+              "text": {
+                "path": "roaming"
+              }
+            },
+            {
+              "id": "plan-yearly-row",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "plan-yearly-label",
+                "plan-yearly-value"
+              ]
+            },
+            {
+              "id": "plan-yearly-label",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Per year"
+            },
+            {
+              "id": "plan-yearly-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "yearly"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "plan-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "note"
+              }
+            },
+            {
+              "id": "change-card",
+              "component": "Card",
+              "child": "change-col"
+            },
+            {
+              "id": "change-col",
+              "component": "Column",
+              "children": [
+                "change-title",
+                "change-1",
+                "change-2"
+              ]
+            },
+            {
+              "id": "change-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "When the answer would change"
+            },
+            {
+              "id": "change-1",
+              "component": "Text",
+              "text": "**Max** wins if you roam more than 48 days a year or use more than 20 GB a month."
+            },
+            {
+              "id": "change-2",
+              "component": "Text",
+              "text": "**Basic** only makes sense at 5 GB or less with no travel. Past 6.5 GB a month it costs more than Plus."
+            },
+            {
+              "id": "choose-card",
+              "component": "Card",
+              "child": "choose-col"
+            },
+            {
+              "id": "choose-col",
+              "component": "Column",
+              "children": [
+                "choose-picker",
+                "choose-button"
+              ]
+            },
+            {
+              "id": "choose-picker",
+              "component": "ChoicePicker",
+              "label": "Switch to",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Basic",
+                  "value": "basic"
+                },
+                {
+                  "label": "Plus",
+                  "value": "plus"
+                },
+                {
+                  "label": "Max",
+                  "value": "max"
+                }
+              ],
+              "value": {
+                "path": "/choice"
+              }
+            },
+            {
+              "id": "choose-button",
+              "component": "Button",
+              "variant": "primary",
+              "child": "choose-button-label",
+              "action": {
+                "event": {
+                  "name": "select_phone_plan",
+                  "context": {
+                    "plan": {
+                      "path": "/choice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "choose-button-label",
+              "component": "Text",
+              "text": "Choose this plan"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "phone-plans",
+          "path": "/",
+          "value": {
+            "choice": [
+              "plus"
+            ],
+            "plans": [
+              {
+                "name": "Basic",
+                "price": 25,
+                "features": "5 GB · extra data $10 per GB · no roaming",
+                "monthlyAtUsage": 95,
+                "roaming": "Not available",
+                "yearly": 1140,
+                "note": "7 GB over the allowance adds $70 a month, and it does not work abroad."
+              },
+              {
+                "name": "Plus (recommended)",
+                "price": 40,
+                "features": "20 GB · roaming $5 per day",
+                "monthlyAtUsage": 40,
+                "roaming": "$70",
+                "yearly": 550,
+                "note": "$480 for the plan plus 14 roaming days at $5."
+              },
+              {
+                "name": "Max",
+                "price": 60,
+                "features": "Unlimited data · roaming included",
+                "monthlyAtUsage": 60,
+                "roaming": "Included",
+                "yearly": 720,
+                "note": "Simple, but you pay $170 a year for headroom you do not use."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Phone plans compared</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #172b4d; background: #f4f5f7; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #5e6c84; }\n  .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .slider { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin-bottom: 8px; }\n  .slider input { grid-column: 1 / -1; width: 100%; accent-color: #0052cc; }\n  .slider output { font-weight: 700; color: #0052cc; }\n  .plan { position: relative; background: #fff; border: 2px solid #dfe1e6; border-radius: 10px; padding: 12px; margin-bottom: 10px; transition: border-color .2s; }\n  .plan.best { border-color: #00875a; }\n  .plan.out { opacity: .6; }\n  .plan header { display: flex; justify-content: space-between; align-items: baseline; }\n  .plan h2 { font-size: 16px; margin: 0; }\n  .plan .price { color: #5e6c84; font-size: 12px; }\n  .plan .feat { font-size: 12px; color: #5e6c84; margin: 2px 0 8px; }\n  .badge { display: none; position: absolute; top: -9px; right: 10px; background: #00875a; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .05em; }\n  .plan.best .badge { display: block; }\n  .line { display: flex; justify-content: space-between; font-size: 13px; }\n  .line.total { font-weight: 700; font-size: 15px; margin-top: 4px; padding-top: 6px; border-top: 1px solid #ebecf0; }\n  .barwrap { height: 8px; background: #ebecf0; border-radius: 4px; overflow: hidden; margin-top: 8px; }\n  .barwrap i { display: block; height: 100%; background: #0052cc; width: 0; transition: width .25s; }\n  .plan.best .barwrap i { background: #00875a; }\n  .problem { color: #bf2600; font-size: 12px; font-weight: 600; margin-top: 6px; min-height: 0; }\n  .verdict { background: #e3fcef; border-color: #abf5d1; font-weight: 600; }\n</style>\n</head>\n<body>\n  <h1>Phone plans compared</h1>\n  <p class=\"lead\">Set to your usage: about 12 GB a month and two one-week trips abroad. Drag to see when the best plan changes.</p>\n\n  <div class=\"card\">\n    <div class=\"slider\"><label for=\"gb\">Data per month</label><output id=\"gbOut\"></output><input id=\"gb\" type=\"range\" min=\"1\" max=\"40\" value=\"12\"></div>\n    <div class=\"slider\"><label for=\"days\">Days abroad per year</label><output id=\"daysOut\"></output><input id=\"days\" type=\"range\" min=\"0\" max=\"90\" value=\"14\"></div>\n  </div>\n\n  <div class=\"card verdict\" id=\"verdict\"></div>\n  <div id=\"plans\"></div>\n\n<script>\n(function () {\n  var plans = [\n    { id: 'basic', name: 'Basic', price: 25, feat: '5 GB · extra data $10 per GB · no roaming' },\n    { id: 'plus', name: 'Plus', price: 40, feat: '20 GB · roaming $5 per day' },\n    { id: 'max', name: 'Max', price: 60, feat: 'Unlimited data · roaming included' }\n  ];\n  var $ = function (id) { return document.getElementById(id); };\n  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };\n\n  function cost(id, gb, days) {\n    if (id === 'basic') {\n      var over = Math.max(0, gb - 5);\n      return { monthly: 25 + over * 10, roaming: 0, roamText: days > 0 ? 'Not available' : 'None needed',\n               problem: days > 0 ? 'No service abroad on your ' + days + ' travel days' : '', detail: over > 0 ? over + ' GB over × $10' : 'Within 5 GB' };\n    }\n    if (id === 'plus') {\n      return { monthly: 40, roaming: days * 5, roamText: usd(days * 5), problem: gb > 20 ? 'You would run out: only 20 GB included' : '', detail: 'Within 20 GB' };\n    }\n    return { monthly: 60, roaming: 0, roamText: 'Included', problem: '', detail: 'Unlimited' };\n  }\n\n  var nodes = {};\n  plans.forEach(function (p) {\n    var el = document.createElement('div');\n    el.className = 'plan';\n    var badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = 'Best for you';\n    var head = document.createElement('header');\n    var h = document.createElement('h2'); h.textContent = p.name;\n    var price = document.createElement('span'); price.className = 'price'; price.textContent = '$' + p.price + '/month';\n    head.appendChild(h); head.appendChild(price);\n    var feat = document.createElement('div'); feat.className = 'feat'; feat.textContent = p.feat;\n    var mk = function (label, cls) {\n      var line = document.createElement('div'); line.className = 'line' + (cls ? ' ' + cls : '');\n      var a = document.createElement('span'); a.textContent = label;\n      var b = document.createElement('span');\n      line.appendChild(a); line.appendChild(b);\n      return { line: line, label: a, value: b };\n    };\n    var monthly = mk('Monthly cost');\n    var roaming = mk('Roaming per year');\n    var total = mk('Per year', 'total');\n    var wrap = document.createElement('div'); wrap.className = 'barwrap';\n    var bar = document.createElement('i'); wrap.appendChild(bar);\n    var problem = document.createElement('div'); problem.className = 'problem';\n    [badge, head, feat, monthly.line, roaming.line, total.line, wrap, problem].forEach(function (n) { el.appendChild(n); });\n    $('plans').appendChild(el);\n    nodes[p.id] = { el: el, monthly: monthly, roaming: roaming, total: total, bar: bar, problem: problem };\n  });\n\n  function render() {\n    var gb = parseInt($('gb').value, 10);\n    var days = parseInt($('days').value, 10);\n    $('gbOut').textContent = gb + ' GB';\n    $('daysOut').textContent = days + (days === 1 ? ' day' : ' days');\n\n    var results = plans.map(function (p) {\n      var c = cost(p.id, gb, days);\n      c.id = p.id; c.name = p.name;\n      c.yearly = c.monthly * 12 + c.roaming;\n      return c;\n    });\n    var usable = results.filter(function (r) { return !r.problem; });\n    var best = usable.reduce(function (a, b) { return b.yearly < a.yearly ? b : a; });\n    var maxYearly = Math.max.apply(null, results.map(function (r) { return r.yearly; }));\n\n    results.forEach(function (r) {\n      var n = nodes[r.id];\n      n.monthly.label.textContent = 'Monthly cost (' + r.detail + ')';\n      n.monthly.value.textContent = usd(r.monthly);\n      n.roaming.value.textContent = r.roamText;\n      n.total.value.textContent = usd(r.yearly);\n      n.bar.style.width = (r.yearly / maxYearly * 100) + '%';\n      n.problem.textContent = r.problem;\n      n.el.classList.toggle('best', r.id === best.id);\n      n.el.classList.toggle('out', !!r.problem);\n    });\n\n    var others = usable.filter(function (r) { return r.id !== best.id; }).sort(function (a, b) { return a.yearly - b.yearly; });\n    var text = 'Best for you: ' + best.name + ' at ' + usd(best.yearly) + ' a year.';\n    if (others.length) { text += ' That is ' + usd(others[0].yearly - best.yearly) + ' less than ' + others[0].name + '.'; }\n    $('verdict').textContent = text;\n  }\n\n  $('gb').addEventListener('input', render);\n  $('days').addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_phone_plans_08",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the three phone plans with their yearly cost for 12 GB a month and 14 roaming days as a read-only table, state that Plus is recommended, and let the user pick the plan to switch to, whether to keep their number and when to start.",
+        "data": {
+          "usage": {
+            "gbPerMonth": 12,
+            "roamingDaysPerYear": 14
+          },
+          "recommended": "plus",
+          "plans": [
+            {
+              "plan": "Basic",
+              "monthly": "$95 ($25 + 7 GB extra)",
+              "roaming": "Not available",
+              "yearly": "$1,140"
+            },
+            {
+              "plan": "Plus",
+              "monthly": "$40",
+              "roaming": "$70",
+              "yearly": "$550"
+            },
+            {
+              "plan": "Max",
+              "monthly": "$60",
+              "roaming": "Included",
+              "yearly": "$720"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "plan": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "plus",
+                "max"
+              ]
+            },
+            "keepNumber": {
+              "type": "boolean"
+            },
+            "startDate": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "required": [
+            "plan",
+            "keepNumber"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "plans": {
+            "type": "array",
+            "title": "Cost at 12 GB a month and 14 days abroad",
+            "items": {
+              "type": "object",
+              "properties": {
+                "plan": {
+                  "type": "string",
+                  "title": "Plan"
+                },
+                "monthly": {
+                  "type": "string",
+                  "title": "Monthly"
+                },
+                "roaming": {
+                  "type": "string",
+                  "title": "Roaming"
+                },
+                "yearly": {
+                  "type": "string",
+                  "title": "Per year"
+                }
+              }
+            }
+          },
+          "plan": {
+            "type": "string",
+            "title": "Switch to",
+            "oneOf": [
+              {
+                "const": "basic",
+                "title": "Basic: $1,140 a year, no service abroad"
+              },
+              {
+                "const": "plus",
+                "title": "Plus: $550 a year (recommended)"
+              },
+              {
+                "const": "max",
+                "title": "Max: $720 a year"
+              }
+            ]
+          },
+          "keepNumber": {
+            "type": "boolean",
+            "title": "Keep my current number"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Start on (optional)"
+          }
+        },
+        "required": [
+          "plan",
+          "keepNumber"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Recommended: Plus. It covers 12 GB and costs $170 a year less than Max."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/plans",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Your choice",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/plan",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/keepNumber"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/startDate"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "plans": [
+          {
+            "plan": "Basic",
+            "monthly": "$95 ($25 + 7 GB extra)",
+            "roaming": "Not available",
+            "yearly": "$1,140"
+          },
+          {
+            "plan": "Plus",
+            "monthly": "$40",
+            "roaming": "$70",
+            "yearly": "$550"
+          },
+          {
+            "plan": "Max",
+            "monthly": "$60",
+            "roaming": "Included",
+            "yearly": "$720"
+          }
+        ],
+        "plan": "plus",
+        "keepNumber": true
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "The table and worked sums give the answer and the break-even points; changing an assumption means redoing the arithmetic yourself.",
+    "a2ui": "Plan cards, currency formatting and a pick-and-confirm button fit the catalog well; every figure had to be precomputed by the agent because the client cannot do the sums.",
+    "html": "Two sliders recompute all three plans, flag the ones that stop working and move the best-for-you badge live, so the break-even points can be found by dragging.",
+    "agui": "Choosing a plan is a clean typed result (plan, keep number, start date); the comparison is a disabled table and the recommendation is a single label."
+  }
+}

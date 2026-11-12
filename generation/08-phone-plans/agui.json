@@ -1,0 +1,89 @@
+{
+  "toolCall": {
+    "id": "call_phone_plans_08",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the three phone plans with their yearly cost for 12 GB a month and 14 roaming days as a read-only table, state that Plus is recommended, and let the user pick the plan to switch to, whether to keep their number and when to start.",
+      "data": {
+        "usage": { "gbPerMonth": 12, "roamingDaysPerYear": 14 },
+        "recommended": "plus",
+        "plans": [
+          { "plan": "Basic", "monthly": "$95 ($25 + 7 GB extra)", "roaming": "Not available", "yearly": "$1,140" },
+          { "plan": "Plus", "monthly": "$40", "roaming": "$70", "yearly": "$550" },
+          { "plan": "Max", "monthly": "$60", "roaming": "Included", "yearly": "$720" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "plan": { "type": "string", "enum": ["basic", "plus", "max"] },
+          "keepNumber": { "type": "boolean" },
+          "startDate": { "type": "string", "format": "date" }
+        },
+        "required": ["plan", "keepNumber"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "plans": {
+          "type": "array",
+          "title": "Cost at 12 GB a month and 14 days abroad",
+          "items": {
+            "type": "object",
+            "properties": {
+              "plan": { "type": "string", "title": "Plan" },
+              "monthly": { "type": "string", "title": "Monthly" },
+              "roaming": { "type": "string", "title": "Roaming" },
+              "yearly": { "type": "string", "title": "Per year" }
+            }
+          }
+        },
+        "plan": {
+          "type": "string",
+          "title": "Switch to",
+          "oneOf": [
+            { "const": "basic", "title": "Basic: $1,140 a year, no service abroad" },
+            { "const": "plus", "title": "Plus: $550 a year (recommended)" },
+            { "const": "max", "title": "Max: $720 a year" }
+          ]
+        },
+        "keepNumber": { "type": "boolean", "title": "Keep my current number" },
+        "startDate": { "type": "string", "format": "date", "title": "Start on (optional)" }
+      },
+      "required": ["plan", "keepNumber"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Recommended: Plus. It covers 12 GB and costs $170 a year less than Max." },
+        { "type": "Control", "scope": "#/properties/plans", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Your choice",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/plan", "options": { "format": "radio" } },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/keepNumber" },
+                { "type": "Control", "scope": "#/properties/startDate" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "plans": [
+        { "plan": "Basic", "monthly": "$95 ($25 + 7 GB extra)", "roaming": "Not available", "yearly": "$1,140" },
+        { "plan": "Plus", "monthly": "$40", "roaming": "$70", "yearly": "$550" },
+        { "plan": "Max", "monthly": "$60", "roaming": "Included", "yearly": "$720" }
+      ],
+      "plan": "plus",
+      "keepNumber": true
+    }
+  }
+}

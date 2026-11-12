@@ -1,0 +1,598 @@
+{
+  "id": "09-sorting-algorithms",
+  "index": 9,
+  "title": "Sorting algorithms",
+  "category": "comparison",
+  "prompt": "Compare bubble sort, merge sort and quicksort: time complexity, space, stability, and when to use each.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Bubble sort vs merge sort vs quicksort\n\n| | Bubble sort | Merge sort | Quicksort |\n| --- | --- | --- | --- |\n| **Idea** | Swap adjacent out-of-order pairs until none remain | Split in half, sort each half, merge | Pick a pivot, partition around it, recurse |\n| **Best case** | O(n) (already sorted, with early exit) | O(n log n) | O(n log n) |\n| **Average case** | O(n²) | O(n log n) | O(n log n) |\n| **Worst case** | O(n²) | O(n log n) | O(n²) (bad pivots) |\n| **Extra space** | O(1) | O(n) | O(log n) stack |\n| **Stable?** | Yes | Yes | No (typical in-place version) |\n| **In place?** | Yes | No | Yes |\n\n*Stable* means equal elements keep their original relative order, which matters when you sort records by one key after another.\n\n### What the complexities mean in practice\n\nFor 1,000,000 items, n² is 10¹² basic steps while n log₂ n is about 2 × 10⁷. That is the difference between hours and a fraction of a second, so bubble sort is ruled out for anything large.\n\n### When to use each\n\n- **Bubble sort** — teaching, or tiny lists (a dozen items) that are already nearly sorted. It is simple and stable, but nothing else recommends it. Insertion sort does the same job better.\n- **Merge sort** — when you need **guaranteed** O(n log n) or a **stable** sort, when sorting linked lists, or when data does not fit in memory (external sorting). The cost is O(n) extra space.\n- **Quicksort** — the usual choice for in-memory arrays of primitives: it sorts in place, is cache-friendly and has small constants, so it is typically the fastest in practice. Use a random or median-of-three pivot to make the O(n²) worst case vanishingly unlikely, and avoid it when stability is required.\n\n### What libraries actually do\n\nMost standard libraries use hybrids: **Timsort** (merge sort plus insertion sort; stable) in Python and for objects in Java, and **introsort** (quicksort that falls back to heapsort) in C++ `std::sort`. Unless you are learning, call the library sort.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "sorting-algorithms",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "sorting-algorithms",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "table-card",
+                "stable-note",
+                "use-title",
+                "tabs",
+                "library-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Bubble vs merge vs quicksort"
+            },
+            {
+              "id": "table-card",
+              "component": "Card",
+              "child": "table-col"
+            },
+            {
+              "id": "table-col",
+              "component": "Column",
+              "children": [
+                "table-head",
+                "table-divider",
+                "table-rows"
+              ]
+            },
+            {
+              "id": "table-head",
+              "component": "Row",
+              "children": [
+                "head-prop",
+                "head-bubble",
+                "head-merge",
+                "head-quick"
+              ]
+            },
+            {
+              "id": "head-prop",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 3,
+              "text": " "
+            },
+            {
+              "id": "head-bubble",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 2,
+              "text": "Bubble"
+            },
+            {
+              "id": "head-merge",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 2,
+              "text": "Merge"
+            },
+            {
+              "id": "head-quick",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 2,
+              "text": "Quick"
+            },
+            {
+              "id": "table-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "table-rows",
+              "component": "List",
+              "children": {
+                "componentId": "table-row",
+                "path": "/rows"
+              }
+            },
+            {
+              "id": "table-row",
+              "component": "Row",
+              "children": [
+                "cell-prop",
+                "cell-bubble",
+                "cell-merge",
+                "cell-quick"
+              ]
+            },
+            {
+              "id": "cell-prop",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 3,
+              "text": {
+                "path": "property"
+              }
+            },
+            {
+              "id": "cell-bubble",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "path": "bubble"
+              }
+            },
+            {
+              "id": "cell-merge",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "path": "merge"
+              }
+            },
+            {
+              "id": "cell-quick",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "path": "quick"
+              }
+            },
+            {
+              "id": "stable-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Stable means equal elements keep their original order, which matters when sorting records by one key after another."
+            },
+            {
+              "id": "use-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "When to use each"
+            },
+            {
+              "id": "tabs",
+              "component": "Tabs",
+              "tabs": [
+                {
+                  "title": "Bubble",
+                  "child": "bubble-col"
+                },
+                {
+                  "title": "Merge",
+                  "child": "merge-col"
+                },
+                {
+                  "title": "Quick",
+                  "child": "quick-col"
+                }
+              ]
+            },
+            {
+              "id": "bubble-col",
+              "component": "Column",
+              "children": [
+                "bubble-idea",
+                "bubble-use",
+                "bubble-avoid"
+              ]
+            },
+            {
+              "id": "bubble-idea",
+              "component": "Text",
+              "text": "**How:** swap adjacent out-of-order pairs until a full pass makes no swaps."
+            },
+            {
+              "id": "bubble-use",
+              "component": "Text",
+              "text": "**Use for:** teaching, or a dozen items that are already nearly sorted."
+            },
+            {
+              "id": "bubble-avoid",
+              "component": "Text",
+              "text": "**Avoid for:** anything large. A million items means about 10¹² steps."
+            },
+            {
+              "id": "merge-col",
+              "component": "Column",
+              "children": [
+                "merge-idea",
+                "merge-use",
+                "merge-avoid"
+              ]
+            },
+            {
+              "id": "merge-idea",
+              "component": "Text",
+              "text": "**How:** split in half, sort each half, merge the two sorted halves."
+            },
+            {
+              "id": "merge-use",
+              "component": "Text",
+              "text": "**Use for:** guaranteed O(n log n), stable sorting, linked lists, and data too big for memory."
+            },
+            {
+              "id": "merge-avoid",
+              "component": "Text",
+              "text": "**Avoid when:** memory is tight. It needs O(n) extra space."
+            },
+            {
+              "id": "quick-col",
+              "component": "Column",
+              "children": [
+                "quick-idea",
+                "quick-use",
+                "quick-avoid"
+              ]
+            },
+            {
+              "id": "quick-idea",
+              "component": "Text",
+              "text": "**How:** pick a pivot, move smaller items left and larger right, recurse on each side."
+            },
+            {
+              "id": "quick-use",
+              "component": "Text",
+              "text": "**Use for:** in-memory arrays. In place, cache-friendly and usually the fastest in practice."
+            },
+            {
+              "id": "quick-avoid",
+              "component": "Text",
+              "text": "**Avoid when:** you need stability, or cannot randomise the pivot against the O(n²) worst case."
+            },
+            {
+              "id": "library-card",
+              "component": "Card",
+              "child": "library-row"
+            },
+            {
+              "id": "library-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "library-icon",
+                "library-text"
+              ]
+            },
+            {
+              "id": "library-icon",
+              "component": "Icon",
+              "name": "info"
+            },
+            {
+              "id": "library-text",
+              "component": "Text",
+              "weight": 1,
+              "text": "Real libraries use hybrids: Timsort (merge + insertion, stable) in Python and Java, introsort (quick + heap) in C++. Outside of learning, call the library sort."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "sorting-algorithms",
+          "path": "/",
+          "value": {
+            "rows": [
+              {
+                "property": "Best case",
+                "bubble": "O(n)",
+                "merge": "O(n log n)",
+                "quick": "O(n log n)"
+              },
+              {
+                "property": "Average",
+                "bubble": "O(n²)",
+                "merge": "O(n log n)",
+                "quick": "O(n log n)"
+              },
+              {
+                "property": "Worst case",
+                "bubble": "O(n²)",
+                "merge": "O(n log n)",
+                "quick": "O(n²)"
+              },
+              {
+                "property": "Extra space",
+                "bubble": "O(1)",
+                "merge": "O(n)",
+                "quick": "O(log n)"
+              },
+              {
+                "property": "Stable",
+                "bubble": "Yes",
+                "merge": "Yes",
+                "quick": "No"
+              },
+              {
+                "property": "In place",
+                "bubble": "Yes",
+                "merge": "No",
+                "quick": "Yes"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Sorting algorithms race</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #e2e8f0; background: #0f172a; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #94a3b8; }\n  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }\n  button, select { padding: 6px 12px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: inherit; font: inherit; cursor: pointer; }\n  button.primary { background: #f59e0b; border-color: #f59e0b; color: #0f172a; font-weight: 700; }\n  label { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }\n  input[type=range] { accent-color: #f59e0b; width: 90px; }\n  .lane { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 10px; margin-bottom: 10px; }\n  .lane header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }\n  .lane h2 { font-size: 14px; margin: 0; }\n  .lane .stat { font: 12px ui-monospace, Menlo, monospace; color: #94a3b8; }\n  .lane.done { border-color: #22c55e; }\n  .lane.done h2::after { content: \" ✓ \" attr(data-place); color: #22c55e; font-weight: 400; font-size: 12px; }\n  .bars { display: flex; align-items: flex-end; gap: 1px; height: 70px; }\n  .bars i { flex: 1; background: #64748b; border-radius: 1px 1px 0 0; min-width: 1px; }\n  .bars i.hot { background: #f59e0b; }\n  .lane.done .bars i { background: #22c55e; }\n  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }\n  th, td { padding: 5px 6px; text-align: left; border-top: 1px solid #334155; }\n  th { color: #94a3b8; font-weight: 600; }\n  .note { color: #94a3b8; font-size: 12.5px; margin: 10px 0 0; }\n</style>\n</head>\n<body>\n  <h1>Bubble vs merge vs quicksort</h1>\n  <p class=\"lead\">All three sort the same list, one comparison or write per tick. Change the input to see where each one struggles.</p>\n\n  <div class=\"controls\">\n    <button id=\"run\" class=\"primary\">Run race</button>\n    <button id=\"shuffle\">New list</button>\n    <select id=\"kind\" aria-label=\"Input order\">\n      <option value=\"random\">Random</option>\n      <option value=\"nearly\">Nearly sorted</option>\n      <option value=\"reversed\">Reversed</option>\n    </select>\n    <label>Size <input id=\"size\" type=\"range\" min=\"8\" max=\"48\" value=\"28\"><span id=\"sizeOut\"></span></label>\n  </div>\n\n  <div id=\"lanes\"></div>\n\n  <table>\n    <thead><tr><th></th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th></tr></thead>\n    <tbody>\n      <tr><td>Bubble</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>\n      <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes</td></tr>\n      <tr><td>Quick</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>No</td></tr>\n    </tbody>\n  </table>\n  <p class=\"note\" id=\"note\">Tip: try \"Nearly sorted\" (bubble sort's best case) and \"Reversed\" (a last-element pivot gives quicksort its O(n²) worst case).</p>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n\n  function bubbleFrames(input) {\n    var a = input.slice(), frames = [], comps = 0, writes = 0, n = a.length;\n    for (var i = 0; i < n - 1; i++) {\n      var swapped = false;\n      for (var j = 0; j < n - 1 - i; j++) {\n        comps += 1;\n        if (a[j] > a[j + 1]) {\n          var t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;\n          writes += 2;\n          swapped = true;\n        }\n        frames.push({ a: a.slice(), hot: [j, j + 1], comps: comps, writes: writes });\n      }\n      if (!swapped) { break; }\n    }\n    return frames;\n  }\n\n  function mergeFrames(input) {\n    var a = input.slice(), frames = [], comps = 0, writes = 0;\n    function sort(lo, hi) {\n      if (lo >= hi) { return; }\n      var mid = Math.floor((lo + hi) / 2);\n      sort(lo, mid);\n      sort(mid + 1, hi);\n      var left = a.slice(lo, mid + 1), right = a.slice(mid + 1, hi + 1);\n      var i = 0, j = 0, k = lo;\n      while (i < left.length || j < right.length) {\n        var takeLeft;\n        if (i < left.length && j < right.length) { comps += 1; takeLeft = left[i] <= right[j]; }\n        else { takeLeft = i < left.length; }\n        a[k] = takeLeft ? left[i++] : right[j++];\n        writes += 1;\n        frames.push({ a: a.slice(), hot: [k], comps: comps, writes: writes });\n        k += 1;\n      }\n    }\n    sort(0, a.length - 1);\n    return frames;\n  }\n\n  function quickFrames(input) {\n    var a = input.slice(), frames = [], comps = 0, writes = 0;\n    function swap(x, y) {\n      if (x === y) { return; }\n      var t = a[x]; a[x] = a[y]; a[y] = t;\n      writes += 2;\n    }\n    function sort(lo, hi) {\n      if (lo >= hi) { return; }\n      var pivot = a[hi], i = lo;\n      for (var j = lo; j < hi; j++) {\n        comps += 1;\n        if (a[j] < pivot) { swap(i, j); i += 1; }\n        frames.push({ a: a.slice(), hot: [j, hi], comps: comps, writes: writes });\n      }\n      swap(i, hi);\n      frames.push({ a: a.slice(), hot: [i], comps: comps, writes: writes });\n      sort(lo, i - 1);\n      sort(i + 1, hi);\n    }\n    sort(0, a.length - 1);\n    return frames;\n  }\n\n  var algos = [\n    { name: 'Bubble sort', make: bubbleFrames },\n    { name: 'Merge sort', make: mergeFrames },\n    { name: 'Quicksort', make: quickFrames }\n  ];\n  var input = [];\n  var timer = null;\n  var tick = 0;\n  var finished = 0;\n\n  algos.forEach(function (al) {\n    var lane = document.createElement('div');\n    lane.className = 'lane';\n    var head = document.createElement('header');\n    var h = document.createElement('h2'); h.textContent = al.name;\n    var stat = document.createElement('span'); stat.className = 'stat';\n    head.appendChild(h); head.appendChild(stat);\n    var bars = document.createElement('div'); bars.className = 'bars';\n    lane.appendChild(head); lane.appendChild(bars);\n    $('lanes').appendChild(lane);\n    al.lane = lane; al.title = h; al.stat = stat; al.bars = bars;\n  });\n\n  function makeInput() {\n    var n = parseInt($('size').value, 10);\n    var kind = $('kind').value;\n    var a = [];\n    for (var i = 1; i <= n; i++) { a.push(i); }\n    if (kind === 'reversed') { a.reverse(); }\n    else if (kind === 'random') {\n      for (var k = a.length - 1; k > 0; k--) {\n        var r = Math.floor(Math.random() * (k + 1));\n        var t = a[k]; a[k] = a[r]; a[r] = t;\n      }\n    } else {\n      for (var s = 0; s < Math.max(1, Math.floor(n / 10)); s++) {\n        var p = Math.floor(Math.random() * (n - 1));\n        var u = a[p]; a[p] = a[p + 1]; a[p + 1] = u;\n      }\n    }\n    return a;\n  }\n\n  function draw(al, frame) {\n    var n = frame.a.length;\n    var nodes = al.bars.children;\n    for (var i = 0; i < n; i++) {\n      nodes[i].style.height = (frame.a[i] / n * 100) + '%';\n      nodes[i].className = frame.hot.indexOf(i) !== -1 ? 'hot' : '';\n    }\n    al.stat.textContent = frame.comps + ' comparisons · ' + frame.writes + ' writes';\n  }\n\n  function prepare() {\n    if (timer) { clearInterval(timer); timer = null; }\n    input = makeInput();\n    tick = 0;\n    finished = 0;\n    $('sizeOut').textContent = String(input.length);\n    $('run').textContent = 'Run race';\n    algos.forEach(function (al) {\n      al.frames = al.make(input);\n      al.done = false;\n      al.lane.className = 'lane';\n      al.bars.textContent = '';\n      for (var i = 0; i < input.length; i++) { al.bars.appendChild(document.createElement('i')); }\n      draw(al, { a: input, hot: [], comps: 0, writes: 0 });\n    });\n  }\n\n  function advance() {\n    var running = false;\n    algos.forEach(function (al) {\n      if (al.done) { return; }\n      if (tick < al.frames.length) {\n        draw(al, al.frames[tick]);\n        running = true;\n      }\n      if (tick >= al.frames.length - 1) {\n        al.done = true;\n        finished += 1;\n        var last = al.frames.length ? al.frames[al.frames.length - 1] : { a: input, hot: [], comps: 0, writes: 0 };\n        draw(al, { a: last.a, hot: [], comps: last.comps, writes: last.writes });\n        al.title.setAttribute('data-place', finished === 1 ? 'first' : (finished === 2 ? 'second' : 'third'));\n        al.lane.className = 'lane done';\n      }\n    });\n    tick += 1;\n    if (!running || finished === algos.length) {\n      clearInterval(timer);\n      timer = null;\n      $('run').textContent = 'Run again';\n    }\n  }\n\n  $('run').addEventListener('click', function () {\n    if (timer) { clearInterval(timer); timer = null; $('run').textContent = 'Resume'; return; }\n    if (finished === algos.length) { prepare(); }\n    $('run').textContent = 'Pause';\n    timer = setInterval(advance, 35);\n  });\n  $('shuffle').addEventListener('click', prepare);\n  $('kind').addEventListener('change', prepare);\n  $('size').addEventListener('input', prepare);\n\n  prepare();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_sorting_algorithms_09",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show a read-only comparison of bubble sort, merge sort and quicksort (average and worst time, extra space, stable). Then collect the user's constraints so one can be recommended: how much data, whether equal items must keep their order, whether memory is tight, and whether the input is usually almost sorted.",
+        "data": {
+          "algorithms": [
+            {
+              "name": "Bubble sort",
+              "average": "O(n²)",
+              "worst": "O(n²)",
+              "space": "O(1)",
+              "stable": true
+            },
+            {
+              "name": "Merge sort",
+              "average": "O(n log n)",
+              "worst": "O(n log n)",
+              "space": "O(n)",
+              "stable": true
+            },
+            {
+              "name": "Quicksort",
+              "average": "O(n log n)",
+              "worst": "O(n²)",
+              "space": "O(log n)",
+              "stable": false
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "string",
+              "enum": [
+                "tens",
+                "thousands",
+                "millions",
+                "larger-than-memory"
+              ]
+            },
+            "needStable": {
+              "type": "boolean"
+            },
+            "memoryTight": {
+              "type": "boolean"
+            },
+            "nearlySorted": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "size",
+            "needStable",
+            "memoryTight",
+            "nearlySorted"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "algorithms": {
+            "type": "array",
+            "title": "At a glance",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "Algorithm"
+                },
+                "average": {
+                  "type": "string",
+                  "title": "Average"
+                },
+                "worst": {
+                  "type": "string",
+                  "title": "Worst"
+                },
+                "space": {
+                  "type": "string",
+                  "title": "Extra space"
+                },
+                "stable": {
+                  "type": "boolean",
+                  "title": "Stable"
+                }
+              }
+            }
+          },
+          "size": {
+            "type": "string",
+            "title": "How much data are you sorting?",
+            "oneOf": [
+              {
+                "const": "tens",
+                "title": "A few dozen items"
+              },
+              {
+                "const": "thousands",
+                "title": "Thousands"
+              },
+              {
+                "const": "millions",
+                "title": "Millions, in memory"
+              },
+              {
+                "const": "larger-than-memory",
+                "title": "More than fits in memory"
+              }
+            ]
+          },
+          "needStable": {
+            "type": "boolean",
+            "title": "Equal items must keep their original order (stable)"
+          },
+          "memoryTight": {
+            "type": "boolean",
+            "title": "Memory is tight: no room for a second copy"
+          },
+          "nearlySorted": {
+            "type": "boolean",
+            "title": "The input is usually almost sorted already"
+          }
+        },
+        "required": [
+          "size",
+          "needStable",
+          "memoryTight",
+          "nearlySorted"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Bubble sort vs merge sort vs quicksort"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/algorithms",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Which one should you use?",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/size",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/needStable"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/memoryTight"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/nearlySorted"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "algorithms": [
+          {
+            "name": "Bubble sort",
+            "average": "O(n²)",
+            "worst": "O(n²)",
+            "space": "O(1)",
+            "stable": true
+          },
+          {
+            "name": "Merge sort",
+            "average": "O(n log n)",
+            "worst": "O(n log n)",
+            "space": "O(n)",
+            "stable": true
+          },
+          {
+            "name": "Quicksort",
+            "average": "O(n log n)",
+            "worst": "O(n²)",
+            "space": "O(log n)",
+            "stable": false
+          }
+        ],
+        "size": "thousands",
+        "needStable": false,
+        "memoryTight": false,
+        "nearlySorted": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "The complexity table is exactly what Markdown tables are for, and the when-to-use advice has room to breathe; the behaviour is asserted and never shown.",
+    "a2ui": "Weighted rows fake a four-column table and tabs hold the per-algorithm advice; superscripts work only because they are plain Unicode, and nothing can be animated.",
+    "html": "Races all three on the same list, tick by tick with comparison and write counters, and lets you feed them reversed or nearly sorted input to trigger best and worst cases.",
+    "agui": "A constraints questionnaire maps well to four typed fields, and the stable column even renders as checkboxes, but the comparison is otherwise a disabled grid."
+  }
+}

@@ -1,0 +1,736 @@
+{
+  "id": "11-scrum-kanban-waterfall",
+  "index": 11,
+  "title": "Scrum vs Kanban vs Waterfall",
+  "category": "comparison",
+  "prompt": "Compare Scrum, Kanban and Waterfall. Which fits a 6-person team maintaining a live product with frequent urgent bug fixes?",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Scrum vs Kanban vs Waterfall\n\n**For your team: Kanban.** Six people maintaining a live product with frequent urgent bug fixes need to change priorities daily without breaking a plan. Kanban is built for exactly that. Borrow a few Scrum habits (a regular retrospective and a short planning session) and you have what many maintenance teams run in practice.\n\n| | Scrum | Kanban | Waterfall |\n| --- | --- | --- | --- |\n| **How work flows** | Fixed sprints (1–4 weeks) | Continuous flow | Sequential phases |\n| **Planning** | At the start of each sprint | Continuous; pull the next item when there is capacity | All up front |\n| **Changing priorities** | Next sprint (mid-sprint changes are discouraged) | Any time, as long as work-in-progress limits hold | Formal change request |\n| **Roles** | Product Owner, Scrum Master, developers | None prescribed | Project manager, phase owners |\n| **Releases** | End of each sprint | Whenever an item is done | Once, at the end |\n| **Key metric** | Velocity | Cycle time, throughput | Milestones against plan |\n| **Best for** | Feature development with evolving requirements | Support, maintenance and operations | Fixed scope, regulated or hardware projects |\n| **Main risk** | Urgent work blows up the sprint | No cadence, so improvement and planning can drift | Late discovery of problems |\n\n### Why Kanban fits\n\n- **Urgent bugs do not break anything.** Add an *expedite* lane (limit: one item) that jumps the queue. In Scrum, every production incident invalidates the sprint commitment.\n- **Work-in-progress limits protect focus.** With six people, a limit of about four items in progress forces the team to finish before starting something new.\n- **Continuous delivery matches a live product.** Fixes ship when they are done and do not wait for a sprint boundary.\n- **Cycle time is the right metric.** \"How long does a bug take from report to production?\" is what your users feel.\n\n### Why not the others\n\n- **Scrum** works if interruptions are rare. If you prefer it anyway, reserve a fixed share of each sprint (say 30%) for unplanned work, or rotate one person as the interrupt handler.\n- **Waterfall** assumes requirements are known and stable. A live product with daily surprises is the opposite.\n\n### A practical starting point\n\nBoard columns: **Backlog → Ready → In progress (limit 4) → Review (limit 3) → Done**, plus an **Expedite** lane. Hold a 15-minute daily stand-up at the board, a weekly replenishment meeting to refill Ready, and a retrospective every two weeks.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "scrum-kanban-waterfall",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "scrum-kanban-waterfall",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "context",
+                "verdict-card",
+                "methods-title",
+                "tabs",
+                "start-card",
+                "more"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Scrum vs Kanban vs Waterfall"
+            },
+            {
+              "id": "context",
+              "component": "Text",
+              "variant": "caption",
+              "text": "For a 6-person team maintaining a live product with frequent urgent bug fixes."
+            },
+            {
+              "id": "verdict-card",
+              "component": "Card",
+              "child": "verdict-row"
+            },
+            {
+              "id": "verdict-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "verdict-icon",
+                "verdict-col"
+              ]
+            },
+            {
+              "id": "verdict-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "verdict-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "verdict-title",
+                "verdict-text"
+              ]
+            },
+            {
+              "id": "verdict-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Recommendation: Kanban"
+            },
+            {
+              "id": "verdict-text",
+              "component": "Text",
+              "text": "Priorities can change daily without breaking a plan. Add an expedite lane for urgent bugs and keep a retrospective from Scrum."
+            },
+            {
+              "id": "methods-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "The three methods"
+            },
+            {
+              "id": "tabs",
+              "component": "Tabs",
+              "tabs": [
+                {
+                  "title": "Scrum",
+                  "child": "scrum-list"
+                },
+                {
+                  "title": "Kanban",
+                  "child": "kanban-list"
+                },
+                {
+                  "title": "Waterfall",
+                  "child": "waterfall-list"
+                }
+              ]
+            },
+            {
+              "id": "scrum-list",
+              "component": "List",
+              "children": {
+                "componentId": "scrum-row",
+                "path": "/scrum"
+              }
+            },
+            {
+              "id": "scrum-row",
+              "component": "Column",
+              "children": [
+                "scrum-label",
+                "scrum-value"
+              ]
+            },
+            {
+              "id": "scrum-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "label"
+              }
+            },
+            {
+              "id": "scrum-value",
+              "component": "Text",
+              "text": {
+                "path": "value"
+              }
+            },
+            {
+              "id": "kanban-list",
+              "component": "List",
+              "children": {
+                "componentId": "kanban-row",
+                "path": "/kanban"
+              }
+            },
+            {
+              "id": "kanban-row",
+              "component": "Column",
+              "children": [
+                "kanban-label",
+                "kanban-value"
+              ]
+            },
+            {
+              "id": "kanban-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "label"
+              }
+            },
+            {
+              "id": "kanban-value",
+              "component": "Text",
+              "text": {
+                "path": "value"
+              }
+            },
+            {
+              "id": "waterfall-list",
+              "component": "List",
+              "children": {
+                "componentId": "waterfall-row",
+                "path": "/waterfall"
+              }
+            },
+            {
+              "id": "waterfall-row",
+              "component": "Column",
+              "children": [
+                "waterfall-label",
+                "waterfall-value"
+              ]
+            },
+            {
+              "id": "waterfall-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "label"
+              }
+            },
+            {
+              "id": "waterfall-value",
+              "component": "Text",
+              "text": {
+                "path": "value"
+              }
+            },
+            {
+              "id": "start-card",
+              "component": "Card",
+              "child": "start-col"
+            },
+            {
+              "id": "start-col",
+              "component": "Column",
+              "children": [
+                "start-title",
+                "start-board",
+                "start-1",
+                "start-2",
+                "start-3"
+              ]
+            },
+            {
+              "id": "start-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "A practical starting point"
+            },
+            {
+              "id": "start-board",
+              "component": "Text",
+              "text": "**Board:** Backlog → Ready → In progress (limit 4) → Review (limit 3) → Done, plus an Expedite lane (limit 1)."
+            },
+            {
+              "id": "start-1",
+              "component": "Text",
+              "text": "Daily: 15-minute stand-up at the board."
+            },
+            {
+              "id": "start-2",
+              "component": "Text",
+              "text": "Weekly: refill the Ready column."
+            },
+            {
+              "id": "start-3",
+              "component": "Text",
+              "text": "Every two weeks: retrospective. Track cycle time from report to production."
+            },
+            {
+              "id": "more",
+              "component": "Modal",
+              "trigger": "more-button",
+              "content": "more-col"
+            },
+            {
+              "id": "more-button",
+              "component": "Button",
+              "variant": "borderless",
+              "child": "more-button-label",
+              "action": {
+                "event": {
+                  "name": "open_scrum_alternative"
+                }
+              }
+            },
+            {
+              "id": "more-button-label",
+              "component": "Text",
+              "text": "What if we prefer Scrum?"
+            },
+            {
+              "id": "more-col",
+              "component": "Column",
+              "children": [
+                "more-title",
+                "more-1",
+                "more-2"
+              ]
+            },
+            {
+              "id": "more-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Making Scrum work with interruptions"
+            },
+            {
+              "id": "more-1",
+              "component": "Text",
+              "text": "Reserve a fixed share of every sprint, around 30%, for unplanned work, and track how much you actually use."
+            },
+            {
+              "id": "more-2",
+              "component": "Text",
+              "text": "Or rotate one person each sprint as the interrupt handler, so the other five keep their commitment."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "scrum-kanban-waterfall",
+          "path": "/",
+          "value": {
+            "scrum": [
+              {
+                "label": "How work flows",
+                "value": "Fixed sprints of 1–4 weeks."
+              },
+              {
+                "label": "Changing priorities",
+                "value": "Next sprint. Mid-sprint changes are discouraged."
+              },
+              {
+                "label": "Releases",
+                "value": "At the end of each sprint."
+              },
+              {
+                "label": "Key metric",
+                "value": "Velocity."
+              },
+              {
+                "label": "Best for",
+                "value": "Feature development with evolving requirements."
+              },
+              {
+                "label": "Main risk for you",
+                "value": "Every urgent bug blows up the sprint commitment."
+              }
+            ],
+            "kanban": [
+              {
+                "label": "How work flows",
+                "value": "Continuous flow; pull the next item when there is capacity."
+              },
+              {
+                "label": "Changing priorities",
+                "value": "Any time, as long as work-in-progress limits hold."
+              },
+              {
+                "label": "Releases",
+                "value": "Whenever an item is done."
+              },
+              {
+                "label": "Key metric",
+                "value": "Cycle time and throughput."
+              },
+              {
+                "label": "Best for",
+                "value": "Support, maintenance and operations."
+              },
+              {
+                "label": "Main risk for you",
+                "value": "No built-in cadence, so planning and improvement can drift."
+              }
+            ],
+            "waterfall": [
+              {
+                "label": "How work flows",
+                "value": "Sequential phases: requirements, design, build, test, release."
+              },
+              {
+                "label": "Changing priorities",
+                "value": "Formal change request."
+              },
+              {
+                "label": "Releases",
+                "value": "Once, at the end."
+              },
+              {
+                "label": "Key metric",
+                "value": "Milestones against plan."
+              },
+              {
+                "label": "Best for",
+                "value": "Fixed scope, regulated or hardware projects."
+              },
+              {
+                "label": "Main risk for you",
+                "value": "Assumes stable requirements; a live product is the opposite."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Scrum vs Kanban vs Waterfall</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #242424; background: #f3f2f1; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  h2 { font-size: 14px; margin: 0 0 8px; }\n  .lead { margin: 0 0 12px; color: #605e5c; }\n  .card { background: #fff; border: 1px solid #e1dfdd; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .q { margin-bottom: 10px; }\n  .q:last-child { margin-bottom: 0; }\n  .q p { margin: 0 0 4px; font-weight: 600; font-size: 13px; }\n  .seg { display: flex; border: 1px solid #c8c6c4; border-radius: 8px; overflow: hidden; }\n  .seg button { flex: 1; border: 0; border-left: 1px solid #c8c6c4; background: #fff; padding: 6px 4px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }\n  .seg button:first-child { border-left: 0; }\n  .seg button.on { background: #242424; color: #fff; }\n  .method { display: grid; grid-template-columns: 78px 1fr 30px; gap: 8px; align-items: center; margin-bottom: 6px; font-weight: 600; }\n  .meter { height: 14px; background: #f3f2f1; border-radius: 7px; overflow: hidden; }\n  .meter i { display: block; height: 100%; width: 0; border-radius: 7px; transition: width .3s; background: #8a8886; }\n  .method.win .meter i { background: #107c10; }\n  .method.win { color: #107c10; }\n  .verdict { margin-top: 10px; padding: 10px; border-radius: 8px; background: #dff6dd; }\n  .verdict b { display: block; }\n  .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 11px; }\n  .col { background: #f3f2f1; border-radius: 6px; padding: 4px; min-height: 86px; }\n  .col h3 { margin: 0 0 4px; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #605e5c; }\n  .tk { background: #fff; border: 1px solid #e1dfdd; border-radius: 4px; padding: 2px 4px; margin-bottom: 3px; }\n  .tk.bug { border-left: 3px solid #d13438; }\n  .hint { font-size: 12px; color: #605e5c; margin: 8px 0 0; }\n  table { width: 100%; border-collapse: collapse; font-size: 12px; }\n  th, td { text-align: left; vertical-align: top; padding: 5px; border-top: 1px solid #f3f2f1; }\n  th { color: #605e5c; font-weight: 600; }\n</style>\n</head>\n<body>\n  <h1>Scrum vs Kanban vs Waterfall</h1>\n  <p class=\"lead\">Preset for your team: six people, a live product, frequent urgent bug fixes. Change an answer to see how the recommendation moves.</p>\n\n  <div class=\"card\" id=\"questions\"></div>\n\n  <div class=\"card\">\n    <h2>Fit for this team</h2>\n    <div id=\"scores\"></div>\n    <div class=\"verdict\"><b id=\"vTitle\"></b><span id=\"vText\"></span></div>\n  </div>\n\n  <div class=\"card\">\n    <h2>How an urgent bug lands in <span id=\"boardName\"></span></h2>\n    <div class=\"board\" id=\"board\"></div>\n    <p class=\"hint\" id=\"boardHint\"></p>\n  </div>\n\n  <div class=\"card\">\n    <table>\n      <thead><tr><th></th><th>Scrum</th><th>Kanban</th><th>Waterfall</th></tr></thead>\n      <tbody>\n        <tr><td>Flow</td><td>Fixed sprints</td><td>Continuous</td><td>Sequential phases</td></tr>\n        <tr><td>Change priorities</td><td>Next sprint</td><td>Any time</td><td>Change request</td></tr>\n        <tr><td>Release</td><td>Each sprint</td><td>When done</td><td>Once, at the end</td></tr>\n        <tr><td>Metric</td><td>Velocity</td><td>Cycle time</td><td>Milestones</td></tr>\n      </tbody>\n    </table>\n  </div>\n\n<script>\n(function () {\n  // Points per answer, in the order [scrum, kanban, waterfall].\n  var questions = [\n    { text: 'How often does urgent work interrupt the plan?', pick: 2, options: [\n      ['Rarely', [2, 1, 2]], ['Weekly', [1, 2, 0]], ['Daily', [0, 3, 0]] ] },\n    { text: 'How stable are the requirements?', pick: 1, options: [\n      ['Fixed up front', [0, 0, 3]], ['Evolving', [2, 2, 0]], ['Changing constantly', [1, 3, 0]] ] },\n    { text: 'How do you release?', pick: 0, options: [\n      ['Continuously', [1, 3, 0]], ['Every 1–4 weeks', [3, 1, 0]], ['One big launch', [0, 0, 3]] ] },\n    { text: 'What is most of the work?', pick: 2, options: [\n      ['New features', [3, 1, 1]], ['A mix', [2, 2, 0]], ['Maintenance and bugs', [0, 3, 0]] ] }\n  ];\n  var names = ['Scrum', 'Kanban', 'Waterfall'];\n  var reasons = [\n    'Sprints give a steady rhythm for planned feature work. Reserve part of each sprint for the unexpected.',\n    'Continuous flow absorbs interruptions: add an expedite lane for urgent bugs and limit work in progress to about four items.',\n    'Stable scope and a single launch suit sequential phases. Make sure the requirements really are fixed.'\n  ];\n  var boards = [\n    { cols: [['Sprint backlog', ['Feature A', 'Feature B']], ['In progress', ['Feature C']], ['Review', ['Feature D']], ['Done', []]],\n      bugCol: 0, hint: 'The bug has to displace committed sprint work or wait for the next sprint. Either way the sprint goal is at risk.' },\n    { cols: [['Ready', ['Feature A', 'Feature B']], ['In progress (4)', ['Feature C']], ['Review (3)', ['Feature D']], ['Done', []]],\n      bugCol: 1, hint: 'The bug enters the expedite lane and is pulled straight into progress. Nothing else is re-planned.' },\n    { cols: [['Requirements', []], ['Design', []], ['Build', ['Feature A–D']], ['Test', []]],\n      bugCol: 0, hint: 'The bug becomes a change request that waits for the current phase, or the whole plan is re-baselined.' }\n  ];\n  var $ = function (id) { return document.getElementById(id); };\n\n  var qBox = $('questions');\n  questions.forEach(function (q, qi) {\n    var wrap = document.createElement('div'); wrap.className = 'q';\n    var p = document.createElement('p'); p.textContent = q.text;\n    var seg = document.createElement('div'); seg.className = 'seg';\n    q.options.forEach(function (opt, oi) {\n      var b = document.createElement('button');\n      b.type = 'button';\n      b.textContent = opt[0];\n      b.setAttribute('data-q', String(qi));\n      b.setAttribute('data-o', String(oi));\n      seg.appendChild(b);\n    });\n    wrap.appendChild(p); wrap.appendChild(seg);\n    qBox.appendChild(wrap);\n    q.seg = seg;\n  });\n\n  var rows = names.map(function (name) {\n    var row = document.createElement('div'); row.className = 'method';\n    var label = document.createElement('span'); label.textContent = name;\n    var meter = document.createElement('div'); meter.className = 'meter';\n    var fill = document.createElement('i'); meter.appendChild(fill);\n    var num = document.createElement('span');\n    row.appendChild(label); row.appendChild(meter); row.appendChild(num);\n    $('scores').appendChild(row);\n    return { row: row, fill: fill, num: num };\n  });\n\n  function render() {\n    var totals = [0, 0, 0];\n    questions.forEach(function (q) {\n      var pts = q.options[q.pick][1];\n      for (var i = 0; i < 3; i++) { totals[i] += pts[i]; }\n      var buttons = q.seg.children;\n      for (var b = 0; b < buttons.length; b++) {\n        buttons[b].className = b === q.pick ? 'on' : '';\n        buttons[b].setAttribute('aria-pressed', b === q.pick ? 'true' : 'false');\n      }\n    });\n    var best = 0;\n    for (var i = 1; i < 3; i++) { if (totals[i] > totals[best]) { best = i; } }\n    var tie = totals.filter(function (t) { return t === totals[best]; }).length > 1;\n    rows.forEach(function (r, i) {\n      r.fill.style.width = (totals[i] / 12 * 100) + '%';\n      r.num.textContent = String(totals[i]);\n      r.row.className = 'method' + (i === best && !tie ? ' win' : '');\n    });\n    $('vTitle').textContent = tie ? 'Too close to call' : 'Recommendation: ' + names[best];\n    $('vText').textContent = tie ? 'Two methods score the same. A hybrid such as Scrumban (sprint cadence, Kanban flow) is worth a look.' : reasons[best];\n\n    var board = boards[best];\n    $('boardName').textContent = names[best];\n    var box = $('board');\n    box.textContent = '';\n    board.cols.forEach(function (col, ci) {\n      var c = document.createElement('div'); c.className = 'col';\n      var h = document.createElement('h3'); h.textContent = col[0];\n      c.appendChild(h);\n      if (ci === board.bugCol) {\n        var bug = document.createElement('div'); bug.className = 'tk bug'; bug.textContent = 'Urgent bug';\n        c.appendChild(bug);\n      }\n      col[1].forEach(function (t) {\n        var k = document.createElement('div'); k.className = 'tk'; k.textContent = t;\n        c.appendChild(k);\n      });\n      box.appendChild(c);\n    });\n    $('boardHint').textContent = board.hint;\n  }\n\n  qBox.addEventListener('click', function (e) {\n    var q = e.target.getAttribute('data-q');\n    if (q === null) { return; }\n    questions[parseInt(q, 10)].pick = parseInt(e.target.getAttribute('data-o'), 10);\n    render();\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_scrum_kanban_waterfall_11",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "State that Kanban is recommended for a 6-person team maintaining a live product with frequent urgent bug fixes, show a read-only comparison of Scrum, Kanban and Waterfall, and confirm the assumptions behind the recommendation so it can be refined: how often urgent work interrupts, how stable requirements are, how the team releases, and which Scrum ceremonies they want to keep.",
+        "data": {
+          "recommendation": "kanban",
+          "teamSize": 6,
+          "methods": [
+            {
+              "method": "Scrum",
+              "flow": "Fixed sprints",
+              "change": "Next sprint",
+              "bestFor": "Feature development"
+            },
+            {
+              "method": "Kanban",
+              "flow": "Continuous",
+              "change": "Any time",
+              "bestFor": "Maintenance and support"
+            },
+            {
+              "method": "Waterfall",
+              "flow": "Sequential phases",
+              "change": "Change request",
+              "bestFor": "Fixed scope"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "interruptions": {
+              "type": "string",
+              "enum": [
+                "rarely",
+                "weekly",
+                "daily"
+              ]
+            },
+            "requirements": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "evolving",
+                "constantly-changing"
+              ]
+            },
+            "releases": {
+              "type": "string",
+              "enum": [
+                "continuous",
+                "every-few-weeks",
+                "single-launch"
+              ]
+            },
+            "keepCeremonies": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "daily-standup",
+                  "retrospective",
+                  "planning",
+                  "demo"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "wipLimit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          },
+          "required": [
+            "interruptions",
+            "requirements",
+            "releases"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "methods": {
+            "type": "array",
+            "title": "The three methods",
+            "items": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "title": "Method"
+                },
+                "flow": {
+                  "type": "string",
+                  "title": "Flow"
+                },
+                "change": {
+                  "type": "string",
+                  "title": "Change priorities"
+                },
+                "bestFor": {
+                  "type": "string",
+                  "title": "Best for"
+                }
+              }
+            }
+          },
+          "interruptions": {
+            "type": "string",
+            "title": "Urgent work interrupts the plan",
+            "oneOf": [
+              {
+                "const": "rarely",
+                "title": "Rarely"
+              },
+              {
+                "const": "weekly",
+                "title": "Weekly"
+              },
+              {
+                "const": "daily",
+                "title": "Daily"
+              }
+            ]
+          },
+          "requirements": {
+            "type": "string",
+            "title": "Requirements are",
+            "oneOf": [
+              {
+                "const": "fixed",
+                "title": "Fixed up front"
+              },
+              {
+                "const": "evolving",
+                "title": "Evolving"
+              },
+              {
+                "const": "constantly-changing",
+                "title": "Changing constantly"
+              }
+            ]
+          },
+          "releases": {
+            "type": "string",
+            "title": "We release",
+            "oneOf": [
+              {
+                "const": "continuous",
+                "title": "Continuously"
+              },
+              {
+                "const": "every-few-weeks",
+                "title": "Every 1–4 weeks"
+              },
+              {
+                "const": "single-launch",
+                "title": "In one big launch"
+              }
+            ]
+          },
+          "keepCeremonies": {
+            "type": "array",
+            "title": "Scrum habits to keep",
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "daily-standup",
+                  "title": "Daily stand-up"
+                },
+                {
+                  "const": "retrospective",
+                  "title": "Retrospective"
+                },
+                {
+                  "const": "planning",
+                  "title": "Planning session"
+                },
+                {
+                  "const": "demo",
+                  "title": "Demo or review"
+                }
+              ]
+            }
+          },
+          "wipLimit": {
+            "type": "integer",
+            "title": "Work-in-progress limit",
+            "minimum": 1,
+            "maximum": 12,
+            "default": 4
+          }
+        },
+        "required": [
+          "interruptions",
+          "requirements",
+          "releases"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Recommendation: Kanban, with an expedite lane for urgent bugs"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/methods",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Check my assumptions about your team",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/interruptions"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/requirements"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/releases"
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Set up the board",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/wipLimit",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/keepCeremonies"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "methods": [
+          {
+            "method": "Scrum",
+            "flow": "Fixed sprints",
+            "change": "Next sprint",
+            "bestFor": "Feature development"
+          },
+          {
+            "method": "Kanban",
+            "flow": "Continuous",
+            "change": "Any time",
+            "bestFor": "Maintenance and support"
+          },
+          {
+            "method": "Waterfall",
+            "flow": "Sequential phases",
+            "change": "Change request",
+            "bestFor": "Fixed scope"
+          }
+        ],
+        "interruptions": "daily",
+        "requirements": "evolving",
+        "releases": "continuous",
+        "keepCeremonies": [
+          "daily-standup",
+          "retrospective"
+        ],
+        "wipLimit": 4
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Gives a direct recommendation, an eight-row comparison and a concrete board to start with; the reasoning is complete but fixed to the stated team.",
+    "a2ui": "Tabs hold one method each, a card carries the verdict and a modal tucks away the Scrum alternative; the three methods can never be seen side by side.",
+    "html": "Four segmented questions re-score the three methods live, and a mini board shows where an urgent bug lands under the winner, which makes the argument visible.",
+    "agui": "Confirming assumptions and configuring the board (WIP limit, ceremonies to keep) is a strong use of a typed form; the comparison is again a disabled table."
+  }
+}

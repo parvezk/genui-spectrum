@@ -85,6 +85,84 @@
         "html": true,
         "agui": true
       }
+    },
+    {
+      "id": "07-rest-vs-graphql",
+      "index": 7,
+      "title": "REST vs GraphQL",
+      "category": "comparison",
+      "prompt": "Compare REST and GraphQL for the backend of a mobile app.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "08-phone-plans",
+      "index": 8,
+      "title": "Phone plans",
+      "category": "comparison",
+      "prompt": "Compare these phone plans and recommend one for someone who uses about 12 GB a month and takes two one-week trips abroad a year. Basic: $25/month, 5 GB, extra data $10 per GB, no roaming. Plus: $40/month, 20 GB, roaming $5 per day. Max: $60/month, unlimited data, roaming included.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "09-sorting-algorithms",
+      "index": 9,
+      "title": "Sorting algorithms",
+      "category": "comparison",
+      "prompt": "Compare bubble sort, merge sort and quicksort: time complexity, space, stability, and when to use each.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "10-ev-vs-gas",
+      "index": 10,
+      "title": "EV vs gas car cost",
+      "category": "comparison",
+      "prompt": "Compare the five-year cost of owning an EV versus a gas car. EV: $38,000 purchase, $0.04 per mile for energy, $400 a year maintenance. Gas: $30,000 purchase, $0.13 per mile for fuel, $900 a year maintenance. I drive 12,000 miles a year.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "11-scrum-kanban-waterfall",
+      "index": 11,
+      "title": "Scrum vs Kanban vs Waterfall",
+      "category": "comparison",
+      "prompt": "Compare Scrum, Kanban and Waterfall. Which fits a 6-person team maintaining a live product with frequent urgent bug fixes?",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "12-weekend-cities",
+      "index": 12,
+      "title": "Weekend city trip",
+      "category": "comparison",
+      "prompt": "Compare Lisbon, Prague and Copenhagen for a 3-night weekend trip in May. Return flights: $180, $140, $210. Hotel per night: $120, $90, $190. Food per day (3 days): $45, $35, $70. Average high: 22°C, 19°C, 16°C. I care most about cost, then weather.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
     }
   ]
 }

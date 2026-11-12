@@ -1,0 +1,109 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "scrum-kanban-waterfall",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "scrum-kanban-waterfall",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "context", "verdict-card", "methods-title", "tabs", "start-card", "more"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Scrum vs Kanban vs Waterfall" },
+        { "id": "context", "component": "Text", "variant": "caption", "text": "For a 6-person team maintaining a live product with frequent urgent bug fixes." },
+
+        { "id": "verdict-card", "component": "Card", "child": "verdict-row" },
+        { "id": "verdict-row", "component": "Row", "align": "start", "children": ["verdict-icon", "verdict-col"] },
+        { "id": "verdict-icon", "component": "Icon", "name": "check" },
+        { "id": "verdict-col", "component": "Column", "weight": 1, "children": ["verdict-title", "verdict-text"] },
+        { "id": "verdict-title", "component": "Text", "variant": "h4", "text": "Recommendation: Kanban" },
+        {
+          "id": "verdict-text",
+          "component": "Text",
+          "text": "Priorities can change daily without breaking a plan. Add an expedite lane for urgent bugs and keep a retrospective from Scrum."
+        },
+
+        { "id": "methods-title", "component": "Text", "variant": "h4", "text": "The three methods" },
+        {
+          "id": "tabs",
+          "component": "Tabs",
+          "tabs": [
+            { "title": "Scrum", "child": "scrum-list" },
+            { "title": "Kanban", "child": "kanban-list" },
+            { "title": "Waterfall", "child": "waterfall-list" }
+          ]
+        },
+        { "id": "scrum-list", "component": "List", "children": { "componentId": "scrum-row", "path": "/scrum" } },
+        { "id": "scrum-row", "component": "Column", "children": ["scrum-label", "scrum-value"] },
+        { "id": "scrum-label", "component": "Text", "variant": "caption", "text": { "path": "label" } },
+        { "id": "scrum-value", "component": "Text", "text": { "path": "value" } },
+        { "id": "kanban-list", "component": "List", "children": { "componentId": "kanban-row", "path": "/kanban" } },
+        { "id": "kanban-row", "component": "Column", "children": ["kanban-label", "kanban-value"] },
+        { "id": "kanban-label", "component": "Text", "variant": "caption", "text": { "path": "label" } },
+        { "id": "kanban-value", "component": "Text", "text": { "path": "value" } },
+        { "id": "waterfall-list", "component": "List", "children": { "componentId": "waterfall-row", "path": "/waterfall" } },
+        { "id": "waterfall-row", "component": "Column", "children": ["waterfall-label", "waterfall-value"] },
+        { "id": "waterfall-label", "component": "Text", "variant": "caption", "text": { "path": "label" } },
+        { "id": "waterfall-value", "component": "Text", "text": { "path": "value" } },
+
+        { "id": "start-card", "component": "Card", "child": "start-col" },
+        { "id": "start-col", "component": "Column", "children": ["start-title", "start-board", "start-1", "start-2", "start-3"] },
+        { "id": "start-title", "component": "Text", "variant": "h5", "text": "A practical starting point" },
+        { "id": "start-board", "component": "Text", "text": "**Board:** Backlog → Ready → In progress (limit 4) → Review (limit 3) → Done, plus an Expedite lane (limit 1)." },
+        { "id": "start-1", "component": "Text", "text": "Daily: 15-minute stand-up at the board." },
+        { "id": "start-2", "component": "Text", "text": "Weekly: refill the Ready column." },
+        { "id": "start-3", "component": "Text", "text": "Every two weeks: retrospective. Track cycle time from report to production." },
+
+        { "id": "more", "component": "Modal", "trigger": "more-button", "content": "more-col" },
+        {
+          "id": "more-button",
+          "component": "Button",
+          "variant": "borderless",
+          "child": "more-button-label",
+          "action": { "event": { "name": "open_scrum_alternative" } }
+        },
+        { "id": "more-button-label", "component": "Text", "text": "What if we prefer Scrum?" },
+        { "id": "more-col", "component": "Column", "children": ["more-title", "more-1", "more-2"] },
+        { "id": "more-title", "component": "Text", "variant": "h5", "text": "Making Scrum work with interruptions" },
+        { "id": "more-1", "component": "Text", "text": "Reserve a fixed share of every sprint, around 30%, for unplanned work, and track how much you actually use." },
+        { "id": "more-2", "component": "Text", "text": "Or rotate one person each sprint as the interrupt handler, so the other five keep their commitment." }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "scrum-kanban-waterfall",
+      "path": "/",
+      "value": {
+        "scrum": [
+          { "label": "How work flows", "value": "Fixed sprints of 1–4 weeks." },
+          { "label": "Changing priorities", "value": "Next sprint. Mid-sprint changes are discouraged." },
+          { "label": "Releases", "value": "At the end of each sprint." },
+          { "label": "Key metric", "value": "Velocity." },
+          { "label": "Best for", "value": "Feature development with evolving requirements." },
+          { "label": "Main risk for you", "value": "Every urgent bug blows up the sprint commitment." }
+        ],
+        "kanban": [
+          { "label": "How work flows", "value": "Continuous flow; pull the next item when there is capacity." },
+          { "label": "Changing priorities", "value": "Any time, as long as work-in-progress limits hold." },
+          { "label": "Releases", "value": "Whenever an item is done." },
+          { "label": "Key metric", "value": "Cycle time and throughput." },
+          { "label": "Best for", "value": "Support, maintenance and operations." },
+          { "label": "Main risk for you", "value": "No built-in cadence, so planning and improvement can drift." }
+        ],
+        "waterfall": [
+          { "label": "How work flows", "value": "Sequential phases: requirements, design, build, test, release." },
+          { "label": "Changing priorities", "value": "Formal change request." },
+          { "label": "Releases", "value": "Once, at the end." },
+          { "label": "Key metric", "value": "Milestones against plan." },
+          { "label": "Best for", "value": "Fixed scope, regulated or hardware projects." },
+          { "label": "Main risk for you", "value": "Assumes stable requirements; a live product is the opposite." }
+        ]
+      }
+    }
+  }
+]

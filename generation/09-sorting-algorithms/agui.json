@@ -1,0 +1,89 @@
+{
+  "toolCall": {
+    "id": "call_sorting_algorithms_09",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show a read-only comparison of bubble sort, merge sort and quicksort (average and worst time, extra space, stable). Then collect the user's constraints so one can be recommended: how much data, whether equal items must keep their order, whether memory is tight, and whether the input is usually almost sorted.",
+      "data": {
+        "algorithms": [
+          { "name": "Bubble sort", "average": "O(n²)", "worst": "O(n²)", "space": "O(1)", "stable": true },
+          { "name": "Merge sort", "average": "O(n log n)", "worst": "O(n log n)", "space": "O(n)", "stable": true },
+          { "name": "Quicksort", "average": "O(n log n)", "worst": "O(n²)", "space": "O(log n)", "stable": false }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "size": { "type": "string", "enum": ["tens", "thousands", "millions", "larger-than-memory"] },
+          "needStable": { "type": "boolean" },
+          "memoryTight": { "type": "boolean" },
+          "nearlySorted": { "type": "boolean" }
+        },
+        "required": ["size", "needStable", "memoryTight", "nearlySorted"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "algorithms": {
+          "type": "array",
+          "title": "At a glance",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "title": "Algorithm" },
+              "average": { "type": "string", "title": "Average" },
+              "worst": { "type": "string", "title": "Worst" },
+              "space": { "type": "string", "title": "Extra space" },
+              "stable": { "type": "boolean", "title": "Stable" }
+            }
+          }
+        },
+        "size": {
+          "type": "string",
+          "title": "How much data are you sorting?",
+          "oneOf": [
+            { "const": "tens", "title": "A few dozen items" },
+            { "const": "thousands", "title": "Thousands" },
+            { "const": "millions", "title": "Millions, in memory" },
+            { "const": "larger-than-memory", "title": "More than fits in memory" }
+          ]
+        },
+        "needStable": { "type": "boolean", "title": "Equal items must keep their original order (stable)" },
+        "memoryTight": { "type": "boolean", "title": "Memory is tight: no room for a second copy" },
+        "nearlySorted": { "type": "boolean", "title": "The input is usually almost sorted already" }
+      },
+      "required": ["size", "needStable", "memoryTight", "nearlySorted"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Bubble sort vs merge sort vs quicksort" },
+        { "type": "Control", "scope": "#/properties/algorithms", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Which one should you use?",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/size", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/needStable" },
+            { "type": "Control", "scope": "#/properties/memoryTight" },
+            { "type": "Control", "scope": "#/properties/nearlySorted" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "algorithms": [
+        { "name": "Bubble sort", "average": "O(n²)", "worst": "O(n²)", "space": "O(1)", "stable": true },
+        { "name": "Merge sort", "average": "O(n log n)", "worst": "O(n log n)", "space": "O(n)", "stable": true },
+        { "name": "Quicksort", "average": "O(n log n)", "worst": "O(n²)", "space": "O(log n)", "stable": false }
+      ],
+      "size": "thousands",
+      "needStable": false,
+      "memoryTight": false,
+      "nearlySorted": false
+    }
+  }
+}

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorting algorithms race</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #e2e8f0; background: #0f172a; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #94a3b8; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  button, select { padding: 6px 12px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: inherit; font: inherit; cursor: pointer; }
+  button.primary { background: #f59e0b; border-color: #f59e0b; color: #0f172a; font-weight: 700; }
+  label { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+  input[type=range] { accent-color: #f59e0b; width: 90px; }
+  .lane { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+  .lane header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .lane h2 { font-size: 14px; margin: 0; }
+  .lane .stat { font: 12px ui-monospace, Menlo, monospace; color: #94a3b8; }
+  .lane.done { border-color: #22c55e; }
+  .lane.done h2::after { content: " ✓ " attr(data-place); color: #22c55e; font-weight: 400; font-size: 12px; }
+  .bars { display: flex; align-items: flex-end; gap: 1px; height: 70px; }
+  .bars i { flex: 1; background: #64748b; border-radius: 1px 1px 0 0; min-width: 1px; }
+  .bars i.hot { background: #f59e0b; }
+  .lane.done .bars i { background: #22c55e; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
+  th, td { padding: 5px 6px; text-align: left; border-top: 1px solid #334155; }
+  th { color: #94a3b8; font-weight: 600; }
+  .note { color: #94a3b8; font-size: 12.5px; margin: 10px 0 0; }
+</style>
+</head>
+<body>
+  <h1>Bubble vs merge vs quicksort</h1>
+  <p class="lead">All three sort the same list, one comparison or write per tick. Change the input to see where each one struggles.</p>
+
+  <div class="controls">
+    <button id="run" class="primary">Run race</button>
+    <button id="shuffle">New list</button>
+    <select id="kind" aria-label="Input order">
+      <option value="random">Random</option>
+      <option value="nearly">Nearly sorted</option>
+      <option value="reversed">Reversed</option>
+    </select>
+    <label>Size <input id="size" type="range" min="8" max="48" value="28"><span id="sizeOut"></span></label>
+  </div>
+
+  <div id="lanes"></div>
+
+  <table>
+    <thead><tr><th></th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th></tr></thead>
+    <tbody>
+      <tr><td>Bubble</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+      <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes</td></tr>
+      <tr><td>Quick</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>No</td></tr>
+    </tbody>
+  </table>
+  <p class="note" id="note">Tip: try "Nearly sorted" (bubble sort's best case) and "Reversed" (a last-element pivot gives quicksort its O(n²) worst case).</p>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  function bubbleFrames(input) {
+    var a = input.slice(), frames = [], comps = 0, writes = 0, n = a.length;
+    for (var i = 0; i < n - 1; i++) {
+      var swapped = false;
+      for (var j = 0; j < n - 1 - i; j++) {
+        comps += 1;
+        if (a[j] > a[j + 1]) {
+          var t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;
+          writes += 2;
+          swapped = true;
+        }
+        frames.push({ a: a.slice(), hot: [j, j + 1], comps: comps, writes: writes });
+      }
+      if (!swapped) { break; }
+    }
+    return frames;
+  }
+
+  function mergeFrames(input) {
+    var a = input.slice(), frames = [], comps = 0, writes = 0;
+    function sort(lo, hi) {
+      if (lo >= hi) { return; }
+      var mid = Math.floor((lo + hi) / 2);
+      sort(lo, mid);
+      sort(mid + 1, hi);
+      var left = a.slice(lo, mid + 1), right = a.slice(mid + 1, hi + 1);
+      var i = 0, j = 0, k = lo;
+      while (i < left.length || j < right.length) {
+        var takeLeft;
+        if (i < left.length && j < right.length) { comps += 1; takeLeft = left[i] <= right[j]; }
+        else { takeLeft = i < left.length; }
+        a[k] = takeLeft ? left[i++] : right[j++];
+        writes += 1;
+        frames.push({ a: a.slice(), hot: [k], comps: comps, writes: writes });
+        k += 1;
+      }
+    }
+    sort(0, a.length - 1);
+    return frames;
+  }
+
+  function quickFrames(input) {
+    var a = input.slice(), frames = [], comps = 0, writes = 0;
+    function swap(x, y) {
+      if (x === y) { return; }
+      var t = a[x]; a[x] = a[y]; a[y] = t;
+      writes += 2;
+    }
+    function sort(lo, hi) {
+      if (lo >= hi) { return; }
+      var pivot = a[hi], i = lo;
+      for (var j = lo; j < hi; j++) {
+        comps += 1;
+        if (a[j] < pivot) { swap(i, j); i += 1; }
+        frames.push({ a: a.slice(), hot: [j, hi], comps: comps, writes: writes });
+      }
+      swap(i, hi);
+      frames.push({ a: a.slice(), hot: [i], comps: comps, writes: writes });
+      sort(lo, i - 1);
+      sort(i + 1, hi);
+    }
+    sort(0, a.length - 1);
+    return frames;
+  }
+
+  var algos = [
+    { name: 'Bubble sort', make: bubbleFrames },
+    { name: 'Merge sort', make: mergeFrames },
+    { name: 'Quicksort', make: quickFrames }
+  ];
+  var input = [];
+  var timer = null;
+  var tick = 0;
+  var finished = 0;
+
+  algos.forEach(function (al) {
+    var lane = document.createElement('div');
+    lane.className = 'lane';
+    var head = document.createElement('header');
+    var h = document.createElement('h2'); h.textContent = al.name;
+    var stat = document.createElement('span'); stat.className = 'stat';
+    head.appendChild(h); head.appendChild(stat);
+    var bars = document.createElement('div'); bars.className = 'bars';
+    lane.appendChild(head); lane.appendChild(bars);
+    $('lanes').appendChild(lane);
+    al.lane = lane; al.title = h; al.stat = stat; al.bars = bars;
+  });
+
+  function makeInput() {
+    var n = parseInt($('size').value, 10);
+    var kind = $('kind').value;
+    var a = [];
+    for (var i = 1; i <= n; i++) { a.push(i); }
+    if (kind === 'reversed') { a.reverse(); }
+    else if (kind === 'random') {
+      for (var k = a.length - 1; k > 0; k--) {
+        var r = Math.floor(Math.random() * (k + 1));
+        var t = a[k]; a[k] = a[r]; a[r] = t;
+      }
+    } else {
+      for (var s = 0; s < Math.max(1, Math.floor(n / 10)); s++) {
+        var p = Math.floor(Math.random() * (n - 1));
+        var u = a[p]; a[p] = a[p + 1]; a[p + 1] = u;
+      }
+    }
+    return a;
+  }
+
+  function draw(al, frame) {
+    var n = frame.a.length;
+    var nodes = al.bars.children;
+    for (var i = 0; i < n; i++) {
+      nodes[i].style.height = (frame.a[i] / n * 100) + '%';
+      nodes[i].className = frame.hot.indexOf(i) !== -1 ? 'hot' : '';
+    }
+    al.stat.textContent = frame.comps + ' comparisons · ' + frame.writes + ' writes';
+  }
+
+  function prepare() {
+    if (timer) { clearInterval(timer); timer = null; }
+    input = makeInput();
+    tick = 0;
+    finished = 0;
+    $('sizeOut').textContent = String(input.length);
+    $('run').textContent = 'Run race';
+    algos.forEach(function (al) {
+      al.frames = al.make(input);
+      al.done = false;
+      al.lane.className = 'lane';
+      al.bars.textContent = '';
+      for (var i = 0; i < input.length; i++) { al.bars.appendChild(document.createElement('i')); }
+      draw(al, { a: input, hot: [], comps: 0, writes: 0 });
+    });
+  }
+
+  function advance() {
+    var running = false;
+    algos.forEach(function (al) {
+      if (al.done) { return; }
+      if (tick < al.frames.length) {
+        draw(al, al.frames[tick]);
+        running = true;
+      }
+      if (tick >= al.frames.length - 1) {
+        al.done = true;
+        finished += 1;
+        var last = al.frames.length ? al.frames[al.frames.length - 1] : { a: input, hot: [], comps: 0, writes: 0 };
+        draw(al, { a: last.a, hot: [], comps: last.comps, writes: last.writes });
+        al.title.setAttribute('data-place', finished === 1 ? 'first' : (finished === 2 ? 'second' : 'third'));
+        al.lane.className = 'lane done';
+      }
+    });
+    tick += 1;
+    if (!running || finished === algos.length) {
+      clearInterval(timer);
+      timer = null;
+      $('run').textContent = 'Run again';
+    }
+  }
+
+  $('run').addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; $('run').textContent = 'Resume'; return; }
+    if (finished === algos.length) { prepare(); }
+    $('run').textContent = 'Pause';
+    timer = setInterval(advance, 35);
+  });
+  $('shuffle').addEventListener('click', prepare);
+  $('kind').addEventListener('change', prepare);
+  $('size').addEventListener('input', prepare);
+
+  prepare();
+})();
+</script>
+</body>
+</html>

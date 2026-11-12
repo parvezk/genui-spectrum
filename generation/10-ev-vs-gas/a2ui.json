@@ -1,0 +1,140 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "ev-vs-gas",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "ev-vs-gas",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "assumption", "verdict-card", "cars", "years-card", "what-if-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "EV vs gas: five-year cost" },
+        { "id": "assumption", "component": "Text", "variant": "caption", "text": "Driving 12,000 miles a year. Resale value, incentives and insurance are not included." },
+
+        { "id": "verdict-card", "component": "Card", "child": "verdict-col" },
+        { "id": "verdict-col", "component": "Column", "children": ["verdict-title", "verdict-text"] },
+        { "id": "verdict-title", "component": "Text", "variant": "h4", "text": "Almost a tie: gas is ahead by $100" },
+        {
+          "id": "verdict-text",
+          "component": "Text",
+          "text": "The EV costs $8,000 more to buy and saves $1,580 a year to run, so it breaks even after about **5.1 years** and wins every year after that."
+        },
+
+        { "id": "cars", "component": "Row", "align": "stretch", "children": ["ev-card", "gas-card"] },
+        { "id": "ev-card", "component": "Card", "weight": 1, "child": "ev-col" },
+        { "id": "ev-col", "component": "Column", "children": ["ev-name", "ev-total", "ev-divider", "ev-purchase", "ev-energy", "ev-maint", "ev-running"] },
+        { "id": "ev-name", "component": "Text", "variant": "h5", "text": "EV" },
+        {
+          "id": "ev-total",
+          "component": "Text",
+          "variant": "h3",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/ev/total5" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "ev-divider", "component": "Divider" },
+        { "id": "ev-purchase", "component": "Text", "text": "Purchase: $38,000" },
+        { "id": "ev-energy", "component": "Text", "text": "Energy: $480 a year" },
+        { "id": "ev-maint", "component": "Text", "text": "Maintenance: $400 a year" },
+        { "id": "ev-running", "component": "Text", "variant": "caption", "text": "Running cost: $880 a year" },
+        { "id": "gas-card", "component": "Card", "weight": 1, "child": "gas-col" },
+        { "id": "gas-col", "component": "Column", "children": ["gas-name", "gas-total", "gas-divider", "gas-purchase", "gas-fuel", "gas-maint", "gas-running"] },
+        { "id": "gas-name", "component": "Text", "variant": "h5", "text": "Gas car" },
+        {
+          "id": "gas-total",
+          "component": "Text",
+          "variant": "h3",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/gas/total5" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "gas-divider", "component": "Divider" },
+        { "id": "gas-purchase", "component": "Text", "text": "Purchase: $30,000" },
+        { "id": "gas-fuel", "component": "Text", "text": "Fuel: $1,560 a year" },
+        { "id": "gas-maint", "component": "Text", "text": "Maintenance: $900 a year" },
+        { "id": "gas-running", "component": "Text", "variant": "caption", "text": "Running cost: $2,460 a year" },
+
+        { "id": "years-card", "component": "Card", "child": "years-col" },
+        { "id": "years-col", "component": "Column", "children": ["years-title", "years-head", "years-divider", "years-rows"] },
+        { "id": "years-title", "component": "Text", "variant": "h5", "text": "Cumulative cost by year" },
+        { "id": "years-head", "component": "Row", "children": ["yh-year", "yh-ev", "yh-gas", "yh-lead"] },
+        { "id": "yh-year", "component": "Text", "variant": "caption", "weight": 1, "text": "Year" },
+        { "id": "yh-ev", "component": "Text", "variant": "caption", "weight": 2, "text": "EV" },
+        { "id": "yh-gas", "component": "Text", "variant": "caption", "weight": 2, "text": "Gas" },
+        { "id": "yh-lead", "component": "Text", "variant": "caption", "weight": 3, "text": "Cheaper so far" },
+        { "id": "years-divider", "component": "Divider" },
+        { "id": "years-rows", "component": "List", "children": { "componentId": "year-row", "path": "/years" } },
+        { "id": "year-row", "component": "Row", "children": ["yr-year", "yr-ev", "yr-gas", "yr-lead"] },
+        { "id": "yr-year", "component": "Text", "weight": 1, "text": { "path": "year" } },
+        {
+          "id": "yr-ev",
+          "component": "Text",
+          "weight": 2,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "ev" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        {
+          "id": "yr-gas",
+          "component": "Text",
+          "weight": 2,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "gas" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "yr-lead", "component": "Text", "weight": 3, "text": { "path": "lead" } },
+
+        { "id": "what-if-card", "component": "Card", "child": "what-if-col" },
+        { "id": "what-if-col", "component": "Column", "children": ["what-if-title", "miles-slider", "miles-readout", "years-slider", "years-readout", "recalc"] },
+        { "id": "what-if-title", "component": "Text", "variant": "h5", "text": "Different mileage or time span?" },
+        { "id": "miles-slider", "component": "Slider", "label": "Miles per year", "min": 4000, "max": 25000, "value": { "path": "/whatIf/miles" } },
+        {
+          "id": "miles-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": {
+            "call": "formatString",
+            "args": { "value": "${formatNumber(value: ${/whatIf/miles}, decimals: 0)} miles a year" },
+            "returnType": "string"
+          }
+        },
+        { "id": "years-slider", "component": "Slider", "label": "Years of ownership", "min": 1, "max": 12, "value": { "path": "/whatIf/years" } },
+        {
+          "id": "years-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${/whatIf/years} years" }, "returnType": "string" }
+        },
+        {
+          "id": "recalc",
+          "component": "Button",
+          "variant": "primary",
+          "child": "recalc-label",
+          "action": {
+            "event": {
+              "name": "recalculate_ownership_cost",
+              "context": { "milesPerYear": { "path": "/whatIf/miles" }, "years": { "path": "/whatIf/years" } }
+            }
+          }
+        },
+        { "id": "recalc-label", "component": "Text", "text": "Recalculate" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "ev-vs-gas",
+      "path": "/",
+      "value": {
+        "ev": { "total5": 42400 },
+        "gas": { "total5": 42300 },
+        "years": [
+          { "year": "1", "ev": 38880, "gas": 32460, "lead": "Gas by $6,420" },
+          { "year": "2", "ev": 39760, "gas": 34920, "lead": "Gas by $4,840" },
+          { "year": "3", "ev": 40640, "gas": 37380, "lead": "Gas by $3,260" },
+          { "year": "4", "ev": 41520, "gas": 39840, "lead": "Gas by $1,680" },
+          { "year": "5", "ev": 42400, "gas": 42300, "lead": "Gas by $100" },
+          { "year": "6", "ev": 43280, "gas": 44760, "lead": "EV by $1,480" }
+        ],
+        "whatIf": { "miles": 12000, "years": 5 }
+      }
+    }
+  }
+]

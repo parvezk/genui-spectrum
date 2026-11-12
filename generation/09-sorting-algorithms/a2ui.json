@@ -1,0 +1,86 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "sorting-algorithms",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "sorting-algorithms",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "table-card", "stable-note", "use-title", "tabs", "library-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Bubble vs merge vs quicksort" },
+
+        { "id": "table-card", "component": "Card", "child": "table-col" },
+        { "id": "table-col", "component": "Column", "children": ["table-head", "table-divider", "table-rows"] },
+        { "id": "table-head", "component": "Row", "children": ["head-prop", "head-bubble", "head-merge", "head-quick"] },
+        { "id": "head-prop", "component": "Text", "variant": "caption", "weight": 3, "text": " " },
+        { "id": "head-bubble", "component": "Text", "variant": "caption", "weight": 2, "text": "Bubble" },
+        { "id": "head-merge", "component": "Text", "variant": "caption", "weight": 2, "text": "Merge" },
+        { "id": "head-quick", "component": "Text", "variant": "caption", "weight": 2, "text": "Quick" },
+        { "id": "table-divider", "component": "Divider" },
+        { "id": "table-rows", "component": "List", "children": { "componentId": "table-row", "path": "/rows" } },
+        { "id": "table-row", "component": "Row", "children": ["cell-prop", "cell-bubble", "cell-merge", "cell-quick"] },
+        { "id": "cell-prop", "component": "Text", "variant": "caption", "weight": 3, "text": { "path": "property" } },
+        { "id": "cell-bubble", "component": "Text", "weight": 2, "text": { "path": "bubble" } },
+        { "id": "cell-merge", "component": "Text", "weight": 2, "text": { "path": "merge" } },
+        { "id": "cell-quick", "component": "Text", "weight": 2, "text": { "path": "quick" } },
+
+        { "id": "stable-note", "component": "Text", "variant": "caption", "text": "Stable means equal elements keep their original order, which matters when sorting records by one key after another." },
+
+        { "id": "use-title", "component": "Text", "variant": "h4", "text": "When to use each" },
+        {
+          "id": "tabs",
+          "component": "Tabs",
+          "tabs": [
+            { "title": "Bubble", "child": "bubble-col" },
+            { "title": "Merge", "child": "merge-col" },
+            { "title": "Quick", "child": "quick-col" }
+          ]
+        },
+        { "id": "bubble-col", "component": "Column", "children": ["bubble-idea", "bubble-use", "bubble-avoid"] },
+        { "id": "bubble-idea", "component": "Text", "text": "**How:** swap adjacent out-of-order pairs until a full pass makes no swaps." },
+        { "id": "bubble-use", "component": "Text", "text": "**Use for:** teaching, or a dozen items that are already nearly sorted." },
+        { "id": "bubble-avoid", "component": "Text", "text": "**Avoid for:** anything large. A million items means about 10¹² steps." },
+        { "id": "merge-col", "component": "Column", "children": ["merge-idea", "merge-use", "merge-avoid"] },
+        { "id": "merge-idea", "component": "Text", "text": "**How:** split in half, sort each half, merge the two sorted halves." },
+        { "id": "merge-use", "component": "Text", "text": "**Use for:** guaranteed O(n log n), stable sorting, linked lists, and data too big for memory." },
+        { "id": "merge-avoid", "component": "Text", "text": "**Avoid when:** memory is tight. It needs O(n) extra space." },
+        { "id": "quick-col", "component": "Column", "children": ["quick-idea", "quick-use", "quick-avoid"] },
+        { "id": "quick-idea", "component": "Text", "text": "**How:** pick a pivot, move smaller items left and larger right, recurse on each side." },
+        { "id": "quick-use", "component": "Text", "text": "**Use for:** in-memory arrays. In place, cache-friendly and usually the fastest in practice." },
+        { "id": "quick-avoid", "component": "Text", "text": "**Avoid when:** you need stability, or cannot randomise the pivot against the O(n²) worst case." },
+
+        { "id": "library-card", "component": "Card", "child": "library-row" },
+        { "id": "library-row", "component": "Row", "align": "start", "children": ["library-icon", "library-text"] },
+        { "id": "library-icon", "component": "Icon", "name": "info" },
+        {
+          "id": "library-text",
+          "component": "Text",
+          "weight": 1,
+          "text": "Real libraries use hybrids: Timsort (merge + insertion, stable) in Python and Java, introsort (quick + heap) in C++. Outside of learning, call the library sort."
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "sorting-algorithms",
+      "path": "/",
+      "value": {
+        "rows": [
+          { "property": "Best case", "bubble": "O(n)", "merge": "O(n log n)", "quick": "O(n log n)" },
+          { "property": "Average", "bubble": "O(n²)", "merge": "O(n log n)", "quick": "O(n log n)" },
+          { "property": "Worst case", "bubble": "O(n²)", "merge": "O(n log n)", "quick": "O(n²)" },
+          { "property": "Extra space", "bubble": "O(1)", "merge": "O(n)", "quick": "O(log n)" },
+          { "property": "Stable", "bubble": "Yes", "merge": "Yes", "quick": "No" },
+          { "property": "In place", "bubble": "Yes", "merge": "No", "quick": "Yes" }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,94 @@
+{
+  "toolCall": {
+    "id": "call_weekend_cities_12",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the cost breakdown and average May high for Lisbon, Prague and Copenhagen as a read-only table, recommend Prague (cheapest; cost matters most), and let the user choose a city, the number of travellers, a departure date and an optional budget cap so the trip can be planned.",
+      "data": {
+        "nights": 3,
+        "recommended": "prague",
+        "cities": [
+          { "city": "Prague", "flight": 140, "hotel": 270, "food": 105, "total": 515, "highC": 19 },
+          { "city": "Lisbon", "flight": 180, "hotel": 360, "food": 135, "total": 675, "highC": 22 },
+          { "city": "Copenhagen", "flight": 210, "hotel": 570, "food": 210, "total": 990, "highC": 16 }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "city": { "type": "string", "enum": ["prague", "lisbon", "copenhagen"] },
+          "travellers": { "type": "integer", "minimum": 1, "maximum": 6 },
+          "departure": { "type": "string", "format": "date" },
+          "budgetCap": { "type": "number", "minimum": 0 }
+        },
+        "required": ["city", "travellers", "departure"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "cities": {
+          "type": "array",
+          "title": "3 nights in May, per person ($)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string", "title": "City" },
+              "flight": { "type": "number", "title": "Flight" },
+              "hotel": { "type": "number", "title": "Hotel" },
+              "food": { "type": "number", "title": "Food" },
+              "total": { "type": "number", "title": "Total" },
+              "highC": { "type": "number", "title": "High °C" }
+            }
+          }
+        },
+        "city": {
+          "type": "string",
+          "title": "Where to?",
+          "oneOf": [
+            { "const": "prague", "title": "Prague: $515, 19 °C (recommended)" },
+            { "const": "lisbon", "title": "Lisbon: $675, 22 °C" },
+            { "const": "copenhagen", "title": "Copenhagen: $990, 16 °C" }
+          ]
+        },
+        "travellers": { "type": "integer", "title": "Travellers", "minimum": 1, "maximum": 6 },
+        "departure": { "type": "string", "format": "date", "title": "Leaving on" },
+        "budgetCap": { "type": "number", "title": "Budget cap per person ($, optional)", "minimum": 0 }
+      },
+      "required": ["city", "travellers", "departure"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Go to Prague: cheapest by $160, and cost matters most to you" },
+        { "type": "Control", "scope": "#/properties/cities", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Plan the trip",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/city", "options": { "format": "radio" } },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/travellers" },
+                { "type": "Control", "scope": "#/properties/departure" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/budgetCap" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "cities": [
+        { "city": "Prague", "flight": 140, "hotel": 270, "food": 105, "total": 515, "highC": 19 },
+        { "city": "Lisbon", "flight": 180, "hotel": 360, "food": 135, "total": 675, "highC": 22 },
+        { "city": "Copenhagen", "flight": 210, "hotel": 570, "food": 210, "total": 990, "highC": 16 }
+      ],
+      "city": "prague",
+      "travellers": 1
+    }
+  }
+}

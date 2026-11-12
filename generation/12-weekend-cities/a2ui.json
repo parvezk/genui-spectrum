@@ -1,0 +1,125 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "weekend-cities",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "weekend-cities",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "context", "verdict-card", "cities", "book-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "A May weekend: three cities" },
+        { "id": "context", "component": "Text", "variant": "caption", "text": "3 nights, one traveller. You care most about cost, then weather." },
+
+        { "id": "verdict-card", "component": "Card", "child": "verdict-row" },
+        { "id": "verdict-row", "component": "Row", "align": "start", "children": ["verdict-icon", "verdict-col"] },
+        { "id": "verdict-icon", "component": "Icon", "name": "locationOn" },
+        { "id": "verdict-col", "component": "Column", "weight": 1, "children": ["verdict-title", "verdict-text"] },
+        { "id": "verdict-title", "component": "Text", "variant": "h4", "text": "Go to Prague" },
+        {
+          "id": "verdict-text",
+          "component": "Text",
+          "text": "Cheapest by a clear margin at **$515**. Lisbon is the runner-up: $160 more buys the warmest weather. Copenhagen is the dearest and the coolest."
+        },
+
+        { "id": "cities", "component": "List", "children": { "componentId": "city-card", "path": "/cities" } },
+        { "id": "city-card", "component": "Card", "child": "city-col" },
+        { "id": "city-col", "component": "Column", "children": ["city-head", "city-rank", "city-divider", "city-flight", "city-hotel", "city-food", "city-total"] },
+        { "id": "city-head", "component": "Row", "justify": "spaceBetween", "align": "center", "children": ["city-name", "city-temp"] },
+        { "id": "city-name", "component": "Text", "variant": "h4", "text": { "path": "name" } },
+        {
+          "id": "city-temp",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "${high} °C" }, "returnType": "string" }
+        },
+        { "id": "city-rank", "component": "Text", "variant": "caption", "text": { "path": "rank" } },
+        { "id": "city-divider", "component": "Divider" },
+        { "id": "city-flight", "component": "Row", "justify": "spaceBetween", "children": ["city-flight-label", "city-flight-value"] },
+        { "id": "city-flight-label", "component": "Text", "text": "Return flight" },
+        {
+          "id": "city-flight-value",
+          "component": "Text",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "flight" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "city-hotel", "component": "Row", "justify": "spaceBetween", "children": ["city-hotel-label", "city-hotel-value"] },
+        { "id": "city-hotel-label", "component": "Text", "text": { "path": "hotelLabel" } },
+        {
+          "id": "city-hotel-value",
+          "component": "Text",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "hotel" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "city-food", "component": "Row", "justify": "spaceBetween", "children": ["city-food-label", "city-food-value"] },
+        { "id": "city-food-label", "component": "Text", "text": { "path": "foodLabel" } },
+        {
+          "id": "city-food-value",
+          "component": "Text",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "food" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "city-total", "component": "Row", "justify": "spaceBetween", "children": ["city-total-label", "city-total-value"] },
+        { "id": "city-total-label", "component": "Text", "variant": "h5", "text": "Total" },
+        {
+          "id": "city-total-value",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "total" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+
+        { "id": "book-card", "component": "Card", "child": "book-col" },
+        { "id": "book-col", "component": "Column", "children": ["book-picker", "book-date", "book-button"] },
+        {
+          "id": "book-picker",
+          "component": "ChoicePicker",
+          "label": "Plan a trip to",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Lisbon", "value": "lisbon" },
+            { "label": "Prague", "value": "prague" },
+            { "label": "Copenhagen", "value": "copenhagen" }
+          ],
+          "value": { "path": "/trip/city" }
+        },
+        { "id": "book-date", "component": "DateTimeInput", "label": "Leaving on", "enableDate": true, "value": { "path": "/trip/departure" } },
+        {
+          "id": "book-button",
+          "component": "Button",
+          "variant": "primary",
+          "child": "book-button-label",
+          "checks": [
+            {
+              "condition": { "call": "required", "args": { "value": { "path": "/trip/departure" } } },
+              "message": "Pick a departure date first."
+            }
+          ],
+          "action": {
+            "event": {
+              "name": "plan_weekend_trip",
+              "context": { "city": { "path": "/trip/city" }, "departure": { "path": "/trip/departure" }, "nights": 3 }
+            }
+          }
+        },
+        { "id": "book-button-label", "component": "Text", "text": "Find flights and hotels" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "weekend-cities",
+      "path": "/",
+      "value": {
+        "trip": { "city": ["prague"], "departure": "" },
+        "cities": [
+          { "name": "Prague", "high": 19, "rank": "Cheapest · 2nd warmest", "flight": 140, "hotelLabel": "Hotel, 3 × $90", "hotel": 270, "foodLabel": "Food, 3 × $35", "food": 105, "total": 515 },
+          { "name": "Lisbon", "high": 22, "rank": "2nd cheapest · warmest", "flight": 180, "hotelLabel": "Hotel, 3 × $120", "hotel": 360, "foodLabel": "Food, 3 × $45", "food": 135, "total": 675 },
+          { "name": "Copenhagen", "high": 16, "rank": "Most expensive · coolest", "flight": 210, "hotelLabel": "Hotel, 3 × $190", "hotel": 570, "foodLabel": "Food, 3 × $70", "food": 210, "total": 990 }
+        ]
+      }
+    }
+  }
+]

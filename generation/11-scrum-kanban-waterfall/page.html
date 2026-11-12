@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrum vs Kanban vs Waterfall</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #242424; background: #f3f2f1; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 14px; margin: 0 0 8px; }
+  .lead { margin: 0 0 12px; color: #605e5c; }
+  .card { background: #fff; border: 1px solid #e1dfdd; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .q { margin-bottom: 10px; }
+  .q:last-child { margin-bottom: 0; }
+  .q p { margin: 0 0 4px; font-weight: 600; font-size: 13px; }
+  .seg { display: flex; border: 1px solid #c8c6c4; border-radius: 8px; overflow: hidden; }
+  .seg button { flex: 1; border: 0; border-left: 1px solid #c8c6c4; background: #fff; padding: 6px 4px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }
+  .seg button:first-child { border-left: 0; }
+  .seg button.on { background: #242424; color: #fff; }
+  .method { display: grid; grid-template-columns: 78px 1fr 30px; gap: 8px; align-items: center; margin-bottom: 6px; font-weight: 600; }
+  .meter { height: 14px; background: #f3f2f1; border-radius: 7px; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; border-radius: 7px; transition: width .3s; background: #8a8886; }
+  .method.win .meter i { background: #107c10; }
+  .method.win { color: #107c10; }
+  .verdict { margin-top: 10px; padding: 10px; border-radius: 8px; background: #dff6dd; }
+  .verdict b { display: block; }
+  .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 11px; }
+  .col { background: #f3f2f1; border-radius: 6px; padding: 4px; min-height: 86px; }
+  .col h3 { margin: 0 0 4px; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #605e5c; }
+  .tk { background: #fff; border: 1px solid #e1dfdd; border-radius: 4px; padding: 2px 4px; margin-bottom: 3px; }
+  .tk.bug { border-left: 3px solid #d13438; }
+  .hint { font-size: 12px; color: #605e5c; margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { text-align: left; vertical-align: top; padding: 5px; border-top: 1px solid #f3f2f1; }
+  th { color: #605e5c; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Scrum vs Kanban vs Waterfall</h1>
+  <p class="lead">Preset for your team: six people, a live product, frequent urgent bug fixes. Change an answer to see how the recommendation moves.</p>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card">
+    <h2>Fit for this team</h2>
+    <div id="scores"></div>
+    <div class="verdict"><b id="vTitle"></b><span id="vText"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>How an urgent bug lands in <span id="boardName"></span></h2>
+    <div class="board" id="board"></div>
+    <p class="hint" id="boardHint"></p>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th></th><th>Scrum</th><th>Kanban</th><th>Waterfall</th></tr></thead>
+      <tbody>
+        <tr><td>Flow</td><td>Fixed sprints</td><td>Continuous</td><td>Sequential phases</td></tr>
+        <tr><td>Change priorities</td><td>Next sprint</td><td>Any time</td><td>Change request</td></tr>
+        <tr><td>Release</td><td>Each sprint</td><td>When done</td><td>Once, at the end</td></tr>
+        <tr><td>Metric</td><td>Velocity</td><td>Cycle time</td><td>Milestones</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<script>
+(function () {
+  // Points per answer, in the order [scrum, kanban, waterfall].
+  var questions = [
+    { text: 'How often does urgent work interrupt the plan?', pick: 2, options: [
+      ['Rarely', [2, 1, 2]], ['Weekly', [1, 2, 0]], ['Daily', [0, 3, 0]] ] },
+    { text: 'How stable are the requirements?', pick: 1, options: [
+      ['Fixed up front', [0, 0, 3]], ['Evolving', [2, 2, 0]], ['Changing constantly', [1, 3, 0]] ] },
+    { text: 'How do you release?', pick: 0, options: [
+      ['Continuously', [1, 3, 0]], ['Every 1–4 weeks', [3, 1, 0]], ['One big launch', [0, 0, 3]] ] },
+    { text: 'What is most of the work?', pick: 2, options: [
+      ['New features', [3, 1, 1]], ['A mix', [2, 2, 0]], ['Maintenance and bugs', [0, 3, 0]] ] }
+  ];
+  var names = ['Scrum', 'Kanban', 'Waterfall'];
+  var reasons = [
+    'Sprints give a steady rhythm for planned feature work. Reserve part of each sprint for the unexpected.',
+    'Continuous flow absorbs interruptions: add an expedite lane for urgent bugs and limit work in progress to about four items.',
+    'Stable scope and a single launch suit sequential phases. Make sure the requirements really are fixed.'
+  ];
+  var boards = [
+    { cols: [['Sprint backlog', ['Feature A', 'Feature B']], ['In progress', ['Feature C']], ['Review', ['Feature D']], ['Done', []]],
+      bugCol: 0, hint: 'The bug has to displace committed sprint work or wait for the next sprint. Either way the sprint goal is at risk.' },
+    { cols: [['Ready', ['Feature A', 'Feature B']], ['In progress (4)', ['Feature C']], ['Review (3)', ['Feature D']], ['Done', []]],
+      bugCol: 1, hint: 'The bug enters the expedite lane and is pulled straight into progress. Nothing else is re-planned.' },
+    { cols: [['Requirements', []], ['Design', []], ['Build', ['Feature A–D']], ['Test', []]],
+      bugCol: 0, hint: 'The bug becomes a change request that waits for the current phase, or the whole plan is re-baselined.' }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+
+  var qBox = $('questions');
+  questions.forEach(function (q, qi) {
+    var wrap = document.createElement('div'); wrap.className = 'q';
+    var p = document.createElement('p'); p.textContent = q.text;
+    var seg = document.createElement('div'); seg.className = 'seg';
+    q.options.forEach(function (opt, oi) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = opt[0];
+      b.setAttribute('data-q', String(qi));
+      b.setAttribute('data-o', String(oi));
+      seg.appendChild(b);
+    });
+    wrap.appendChild(p); wrap.appendChild(seg);
+    qBox.appendChild(wrap);
+    q.seg = seg;
+  });
+
+  var rows = names.map(function (name) {
+    var row = document.createElement('div'); row.className = 'method';
+    var label = document.createElement('span'); label.textContent = name;
+    var meter = document.createElement('div'); meter.className = 'meter';
+    var fill = document.createElement('i'); meter.appendChild(fill);
+    var num = document.createElement('span');
+    row.appendChild(label); row.appendChild(meter); row.appendChild(num);
+    $('scores').appendChild(row);
+    return { row: row, fill: fill, num: num };
+  });
+
+  function render() {
+    var totals = [0, 0, 0];
+    questions.forEach(function (q) {
+      var pts = q.options[q.pick][1];
+      for (var i = 0; i < 3; i++) { totals[i] += pts[i]; }
+      var buttons = q.seg.children;
+      for (var b = 0; b < buttons.length; b++) {
+        buttons[b].className = b === q.pick ? 'on' : '';
+        buttons[b].setAttribute('aria-pressed', b === q.pick ? 'true' : 'false');
+      }
+    });
+    var best = 0;
+    for (var i = 1; i < 3; i++) { if (totals[i] > totals[best]) { best = i; } }
+    var tie = totals.filter(function (t) { return t === totals[best]; }).length > 1;
+    rows.forEach(function (r, i) {
+      r.fill.style.width = (totals[i] / 12 * 100) + '%';
+      r.num.textContent = String(totals[i]);
+      r.row.className = 'method' + (i === best && !tie ? ' win' : '');
+    });
+    $('vTitle').textContent = tie ? 'Too close to call' : 'Recommendation: ' + names[best];
+    $('vText').textContent = tie ? 'Two methods score the same. A hybrid such as Scrumban (sprint cadence, Kanban flow) is worth a look.' : reasons[best];
+
+    var board = boards[best];
+    $('boardName').textContent = names[best];
+    var box = $('board');
+    box.textContent = '';
+    board.cols.forEach(function (col, ci) {
+      var c = document.createElement('div'); c.className = 'col';
+      var h = document.createElement('h3'); h.textContent = col[0];
+      c.appendChild(h);
+      if (ci === board.bugCol) {
+        var bug = document.createElement('div'); bug.className = 'tk bug'; bug.textContent = 'Urgent bug';
+        c.appendChild(bug);
+      }
+      col[1].forEach(function (t) {
+        var k = document.createElement('div'); k.className = 'tk'; k.textContent = t;
+        c.appendChild(k);
+      });
+      box.appendChild(c);
+    });
+    $('boardHint').textContent = board.hint;
+  }
+
+  qBox.addEventListener('click', function (e) {
+    var q = e.target.getAttribute('data-q');
+    if (q === null) { return; }
+    questions[parseInt(q, 10)].pick = parseInt(e.target.getAttribute('data-o'), 10);
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

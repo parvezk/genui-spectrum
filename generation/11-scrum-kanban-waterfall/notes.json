@@ -1,0 +1,6 @@
+{
+  "text": "Gives a direct recommendation, an eight-row comparison and a concrete board to start with; the reasoning is complete but fixed to the stated team.",
+  "a2ui": "Tabs hold one method each, a card carries the verdict and a modal tucks away the Scrum alternative; the three methods can never be seen side by side.",
+  "html": "Four segmented questions re-score the three methods live, and a mini board shows where an urgent bug lands under the winner, which makes the argument visible.",
+  "agui": "Confirming assumptions and configuring the board (WIP limit, ceremonies to keep) is a strong use of a typed form; the comparison is again a disabled table."
+}

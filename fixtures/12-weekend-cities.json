@@ -1,0 +1,702 @@
+{
+  "id": "12-weekend-cities",
+  "index": 12,
+  "title": "Weekend city trip",
+  "category": "comparison",
+  "prompt": "Compare Lisbon, Prague and Copenhagen for a 3-night weekend trip in May. Return flights: $180, $140, $210. Hotel per night: $120, $90, $190. Food per day (3 days): $45, $35, $70. Average high: 22°C, 19°C, 16°C. I care most about cost, then weather.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Lisbon vs Prague vs Copenhagen for a May weekend\n\n**Go to Prague.** It is the cheapest by a clear margin at **$515**, and since cost matters most to you, that settles it. **Lisbon** is the runner-up: $160 more buys you the warmest weather of the three. Copenhagen is both the most expensive and the coolest.\n\n| | Lisbon | **Prague** | Copenhagen |\n| --- | ---: | ---: | ---: |\n| Return flight | $180 | $140 | $210 |\n| Hotel, 3 nights | $360 | $270 | $570 |\n| Food, 3 days | $135 | $105 | $210 |\n| **Total** | **$675** | **$515** | **$990** |\n| Average high in May | 22 °C | 19 °C | 16 °C |\n| Cost rank | 2nd | 1st | 3rd |\n| Weather rank | 1st | 2nd | 3rd |\n\n### How the totals break down\n\n- **Lisbon:** $180 + 3 × $120 + 3 × $45 = **$675**\n- **Prague:** $140 + 3 × $90 + 3 × $35 = **$515**\n- **Copenhagen:** $210 + 3 × $190 + 3 × $70 = **$990**\n\nHotels drive the gap. Copenhagen's three nights alone ($570) cost more than the entire Prague trip.\n\n### Weighing cost against weather\n\n- **Prague** wins on cost and is in the middle on weather. 19 °C is comfortable for walking a city all day.\n- **Lisbon** costs $160 more (about 31%) for 3 °C more warmth and a better chance of sitting outside in the evening. If weather mattered as much as cost to you, Lisbon would edge ahead.\n- **Copenhagen** costs nearly twice as much as Prague and is the coolest, so it loses on both of your criteria.\n\n**Verdict:** Prague, unless the extra warmth is worth $160 to you, in which case Lisbon.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "weekend-cities",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "weekend-cities",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "context",
+                "verdict-card",
+                "cities",
+                "book-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "A May weekend: three cities"
+            },
+            {
+              "id": "context",
+              "component": "Text",
+              "variant": "caption",
+              "text": "3 nights, one traveller. You care most about cost, then weather."
+            },
+            {
+              "id": "verdict-card",
+              "component": "Card",
+              "child": "verdict-row"
+            },
+            {
+              "id": "verdict-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "verdict-icon",
+                "verdict-col"
+              ]
+            },
+            {
+              "id": "verdict-icon",
+              "component": "Icon",
+              "name": "locationOn"
+            },
+            {
+              "id": "verdict-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "verdict-title",
+                "verdict-text"
+              ]
+            },
+            {
+              "id": "verdict-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Go to Prague"
+            },
+            {
+              "id": "verdict-text",
+              "component": "Text",
+              "text": "Cheapest by a clear margin at **$515**. Lisbon is the runner-up: $160 more buys the warmest weather. Copenhagen is the dearest and the coolest."
+            },
+            {
+              "id": "cities",
+              "component": "List",
+              "children": {
+                "componentId": "city-card",
+                "path": "/cities"
+              }
+            },
+            {
+              "id": "city-card",
+              "component": "Card",
+              "child": "city-col"
+            },
+            {
+              "id": "city-col",
+              "component": "Column",
+              "children": [
+                "city-head",
+                "city-rank",
+                "city-divider",
+                "city-flight",
+                "city-hotel",
+                "city-food",
+                "city-total"
+              ]
+            },
+            {
+              "id": "city-head",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "align": "center",
+              "children": [
+                "city-name",
+                "city-temp"
+              ]
+            },
+            {
+              "id": "city-name",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "city-temp",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${high} °C"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "city-rank",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "rank"
+              }
+            },
+            {
+              "id": "city-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "city-flight",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "city-flight-label",
+                "city-flight-value"
+              ]
+            },
+            {
+              "id": "city-flight-label",
+              "component": "Text",
+              "text": "Return flight"
+            },
+            {
+              "id": "city-flight-value",
+              "component": "Text",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "flight"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "city-hotel",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "city-hotel-label",
+                "city-hotel-value"
+              ]
+            },
+            {
+              "id": "city-hotel-label",
+              "component": "Text",
+              "text": {
+                "path": "hotelLabel"
+              }
+            },
+            {
+              "id": "city-hotel-value",
+              "component": "Text",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "hotel"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "city-food",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "city-food-label",
+                "city-food-value"
+              ]
+            },
+            {
+              "id": "city-food-label",
+              "component": "Text",
+              "text": {
+                "path": "foodLabel"
+              }
+            },
+            {
+              "id": "city-food-value",
+              "component": "Text",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "food"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "city-total",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "city-total-label",
+                "city-total-value"
+              ]
+            },
+            {
+              "id": "city-total-label",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Total"
+            },
+            {
+              "id": "city-total-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "total"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "book-card",
+              "component": "Card",
+              "child": "book-col"
+            },
+            {
+              "id": "book-col",
+              "component": "Column",
+              "children": [
+                "book-picker",
+                "book-date",
+                "book-button"
+              ]
+            },
+            {
+              "id": "book-picker",
+              "component": "ChoicePicker",
+              "label": "Plan a trip to",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Lisbon",
+                  "value": "lisbon"
+                },
+                {
+                  "label": "Prague",
+                  "value": "prague"
+                },
+                {
+                  "label": "Copenhagen",
+                  "value": "copenhagen"
+                }
+              ],
+              "value": {
+                "path": "/trip/city"
+              }
+            },
+            {
+              "id": "book-date",
+              "component": "DateTimeInput",
+              "label": "Leaving on",
+              "enableDate": true,
+              "value": {
+                "path": "/trip/departure"
+              }
+            },
+            {
+              "id": "book-button",
+              "component": "Button",
+              "variant": "primary",
+              "child": "book-button-label",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": {
+                      "value": {
+                        "path": "/trip/departure"
+                      }
+                    }
+                  },
+                  "message": "Pick a departure date first."
+                }
+              ],
+              "action": {
+                "event": {
+                  "name": "plan_weekend_trip",
+                  "context": {
+                    "city": {
+                      "path": "/trip/city"
+                    },
+                    "departure": {
+                      "path": "/trip/departure"
+                    },
+                    "nights": 3
+                  }
+                }
+              }
+            },
+            {
+              "id": "book-button-label",
+              "component": "Text",
+              "text": "Find flights and hotels"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "weekend-cities",
+          "path": "/",
+          "value": {
+            "trip": {
+              "city": [
+                "prague"
+              ],
+              "departure": ""
+            },
+            "cities": [
+              {
+                "name": "Prague",
+                "high": 19,
+                "rank": "Cheapest · 2nd warmest",
+                "flight": 140,
+                "hotelLabel": "Hotel, 3 × $90",
+                "hotel": 270,
+                "foodLabel": "Food, 3 × $35",
+                "food": 105,
+                "total": 515
+              },
+              {
+                "name": "Lisbon",
+                "high": 22,
+                "rank": "2nd cheapest · warmest",
+                "flight": 180,
+                "hotelLabel": "Hotel, 3 × $120",
+                "hotel": 360,
+                "foodLabel": "Food, 3 × $45",
+                "food": 135,
+                "total": 675
+              },
+              {
+                "name": "Copenhagen",
+                "high": 16,
+                "rank": "Most expensive · coolest",
+                "flight": 210,
+                "hotelLabel": "Hotel, 3 × $190",
+                "hotel": 570,
+                "foodLabel": "Food, 3 × $70",
+                "food": 210,
+                "total": 990
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Weekend city trip</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #2d3142; background: linear-gradient(#eaf4ff, #fff 220px); }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #5c6178; }\n  .card { background: #fff; border: 1px solid #dfe3ee; border-radius: 12px; padding: 12px; margin-bottom: 12px; }\n  .weights { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; }\n  .weights .c { color: #2a6f4e; } .weights .w { color: #d9730d; }\n  input[type=range] { width: 100%; accent-color: #2d3142; }\n  .city { position: relative; background: #fff; border: 2px solid #dfe3ee; border-radius: 12px; padding: 12px; margin-bottom: 10px; transition: border-color .2s, transform .2s; }\n  .city.first { border-color: #2a6f4e; }\n  .city header { display: flex; justify-content: space-between; align-items: baseline; }\n  .city h2 { margin: 0; font-size: 16px; }\n  .city .place { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #5c6178; }\n  .city.first .place { color: #2a6f4e; }\n  .facts { display: flex; gap: 14px; margin: 4px 0 8px; font-size: 13px; }\n  .facts b { font-size: 18px; }\n  .stack { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: #f1f3f8; }\n  .stack i { display: block; height: 100%; }\n  .f1 { background: #4c6ef5; } .f2 { background: #7950f2; } .f3 { background: #e64980; }\n  .key { display: flex; gap: 10px; font-size: 11px; color: #5c6178; margin-top: 4px; flex-wrap: wrap; }\n  .key i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 3px; }\n  .score { display: grid; grid-template-columns: 44px 1fr 34px; gap: 6px; align-items: center; margin-top: 8px; font-size: 12px; font-weight: 700; }\n  .meter { height: 8px; background: #f1f3f8; border-radius: 4px; overflow: hidden; }\n  .meter i { display: block; height: 100%; background: #2d3142; transition: width .25s; }\n  .city.first .meter i { background: #2a6f4e; }\n  .verdict { background: #e6f4ec; border-color: #b7dcc6; font-weight: 600; }\n  .why { font-size: 12px; color: #5c6178; margin: 0; }\n</style>\n</head>\n<body>\n  <h1>A May weekend: Lisbon, Prague or Copenhagen?</h1>\n  <p class=\"lead\">Three nights, flights, hotel and food. You said cost matters most, then weather. Move the slider to change that balance.</p>\n\n  <div class=\"card\">\n    <div class=\"weights\"><span class=\"c\" id=\"wCost\"></span><span class=\"w\" id=\"wWeather\"></span></div>\n    <input id=\"weight\" type=\"range\" min=\"0\" max=\"100\" step=\"5\" value=\"70\" aria-label=\"How much cost matters compared with weather\">\n  </div>\n\n  <div class=\"card verdict\" id=\"verdict\"></div>\n  <div id=\"cities\"></div>\n  <p class=\"why\">Score = cost weight × how cheap (cheapest = 1, dearest = 0) + weather weight × how warm (warmest = 1, coolest = 0).</p>\n\n<script>\n(function () {\n  var NIGHTS = 3;\n  var cities = [\n    { name: 'Lisbon', flight: 180, hotel: 120, food: 45, high: 22 },\n    { name: 'Prague', flight: 140, hotel: 90, food: 35, high: 19 },\n    { name: 'Copenhagen', flight: 210, hotel: 190, food: 70, high: 16 }\n  ];\n  var $ = function (id) { return document.getElementById(id); };\n  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };\n\n  cities.forEach(function (c) {\n    c.hotelTotal = c.hotel * NIGHTS;\n    c.foodTotal = c.food * NIGHTS;\n    c.total = c.flight + c.hotelTotal + c.foodTotal;\n  });\n  var maxTotal = Math.max.apply(null, cities.map(function (c) { return c.total; }));\n  var minTotal = Math.min.apply(null, cities.map(function (c) { return c.total; }));\n  var maxHigh = Math.max.apply(null, cities.map(function (c) { return c.high; }));\n  var minHigh = Math.min.apply(null, cities.map(function (c) { return c.high; }));\n  cities.forEach(function (c) {\n    c.costScore = (maxTotal - c.total) / (maxTotal - minTotal);\n    c.weatherScore = (c.high - minHigh) / (maxHigh - minHigh);\n  });\n\n  var box = $('cities');\n  cities.forEach(function (c) {\n    var el = document.createElement('div'); el.className = 'city';\n    var head = document.createElement('header');\n    var h = document.createElement('h2'); h.textContent = c.name;\n    var place = document.createElement('span'); place.className = 'place';\n    head.appendChild(h); head.appendChild(place);\n\n    var facts = document.createElement('div'); facts.className = 'facts';\n    var cost = document.createElement('span');\n    var costB = document.createElement('b'); costB.textContent = usd(c.total);\n    cost.appendChild(costB); cost.appendChild(document.createTextNode(' total'));\n    var temp = document.createElement('span');\n    var tempB = document.createElement('b'); tempB.textContent = c.high + ' °C';\n    temp.appendChild(tempB); temp.appendChild(document.createTextNode(' avg high'));\n    facts.appendChild(cost); facts.appendChild(temp);\n\n    var stack = document.createElement('div'); stack.className = 'stack';\n    [['f1', c.flight], ['f2', c.hotelTotal], ['f3', c.foodTotal]].forEach(function (part) {\n      var seg = document.createElement('i'); seg.className = part[0];\n      seg.style.width = (part[1] / maxTotal * 100) + '%';\n      stack.appendChild(seg);\n    });\n    var key = document.createElement('div'); key.className = 'key';\n    [['f1', 'Flight ' + usd(c.flight)], ['f2', 'Hotel ' + usd(c.hotelTotal)], ['f3', 'Food ' + usd(c.foodTotal)]].forEach(function (part) {\n      var item = document.createElement('span');\n      var dot = document.createElement('i'); dot.className = part[0];\n      item.appendChild(dot); item.appendChild(document.createTextNode(part[1]));\n      key.appendChild(item);\n    });\n\n    var score = document.createElement('div'); score.className = 'score';\n    var sLabel = document.createElement('span'); sLabel.textContent = 'Score';\n    var meter = document.createElement('div'); meter.className = 'meter';\n    var fill = document.createElement('i'); meter.appendChild(fill);\n    var sNum = document.createElement('span');\n    score.appendChild(sLabel); score.appendChild(meter); score.appendChild(sNum);\n\n    [head, facts, stack, key, score].forEach(function (n) { el.appendChild(n); });\n    c.el = el; c.place = place; c.fill = fill; c.num = sNum;\n  });\n\n  function render() {\n    var w = parseInt($('weight').value, 10) / 100;\n    $('wCost').textContent = 'Cost ' + Math.round(w * 100) + '%';\n    $('wWeather').textContent = 'Weather ' + Math.round((1 - w) * 100) + '%';\n    cities.forEach(function (c) { c.score = w * c.costScore + (1 - w) * c.weatherScore; });\n    var ranked = cities.slice().sort(function (a, b) { return b.score - a.score; });\n    var labels = ['Best match', 'Runner-up', 'Third'];\n    ranked.forEach(function (c, i) {\n      c.place.textContent = labels[i];\n      c.el.className = 'city' + (i === 0 ? ' first' : '');\n      c.fill.style.width = (c.score * 100) + '%';\n      c.num.textContent = c.score.toFixed(2);\n      box.appendChild(c.el);\n    });\n    var a = ranked[0], b = ranked[1];\n    var text = 'Best match: ' + a.name + ' (' + usd(a.total) + ', ' + a.high + ' °C). ';\n    if (a.total < b.total) { text += 'It is ' + usd(b.total - a.total) + ' cheaper than ' + b.name + ', which is ' + (b.high - a.high) + ' °C warmer.'; }\n    else { text += 'It costs ' + usd(a.total - b.total) + ' more than ' + b.name + ' and is ' + (a.high - b.high) + ' °C warmer.'; }\n    $('verdict').textContent = text;\n  }\n\n  $('weight').addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_weekend_cities_12",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the cost breakdown and average May high for Lisbon, Prague and Copenhagen as a read-only table, recommend Prague (cheapest; cost matters most), and let the user choose a city, the number of travellers, a departure date and an optional budget cap so the trip can be planned.",
+        "data": {
+          "nights": 3,
+          "recommended": "prague",
+          "cities": [
+            {
+              "city": "Prague",
+              "flight": 140,
+              "hotel": 270,
+              "food": 105,
+              "total": 515,
+              "highC": 19
+            },
+            {
+              "city": "Lisbon",
+              "flight": 180,
+              "hotel": 360,
+              "food": 135,
+              "total": 675,
+              "highC": 22
+            },
+            {
+              "city": "Copenhagen",
+              "flight": 210,
+              "hotel": 570,
+              "food": 210,
+              "total": 990,
+              "highC": 16
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "enum": [
+                "prague",
+                "lisbon",
+                "copenhagen"
+              ]
+            },
+            "travellers": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "departure": {
+              "type": "string",
+              "format": "date"
+            },
+            "budgetCap": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "city",
+            "travellers",
+            "departure"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "cities": {
+            "type": "array",
+            "title": "3 nights in May, per person ($)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "title": "City"
+                },
+                "flight": {
+                  "type": "number",
+                  "title": "Flight"
+                },
+                "hotel": {
+                  "type": "number",
+                  "title": "Hotel"
+                },
+                "food": {
+                  "type": "number",
+                  "title": "Food"
+                },
+                "total": {
+                  "type": "number",
+                  "title": "Total"
+                },
+                "highC": {
+                  "type": "number",
+                  "title": "High °C"
+                }
+              }
+            }
+          },
+          "city": {
+            "type": "string",
+            "title": "Where to?",
+            "oneOf": [
+              {
+                "const": "prague",
+                "title": "Prague: $515, 19 °C (recommended)"
+              },
+              {
+                "const": "lisbon",
+                "title": "Lisbon: $675, 22 °C"
+              },
+              {
+                "const": "copenhagen",
+                "title": "Copenhagen: $990, 16 °C"
+              }
+            ]
+          },
+          "travellers": {
+            "type": "integer",
+            "title": "Travellers",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "departure": {
+            "type": "string",
+            "format": "date",
+            "title": "Leaving on"
+          },
+          "budgetCap": {
+            "type": "number",
+            "title": "Budget cap per person ($, optional)",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "city",
+          "travellers",
+          "departure"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Go to Prague: cheapest by $160, and cost matters most to you"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/cities",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Plan the trip",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/city",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/travellers"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/departure"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/budgetCap"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "cities": [
+          {
+            "city": "Prague",
+            "flight": 140,
+            "hotel": 270,
+            "food": 105,
+            "total": 515,
+            "highC": 19
+          },
+          {
+            "city": "Lisbon",
+            "flight": 180,
+            "hotel": 360,
+            "food": 135,
+            "total": 675,
+            "highC": 22
+          },
+          {
+            "city": "Copenhagen",
+            "flight": 210,
+            "hotel": 570,
+            "food": 210,
+            "total": 990,
+            "highC": 16
+          }
+        ],
+        "city": "prague",
+        "travellers": 1
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "The totals table and a plain verdict answer the question; the cost-versus-weather trade-off is argued in prose and cannot be re-weighted.",
+    "a2ui": "Bound city cards with currency formatting, then a chip picker, date input and a button whose check blocks submission until a date is set; no way to rank or re-sort.",
+    "html": "A cost-versus-weather slider re-scores and physically reorders the cards, with stacked bars showing where each city's money goes; Lisbon overtakes once the cost weight drops below about 60%.",
+    "agui": "Turns the comparison into a booking step with typed city, travellers, date and budget, which is a real next action; the six-column table is too wide for its panel."
+  }
+}

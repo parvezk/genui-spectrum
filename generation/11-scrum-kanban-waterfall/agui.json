@@ -1,0 +1,131 @@
+{
+  "toolCall": {
+    "id": "call_scrum_kanban_waterfall_11",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "State that Kanban is recommended for a 6-person team maintaining a live product with frequent urgent bug fixes, show a read-only comparison of Scrum, Kanban and Waterfall, and confirm the assumptions behind the recommendation so it can be refined: how often urgent work interrupts, how stable requirements are, how the team releases, and which Scrum ceremonies they want to keep.",
+      "data": {
+        "recommendation": "kanban",
+        "teamSize": 6,
+        "methods": [
+          { "method": "Scrum", "flow": "Fixed sprints", "change": "Next sprint", "bestFor": "Feature development" },
+          { "method": "Kanban", "flow": "Continuous", "change": "Any time", "bestFor": "Maintenance and support" },
+          { "method": "Waterfall", "flow": "Sequential phases", "change": "Change request", "bestFor": "Fixed scope" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "interruptions": { "type": "string", "enum": ["rarely", "weekly", "daily"] },
+          "requirements": { "type": "string", "enum": ["fixed", "evolving", "constantly-changing"] },
+          "releases": { "type": "string", "enum": ["continuous", "every-few-weeks", "single-launch"] },
+          "keepCeremonies": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["daily-standup", "retrospective", "planning", "demo"] },
+            "uniqueItems": true
+          },
+          "wipLimit": { "type": "integer", "minimum": 1, "maximum": 12 }
+        },
+        "required": ["interruptions", "requirements", "releases"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "methods": {
+          "type": "array",
+          "title": "The three methods",
+          "items": {
+            "type": "object",
+            "properties": {
+              "method": { "type": "string", "title": "Method" },
+              "flow": { "type": "string", "title": "Flow" },
+              "change": { "type": "string", "title": "Change priorities" },
+              "bestFor": { "type": "string", "title": "Best for" }
+            }
+          }
+        },
+        "interruptions": {
+          "type": "string",
+          "title": "Urgent work interrupts the plan",
+          "oneOf": [
+            { "const": "rarely", "title": "Rarely" },
+            { "const": "weekly", "title": "Weekly" },
+            { "const": "daily", "title": "Daily" }
+          ]
+        },
+        "requirements": {
+          "type": "string",
+          "title": "Requirements are",
+          "oneOf": [
+            { "const": "fixed", "title": "Fixed up front" },
+            { "const": "evolving", "title": "Evolving" },
+            { "const": "constantly-changing", "title": "Changing constantly" }
+          ]
+        },
+        "releases": {
+          "type": "string",
+          "title": "We release",
+          "oneOf": [
+            { "const": "continuous", "title": "Continuously" },
+            { "const": "every-few-weeks", "title": "Every 1–4 weeks" },
+            { "const": "single-launch", "title": "In one big launch" }
+          ]
+        },
+        "keepCeremonies": {
+          "type": "array",
+          "title": "Scrum habits to keep",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "const": "daily-standup", "title": "Daily stand-up" },
+              { "const": "retrospective", "title": "Retrospective" },
+              { "const": "planning", "title": "Planning session" },
+              { "const": "demo", "title": "Demo or review" }
+            ]
+          }
+        },
+        "wipLimit": { "type": "integer", "title": "Work-in-progress limit", "minimum": 1, "maximum": 12, "default": 4 }
+      },
+      "required": ["interruptions", "requirements", "releases"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Recommendation: Kanban, with an expedite lane for urgent bugs" },
+        { "type": "Control", "scope": "#/properties/methods", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Check my assumptions about your team",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/interruptions" },
+            { "type": "Control", "scope": "#/properties/requirements" },
+            { "type": "Control", "scope": "#/properties/releases" }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Set up the board",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/wipLimit", "options": { "slider": true } },
+            { "type": "Control", "scope": "#/properties/keepCeremonies" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "methods": [
+        { "method": "Scrum", "flow": "Fixed sprints", "change": "Next sprint", "bestFor": "Feature development" },
+        { "method": "Kanban", "flow": "Continuous", "change": "Any time", "bestFor": "Maintenance and support" },
+        { "method": "Waterfall", "flow": "Sequential phases", "change": "Change request", "bestFor": "Fixed scope" }
+      ],
+      "interruptions": "daily",
+      "requirements": "evolving",
+      "releases": "continuous",
+      "keepCeremonies": ["daily-standup", "retrospective"],
+      "wipLimit": 4
+    }
+  }
+}

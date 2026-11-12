@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone plans compared</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #172b4d; background: #f4f5f7; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #5e6c84; }
+  .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .slider { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin-bottom: 8px; }
+  .slider input { grid-column: 1 / -1; width: 100%; accent-color: #0052cc; }
+  .slider output { font-weight: 700; color: #0052cc; }
+  .plan { position: relative; background: #fff; border: 2px solid #dfe1e6; border-radius: 10px; padding: 12px; margin-bottom: 10px; transition: border-color .2s; }
+  .plan.best { border-color: #00875a; }
+  .plan.out { opacity: .6; }
+  .plan header { display: flex; justify-content: space-between; align-items: baseline; }
+  .plan h2 { font-size: 16px; margin: 0; }
+  .plan .price { color: #5e6c84; font-size: 12px; }
+  .plan .feat { font-size: 12px; color: #5e6c84; margin: 2px 0 8px; }
+  .badge { display: none; position: absolute; top: -9px; right: 10px; background: #00875a; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .05em; }
+  .plan.best .badge { display: block; }
+  .line { display: flex; justify-content: space-between; font-size: 13px; }
+  .line.total { font-weight: 700; font-size: 15px; margin-top: 4px; padding-top: 6px; border-top: 1px solid #ebecf0; }
+  .barwrap { height: 8px; background: #ebecf0; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .barwrap i { display: block; height: 100%; background: #0052cc; width: 0; transition: width .25s; }
+  .plan.best .barwrap i { background: #00875a; }
+  .problem { color: #bf2600; font-size: 12px; font-weight: 600; margin-top: 6px; min-height: 0; }
+  .verdict { background: #e3fcef; border-color: #abf5d1; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Phone plans compared</h1>
+  <p class="lead">Set to your usage: about 12 GB a month and two one-week trips abroad. Drag to see when the best plan changes.</p>
+
+  <div class="card">
+    <div class="slider"><label for="gb">Data per month</label><output id="gbOut"></output><input id="gb" type="range" min="1" max="40" value="12"></div>
+    <div class="slider"><label for="days">Days abroad per year</label><output id="daysOut"></output><input id="days" type="range" min="0" max="90" value="14"></div>
+  </div>
+
+  <div class="card verdict" id="verdict"></div>
+  <div id="plans"></div>
+
+<script>
+(function () {
+  var plans = [
+    { id: 'basic', name: 'Basic', price: 25, feat: '5 GB · extra data $10 per GB · no roaming' },
+    { id: 'plus', name: 'Plus', price: 40, feat: '20 GB · roaming $5 per day' },
+    { id: 'max', name: 'Max', price: 60, feat: 'Unlimited data · roaming included' }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  function cost(id, gb, days) {
+    if (id === 'basic') {
+      var over = Math.max(0, gb - 5);
+      return { monthly: 25 + over * 10, roaming: 0, roamText: days > 0 ? 'Not available' : 'None needed',
+               problem: days > 0 ? 'No service abroad on your ' + days + ' travel days' : '', detail: over > 0 ? over + ' GB over × $10' : 'Within 5 GB' };
+    }
+    if (id === 'plus') {
+      return { monthly: 40, roaming: days * 5, roamText: usd(days * 5), problem: gb > 20 ? 'You would run out: only 20 GB included' : '', detail: 'Within 20 GB' };
+    }
+    return { monthly: 60, roaming: 0, roamText: 'Included', problem: '', detail: 'Unlimited' };
+  }
+
+  var nodes = {};
+  plans.forEach(function (p) {
+    var el = document.createElement('div');
+    el.className = 'plan';
+    var badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = 'Best for you';
+    var head = document.createElement('header');
+    var h = document.createElement('h2'); h.textContent = p.name;
+    var price = document.createElement('span'); price.className = 'price'; price.textContent = '$' + p.price + '/month';
+    head.appendChild(h); head.appendChild(price);
+    var feat = document.createElement('div'); feat.className = 'feat'; feat.textContent = p.feat;
+    var mk = function (label, cls) {
+      var line = document.createElement('div'); line.className = 'line' + (cls ? ' ' + cls : '');
+      var a = document.createElement('span'); a.textContent = label;
+      var b = document.createElement('span');
+      line.appendChild(a); line.appendChild(b);
+      return { line: line, label: a, value: b };
+    };
+    var monthly = mk('Monthly cost');
+    var roaming = mk('Roaming per year');
+    var total = mk('Per year', 'total');
+    var wrap = document.createElement('div'); wrap.className = 'barwrap';
+    var bar = document.createElement('i'); wrap.appendChild(bar);
+    var problem = document.createElement('div'); problem.className = 'problem';
+    [badge, head, feat, monthly.line, roaming.line, total.line, wrap, problem].forEach(function (n) { el.appendChild(n); });
+    $('plans').appendChild(el);
+    nodes[p.id] = { el: el, monthly: monthly, roaming: roaming, total: total, bar: bar, problem: problem };
+  });
+
+  function render() {
+    var gb = parseInt($('gb').value, 10);
+    var days = parseInt($('days').value, 10);
+    $('gbOut').textContent = gb + ' GB';
+    $('daysOut').textContent = days + (days === 1 ? ' day' : ' days');
+
+    var results = plans.map(function (p) {
+      var c = cost(p.id, gb, days);
+      c.id = p.id; c.name = p.name;
+      c.yearly = c.monthly * 12 + c.roaming;
+      return c;
+    });
+    var usable = results.filter(function (r) { return !r.problem; });
+    var best = usable.reduce(function (a, b) { return b.yearly < a.yearly ? b : a; });
+    var maxYearly = Math.max.apply(null, results.map(function (r) { return r.yearly; }));
+
+    results.forEach(function (r) {
+      var n = nodes[r.id];
+      n.monthly.label.textContent = 'Monthly cost (' + r.detail + ')';
+      n.monthly.value.textContent = usd(r.monthly);
+      n.roaming.value.textContent = r.roamText;
+      n.total.value.textContent = usd(r.yearly);
+      n.bar.style.width = (r.yearly / maxYearly * 100) + '%';
+      n.problem.textContent = r.problem;
+      n.el.classList.toggle('best', r.id === best.id);
+      n.el.classList.toggle('out', !!r.problem);
+    });
+
+    var others = usable.filter(function (r) { return r.id !== best.id; }).sort(function (a, b) { return a.yearly - b.yearly; });
+    var text = 'Best for you: ' + best.name + ' at ' + usd(best.yearly) + ' a year.';
+    if (others.length) { text += ' That is ' + usd(others[0].yearly - best.yearly) + ' less than ' + others[0].name + '.'; }
+    $('verdict').textContent = text;
+  }
+
+  $('gb').addEventListener('input', render);
+  $('days').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

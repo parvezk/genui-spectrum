@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REST vs GraphQL</title>
+<style>
+  * { box-sizing: border-box; }
+  :root { --rest: #0e7490; --gql: #be185d; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2937; background: #f8fafc; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 14px; margin: 0 0 8px; }
+  .lead { margin: 0 0 12px; color: #64748b; }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .rest { color: var(--rest); } .gql { color: var(--gql); }
+  .lane { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .lane b { font-size: 13px; }
+  .track { position: relative; height: 54px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+  .req { position: absolute; height: 14px; border-radius: 3px; width: 0; color: #fff; font-size: 10px; line-height: 14px; padding-left: 4px; white-space: nowrap; overflow: hidden; transition: width .5s linear; }
+  .track.rest .req { background: var(--rest); }
+  .track.gql .req { background: var(--gql); height: 22px; line-height: 22px; top: 16px; left: 0; }
+  .r1 { top: 3px; left: 0; } .r2 { top: 20px; left: 33.3%; transition-delay: .5s !important; } .r3 { top: 37px; left: 66.6%; transition-delay: 1s !important; }
+  .play .track.rest .req { width: 33.3%; }
+  .play .track.gql .req { width: 40%; }
+  .cap { font-size: 12px; color: #64748b; margin: 4px 0 0; }
+  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font: inherit; cursor: pointer; }
+  .q { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-top: 1px solid #f1f5f9; cursor: pointer; }
+  .q:first-of-type { border-top: 0; }
+  .q input { margin-top: 3px; width: 16px; height: 16px; flex: none; }
+  .score { display: grid; grid-template-columns: 64px 1fr 24px; gap: 8px; align-items: center; margin-top: 6px; font-weight: 600; }
+  .meter { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; transition: width .25s; }
+  .verdict { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f1f5f9; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; vertical-align: top; padding: 6px; border-top: 1px solid #f1f5f9; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  td:first-child { font-weight: 600; width: 26%; }
+  tr.hl td { background: #fefce8; }
+</style>
+</head>
+<body>
+  <h1>REST vs GraphQL for a mobile backend</h1>
+  <p class="lead">See what loading one screen costs, then answer a few questions about your app to get a recommendation.</p>
+
+  <div class="card" id="demo">
+    <h2>Loading a profile screen (user + posts + followers)</h2>
+    <div class="lane"><b class="rest">REST</b>
+      <div class="track rest"><span class="req r1">GET /users/42</span><span class="req r2">GET /users/42/posts</span><span class="req r3">GET /users/42/followers</span></div>
+    </div>
+    <div class="lane"><b class="gql">GraphQL</b>
+      <div class="track gql"><span class="req">query { user { posts followers } }</span></div>
+    </div>
+    <button id="replay">Replay</button>
+    <p class="cap">Three sequential round trips versus one. On a cellular connection each round trip can cost 100–300 ms.</p>
+  </div>
+
+  <div class="card">
+    <h2>Which fits your app?</h2>
+    <div id="questions"></div>
+    <div class="score"><span class="rest">REST</span><div class="meter"><i id="mRest" style="background:var(--rest)"></i></div><span id="sRest">0</span></div>
+    <div class="score"><span class="gql">GraphQL</span><div class="meter"><i id="mGql" style="background:var(--gql)"></i></div><span id="sGql">0</span></div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="card">
+    <h2>Side by side</h2>
+    <table>
+      <thead><tr><th></th><th class="rest">REST</th><th class="gql">GraphQL</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="cap">Rows tied to your answers are highlighted.</p>
+  </div>
+
+<script>
+(function () {
+  var questions = [
+    { text: 'Screens combine data from several resources (feeds, profiles, dashboards)', side: 'gql', points: 2, row: 1 },
+    { text: 'iOS, Android and web each need different fields', side: 'gql', points: 2, row: 1 },
+    { text: 'Many users are on slow or metered mobile networks', side: 'gql', points: 1, row: 1 },
+    { text: 'You need live updates (chat, presence, notifications)', side: 'gql', points: 1, row: 5 },
+    { text: 'The API is mostly simple CRUD on a few resources', side: 'rest', points: 2, row: 0 },
+    { text: 'You rely on HTTP or CDN caching for public content', side: 'rest', points: 2, row: 2 },
+    { text: 'Third parties will consume the API', side: 'rest', points: 1, row: 4 },
+    { text: 'The team is small and has not run GraphQL before', side: 'rest', points: 2, row: 6 }
+  ];
+  var rows = [
+    ['Shape', 'Many endpoints, one per resource', 'One endpoint, typed schema, client writes the query'],
+    ['Fetching a screen', 'Several round trips or a custom endpoint', 'One request with exactly the fields needed'],
+    ['Caching', 'HTTP and CDN caching just work', 'Harder; moves into the client library'],
+    ['Versioning', '/v1, /v2 or additive changes', 'Deprecate fields, no versions'],
+    ['Tooling', 'Optional OpenAPI; status codes map to dashboards', 'Introspection and generated types; errors need extra tooling'],
+    ['Real-time', 'Add WebSockets or SSE yourself', 'Subscriptions in the spec'],
+    ['Learning curve', 'Low', 'Higher: schema, resolvers, client cache']
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var checked = questions.map(function () { return false; });
+
+  var qBox = $('questions');
+  questions.forEach(function (q, i) {
+    var label = document.createElement('label');
+    label.className = 'q';
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.setAttribute('data-i', String(i));
+    var span = document.createElement('span');
+    span.textContent = q.text;
+    label.appendChild(input);
+    label.appendChild(span);
+    qBox.appendChild(label);
+  });
+
+  var body = $('rows');
+  rows.forEach(function (r) {
+    var tr = document.createElement('tr');
+    r.forEach(function (text) {
+      var td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+
+  function render() {
+    var rest = 0, gql = 0, touched = {};
+    questions.forEach(function (q, i) {
+      if (!checked[i]) { return; }
+      if (q.side === 'rest') { rest += q.points; } else { gql += q.points; }
+      touched[q.row] = true;
+    });
+    $('sRest').textContent = String(rest);
+    $('sGql').textContent = String(gql);
+    $('mRest').style.width = (rest / 7 * 100) + '%';
+    $('mGql').style.width = (gql / 6 * 100) + '%';
+    var v;
+    if (rest === 0 && gql === 0) { v = 'Tick what applies to your app.'; }
+    else if (gql - rest >= 2) { v = 'Recommendation: GraphQL. Your screens and clients benefit from asking for exactly what they need.'; }
+    else if (rest - gql >= 2) { v = 'Recommendation: REST. Simpler to build, cache and operate for this kind of app.'; }
+    else { v = 'Close call: start with REST and add a GraphQL layer for the screens that aggregate data.'; }
+    $('verdict').textContent = v;
+    var trs = body.children;
+    for (var i = 0; i < trs.length; i++) { trs[i].className = touched[i] ? 'hl' : ''; }
+  }
+
+  qBox.addEventListener('change', function (e) {
+    var i = e.target.getAttribute('data-i');
+    if (i === null) { return; }
+    checked[parseInt(i, 10)] = e.target.checked;
+    render();
+  });
+
+  function play() {
+    var demo = $('demo');
+    demo.classList.remove('play');
+    // Force a reflow so the transition restarts.
+    void demo.offsetWidth;
+    demo.classList.add('play');
+  }
+  $('replay').addEventListener('click', play);
+
+  render();
+  setTimeout(play, 300);
+})();
+</script>
+</body>
+</html>
