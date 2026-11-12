@@ -43,7 +43,8 @@ export function validateHtml(doc) {
     [/https?:\/\/[^\s"'<>)]+/gi, "EXTERNAL_URL", "absolute URL"],
     [/url\(\s*["']?(?!data:|#|["']?\))/gi, "EXTERNAL_CSS_URL", "CSS url() that is not a data: URI"],
     [/@import\b/gi, "CSS_IMPORT", "CSS @import"],
-    [/\bfetch\s*\(|XMLHttpRequest|\bWebSocket\b|\bEventSource\b|sendBeacon|importScripts|\bimport\s*\(|new\s+(?:Shared)?Worker\b/gi, "NETWORK_API", "network or module-loading API"],
+    // Constructor and call forms only, so prose that merely names an API (e.g. "upgraded to WebSocket") is not flagged.
+    [/\bfetch\s*\(|\bnew\s+(?:XMLHttpRequest|WebSocket|EventSource|(?:Shared)?Worker)\b|\bsendBeacon\s*\(|\bimportScripts\s*\(|\bimport\s*\(/g, "NETWORK_API", "network or module-loading API"],
     [/\blocation\s*\.\s*(?:href|assign|replace)\b|\blocation\s*=[^=]/gi, "NAVIGATION", "navigation away from the document"],
     [/\.(?:src|href|action|poster)\s*=\s*(?!["'`](?:data:|blob:|#))/gi, "DYNAMIC_REFERENCE", "script-assigned URL that is not a data: URI"],
   ];
