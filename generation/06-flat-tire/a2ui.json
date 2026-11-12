@@ -1,0 +1,112 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "flat-tire",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "flat-tire",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "warning-card", "sections", "star-card", "help-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Changing a flat tire" },
+
+        { "id": "warning-card", "component": "Card", "child": "warning-row" },
+        { "id": "warning-row", "component": "Row", "align": "start", "children": ["warning-icon", "warning-text"] },
+        { "id": "warning-icon", "component": "Icon", "name": "warning" },
+        {
+          "id": "warning-text",
+          "component": "Text",
+          "weight": 1,
+          "text": "**Stay safe first.** On a motorway or a narrow shoulder, do not change the wheel. Get everyone behind the barrier and call for help."
+        },
+
+        { "id": "sections", "component": "List", "children": { "componentId": "section-card", "path": "/sections" } },
+        { "id": "section-card", "component": "Card", "child": "section-col" },
+        { "id": "section-col", "component": "Column", "children": ["section-title", "section-steps"] },
+        { "id": "section-title", "component": "Text", "variant": "h4", "text": { "path": "title" } },
+        { "id": "section-steps", "component": "List", "children": { "componentId": "step-check", "path": "steps" } },
+        { "id": "step-check", "component": "CheckBox", "label": { "path": "text" }, "value": { "path": "done" } },
+
+        { "id": "star-card", "component": "Card", "child": "star-row" },
+        { "id": "star-row", "component": "Row", "align": "start", "children": ["star-icon", "star-col"] },
+        { "id": "star-icon", "component": "Icon", "name": "star" },
+        { "id": "star-col", "component": "Column", "weight": 1, "children": ["star-title", "star-text"] },
+        { "id": "star-title", "component": "Text", "variant": "h5", "text": "Tighten in a star pattern" },
+        {
+          "id": "star-text",
+          "component": "Text",
+          "text": "With five nuts, tighten 1, 3, 5, 2, 4: always jump to the nut opposite, never the neighbour. This seats the wheel evenly."
+        },
+
+        { "id": "help-card", "component": "Card", "child": "help-col" },
+        { "id": "help-col", "component": "Column", "children": ["help-title", "help-text", "help-location", "help-button"] },
+        { "id": "help-title", "component": "Text", "variant": "h5", "text": "Not safe, or stuck?" },
+        {
+          "id": "help-text",
+          "component": "Text",
+          "text": "Call for help if the ground is soft or sloping, a nut will not budge, or the car has no spare."
+        },
+        { "id": "help-location", "component": "TextField", "label": "Where are you? (road, direction, nearest exit)", "value": { "path": "/location" } },
+        {
+          "id": "help-button",
+          "component": "Button",
+          "variant": "primary",
+          "child": "help-button-row",
+          "action": { "event": { "name": "request_roadside_assistance", "context": { "location": { "path": "/location" } } } }
+        },
+        { "id": "help-button-row", "component": "Row", "align": "center", "children": ["help-button-icon", "help-button-label"] },
+        { "id": "help-button-icon", "component": "Icon", "name": "call" },
+        { "id": "help-button-label", "component": "Text", "text": "Request roadside assistance" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "flat-tire",
+      "path": "/",
+      "value": {
+        "location": "",
+        "sections": [
+          {
+            "title": "1. Make the scene safe",
+            "steps": [
+              { "text": "Pull over on flat, firm ground, well away from traffic", "done": false },
+              { "text": "Hazard lights on; hi-vis vest if you have one", "done": false },
+              { "text": "Parking brake on; car in Park or first gear", "done": false },
+              { "text": "Passengers out and clear of the road", "done": false },
+              { "text": "Warning triangle about 45 m behind the car", "done": false },
+              { "text": "Chock the wheel diagonally opposite the flat", "done": false }
+            ]
+          },
+          {
+            "title": "2. Change the wheel",
+            "steps": [
+              { "text": "Get out the spare, jack and wrench; check the spare has air", "done": false },
+              { "text": "Loosen each nut half a turn while the tire is on the ground", "done": false },
+              { "text": "Jack at the jacking point until the tire is 5 cm off the ground", "done": false },
+              { "text": "Never put any part of your body under the car", "done": false },
+              { "text": "Remove the nuts and pull the wheel straight off", "done": false },
+              { "text": "Fit the spare; hand-tighten the nuts in a star pattern", "done": false },
+              { "text": "Lower until the tire touches; tighten fully in a star pattern", "done": false },
+              { "text": "Lower completely, remove the jack, check each nut again", "done": false }
+            ]
+          },
+          {
+            "title": "3. Before you drive off",
+            "steps": [
+              { "text": "Stow the flat, jack, wrench, triangle and chock", "done": false },
+              { "text": "Check the spare's pressure at the next fuel station", "done": false },
+              { "text": "Space-saver spare: stay under 80 km/h (50 mph)", "done": false },
+              { "text": "Have the nuts re-torqued after about 50 km", "done": false }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

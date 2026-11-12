@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sourdough starter in 7 days</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 Georgia, "Times New Roman", serif; color: #3b2f2a; background: #fbf6ee; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 0 0 6px; }
+  .lead { margin: 0 0 12px; color: #6b5a50; }
+  .ui { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .progress { height: 8px; background: #eadfce; border-radius: 4px; overflow: hidden; margin: 4px 0 2px; }
+  .progress i { display: block; height: 100%; width: 0; background: #b7791f; transition: width .3s; }
+  .days { display: flex; gap: 6px; margin: 12px 0; }
+  .day { flex: 1; min-width: 0; padding: 8px 0; border: 1px solid #dccdb8; background: #fff; border-radius: 8px; text-align: center; cursor: pointer; font: 600 13px system-ui, sans-serif; color: #6b5a50; }
+  .day small { display: block; font-weight: 400; font-size: 10px; }
+  .day.sel { border-color: #b7791f; box-shadow: 0 0 0 2px #f1d9a8; color: #3b2f2a; }
+  .day.done { background: #f6ead3; }
+  .panel { display: grid; grid-template-columns: 110px 1fr; gap: 12px; background: #fff; border: 1px solid #dccdb8; border-radius: 10px; padding: 12px; }
+  .panel svg { width: 100%; height: auto; }
+  .panel p { margin: 0 0 8px; }
+  .expect { color: #6b5a50; font-style: italic; }
+  label.check { display: flex; gap: 8px; align-items: center; font: 13px system-ui, sans-serif; cursor: pointer; }
+  .box { background: #fff; border: 1px solid #dccdb8; border-radius: 10px; padding: 12px; margin-top: 12px; }
+  .calc { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 13px system-ui, sans-serif; }
+  .calc input { width: 70px; padding: 4px 6px; border: 1px solid #dccdb8; border-radius: 6px; font: inherit; }
+  .calc b { color: #b7791f; }
+  details { border-top: 1px solid #efe5d6; padding: 6px 0; }
+  details:first-of-type { border-top: 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 4px 0 2px; color: #6b5a50; }
+</style>
+</head>
+<body>
+  <h1>Sourdough starter in 7 days</h1>
+  <p class="lead">Flour, water and patience. Pick a day to see what to do and what the jar should look like.</p>
+
+  <div class="ui"><span id="count"></span><div class="progress"><i id="bar"></i></div></div>
+
+  <div class="days" id="days"></div>
+
+  <div class="panel">
+    <svg viewBox="0 0 110 150" role="img" aria-label="Jar showing how active the starter is">
+      <rect x="18" y="6" width="74" height="10" rx="3" fill="#c9b79c"/>
+      <rect x="14" y="16" width="82" height="128" rx="12" fill="#fdfaf5" stroke="#a8957a" stroke-width="2"/>
+      <rect id="starter" x="16" y="100" width="78" height="42" rx="10" fill="#e8d5b0"/>
+      <line id="band" x1="12" y1="100" x2="98" y2="100" stroke="#c0392b" stroke-width="2"/>
+      <g id="bubbles" fill="#fdfaf5" stroke="#cdb88f"></g>
+    </svg>
+    <div>
+      <h2 id="dayTitle"></h2>
+      <p id="dayAction"></p>
+      <p class="expect" id="dayExpect"></p>
+      <label class="check"><input type="checkbox" id="doneBox"> Done for this day</label>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>Feeding calculator</h2>
+    <div class="calc">
+      <span>Keep</span><input id="keep" type="number" min="10" max="500" step="5" value="50"><span>g of starter, then add</span>
+      <b id="flour"></b><span>flour and</span><b id="water"></b><span>water (1:1:1).</span>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>It is ready when…</h2>
+    <details open><summary>It doubles in 4–8 hours</summary><p>Mark the level with a rubber band after feeding (the red line in the jar) and check back.</p></details>
+    <details><summary>It smells like yoghurt</summary><p>Tangy and slightly sweet. Nail-polish or sock smells mean it is still settling down.</p></details>
+    <details><summary>A spoonful floats</summary><p>Drop a little into a glass of water. If it floats, it holds enough gas to raise bread.</p></details>
+    <details><summary>Something looks wrong?</summary><p>Grey liquid on top means it is hungry: pour it off and feed. No activity after day 4: move it somewhere warmer. Pink, orange or fuzzy patches are mould: start again.</p></details>
+  </div>
+
+<script>
+(function () {
+  var days = [
+    { name: 'Mix', action: 'Mix 50 g whole-wheat flour with 50 g lukewarm water in a clean jar. Cover loosely and keep it warm (24–26 °C).', expect: 'A thick paste. Nothing else yet.', activity: 0 },
+    { name: 'Rest', action: 'Leave it alone. Give it one stir.', expect: 'A few small bubbles, maybe none.', activity: 10 },
+    { name: 'Feed', action: 'Discard all but 50 g. Add 50 g white bread flour and 50 g water.', expect: 'Bubbles and a sharp, funky smell.', activity: 35 },
+    { name: 'Feed', action: 'Discard to 50 g and feed 50 g flour + 50 g water again.', expect: 'Often goes quiet. This lull is normal, keep going.', activity: 20 },
+    { name: 'Feed ×2', action: 'Start feeding twice a day, 12 hours apart, same amounts.', expect: 'Rises a little after each feed.', activity: 55 },
+    { name: 'Feed ×2', action: 'Feed twice again.', expect: 'Rises predictably and smells pleasantly tangy.', activity: 80 },
+    { name: 'Test', action: 'Feed, mark the level, and watch.', expect: 'Doubles within 4–8 hours and is bubbly throughout. Ready to bake!', activity: 100 }
+  ];
+  var done = [false, false, false, false, false, false, false];
+  var selected = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  var SVG = 'http://www.w3.org/2000/svg';
+
+  var strip = $('days');
+  days.forEach(function (d, i) {
+    var b = document.createElement('button');
+    b.className = 'day';
+    b.type = 'button';
+    b.setAttribute('data-i', String(i));
+    b.appendChild(document.createTextNode(String(i + 1)));
+    var s = document.createElement('small');
+    s.textContent = d.name;
+    b.appendChild(s);
+    strip.appendChild(b);
+  });
+
+  function render() {
+    var d = days[selected];
+    var buttons = strip.querySelectorAll('.day');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].classList.toggle('sel', i === selected);
+      buttons[i].classList.toggle('done', done[i]);
+    }
+    $('dayTitle').textContent = 'Day ' + (selected + 1) + ': ' + d.name;
+    $('dayAction').textContent = d.action;
+    $('dayExpect').textContent = d.expect;
+    $('doneBox').checked = done[selected];
+
+    var n = done.filter(function (x) { return x; }).length;
+    $('count').textContent = n + ' of 7 days done';
+    $('bar').style.width = (n / 7 * 100) + '%';
+
+    // Jar: the starter sits at the band (y = 100) and rises with activity, up to double.
+    var rise = 42 * d.activity / 100;
+    var top = 100 - rise;
+    $('starter').setAttribute('y', String(top));
+    $('starter').setAttribute('height', String(42 + rise));
+    var g = $('bubbles');
+    while (g.firstChild) { g.removeChild(g.firstChild); }
+    var count = Math.round(d.activity / 7);
+    for (var k = 0; k < count; k++) {
+      var c = document.createElementNS(SVG, 'circle');
+      var x = 26 + ((k * 37) % 58);
+      var y = top + 8 + ((k * 23) % Math.max(10, 30 + rise));
+      c.setAttribute('cx', String(x));
+      c.setAttribute('cy', String(Math.min(y, 136)));
+      c.setAttribute('r', String(2 + (k % 3)));
+      g.appendChild(c);
+    }
+  }
+
+  function calc() {
+    var keep = parseFloat($('keep').value);
+    if (isNaN(keep) || keep < 0) { keep = 0; }
+    $('flour').textContent = keep + ' g';
+    $('water').textContent = keep + ' g';
+  }
+
+  strip.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== strip && !t.classList.contains('day')) { t = t.parentNode; }
+    if (t && t !== strip) { selected = parseInt(t.getAttribute('data-i'), 10); render(); }
+  });
+  $('doneBox').addEventListener('change', function () { done[selected] = $('doneBox').checked; render(); });
+  $('keep').addEventListener('input', calc);
+  render();
+  calc();
+})();
+</script>
+</body>
+</html>

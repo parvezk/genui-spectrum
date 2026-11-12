@@ -1,0 +1,6 @@
+{
+  "text": "States the formula and the milestone table clearly, but the numbers are frozen at 6% and 20 years and the curve has to be imagined.",
+  "a2ui": "Stat cards, a bound table and sliders look right, but the catalog has no arithmetic or chart, so moving a slider changes only its readout until the agent recalculates.",
+  "html": "A live calculator with a compound-versus-simple chart that redraws on every slider move; the only approach where the reader can actually feel the curve bend.",
+  "agui": "Good at collecting new inputs with typed, range-checked controls, but the result is a disabled table and nothing updates until the form is submitted back to the agent."
+}

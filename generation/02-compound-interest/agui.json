@@ -1,0 +1,93 @@
+{
+  "toolCall": {
+    "id": "call_compound_interest_02",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show how $5,000 grows at 6% compounded annually over 20 years as a read-only milestone table, then let the user change the starting amount, rate, years and compounding frequency to request a new calculation.",
+      "data": {
+        "principal": 5000,
+        "annualRatePercent": 6,
+        "years": 20,
+        "finalBalance": 16035.68,
+        "milestones": [
+          { "year": 1, "balance": 5300.0 },
+          { "year": 5, "balance": 6691.13 },
+          { "year": 10, "balance": 8954.24 },
+          { "year": 15, "balance": 11982.79 },
+          { "year": 20, "balance": 16035.68 }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "principal": { "type": "number", "minimum": 0 },
+          "annualRatePercent": { "type": "number", "minimum": 0, "maximum": 20 },
+          "years": { "type": "integer", "minimum": 1, "maximum": 50 },
+          "compounding": { "type": "string", "enum": ["annually", "monthly", "daily"] }
+        },
+        "required": ["principal", "annualRatePercent", "years", "compounding"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "milestones": {
+          "type": "array",
+          "title": "$5,000 at 6% a year, compounded annually",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": { "type": "integer", "title": "Year" },
+              "balance": { "type": "number", "title": "Balance ($)" }
+            }
+          }
+        },
+        "principal": { "type": "number", "title": "Starting amount ($)", "minimum": 0 },
+        "annualRatePercent": { "type": "number", "title": "Yearly rate (%)", "minimum": 0, "maximum": 20, "default": 6 },
+        "years": { "type": "integer", "title": "Years", "minimum": 1, "maximum": 50, "default": 20 },
+        "compounding": {
+          "type": "string",
+          "title": "Interest is added",
+          "oneOf": [
+            { "const": "annually", "title": "Once a year" },
+            { "const": "monthly", "title": "Every month" },
+            { "const": "daily", "title": "Every day" }
+          ]
+        }
+      },
+      "required": ["principal", "annualRatePercent", "years", "compounding"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "After 20 years: $16,035.68 ($11,035.68 of it is interest)" },
+        { "type": "Control", "scope": "#/properties/milestones", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Try other numbers",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/principal" },
+            { "type": "Control", "scope": "#/properties/annualRatePercent", "options": { "slider": true } },
+            { "type": "Control", "scope": "#/properties/years", "options": { "slider": true } },
+            { "type": "Control", "scope": "#/properties/compounding", "options": { "format": "radio" } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "milestones": [
+        { "year": 1, "balance": 5300.0 },
+        { "year": 5, "balance": 6691.13 },
+        { "year": 10, "balance": 8954.24 },
+        { "year": 15, "balance": 11982.79 },
+        { "year": 20, "balance": 16035.68 }
+      ],
+      "principal": 5000,
+      "annualRatePercent": 6,
+      "years": 20,
+      "compounding": "annually"
+    }
+  }
+}

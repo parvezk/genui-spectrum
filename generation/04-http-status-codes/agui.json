@@ -1,0 +1,111 @@
+{
+  "toolCall": {
+    "id": "call_http_status_codes_04",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the five HTTP status code classes as a read-only reference table (class, meaning, common codes). Then ask whether the user is looking at a specific code right now, where they saw it, and whether they want steps to fix it.",
+      "data": {
+        "classes": [
+          { "class": "1xx Informational", "meaning": "Request received, keep going", "common": "100, 101" },
+          { "class": "2xx Success", "meaning": "The request worked", "common": "200, 201, 204" },
+          { "class": "3xx Redirection", "meaning": "Look somewhere else", "common": "301, 302, 304" },
+          { "class": "4xx Client error", "meaning": "The request was wrong", "common": "400, 401, 403, 404, 429" },
+          { "class": "5xx Server error", "meaning": "The server failed", "common": "500, 502, 503, 504" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [100, 101, 200, 201, 204, 301, 302, 304, 400, 401, 403, 404, 429, 500, 502, 503, 504]
+          },
+          "seenIn": { "type": "string", "enum": ["browser", "api-client", "server-logs", "just-curious"] },
+          "wantFixSteps": { "type": "boolean" }
+        },
+        "required": ["seenIn", "wantFixSteps"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "classes": {
+          "type": "array",
+          "title": "Status code classes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "class": { "type": "string", "title": "Class" },
+              "meaning": { "type": "string", "title": "Meaning" },
+              "common": { "type": "string", "title": "Common codes" }
+            }
+          }
+        },
+        "code": {
+          "type": "integer",
+          "title": "Code you are looking at (optional)",
+          "oneOf": [
+            { "const": 100, "title": "100 Continue" },
+            { "const": 101, "title": "101 Switching Protocols" },
+            { "const": 200, "title": "200 OK" },
+            { "const": 201, "title": "201 Created" },
+            { "const": 204, "title": "204 No Content" },
+            { "const": 301, "title": "301 Moved Permanently" },
+            { "const": 302, "title": "302 Found" },
+            { "const": 304, "title": "304 Not Modified" },
+            { "const": 400, "title": "400 Bad Request" },
+            { "const": 401, "title": "401 Unauthorized" },
+            { "const": 403, "title": "403 Forbidden" },
+            { "const": 404, "title": "404 Not Found" },
+            { "const": 429, "title": "429 Too Many Requests" },
+            { "const": 500, "title": "500 Internal Server Error" },
+            { "const": 502, "title": "502 Bad Gateway" },
+            { "const": 503, "title": "503 Service Unavailable" },
+            { "const": 504, "title": "504 Gateway Timeout" }
+          ]
+        },
+        "seenIn": {
+          "type": "string",
+          "title": "Where did you see it?",
+          "oneOf": [
+            { "const": "browser", "title": "In the browser" },
+            { "const": "api-client", "title": "In an API client or my code" },
+            { "const": "server-logs", "title": "In server logs" },
+            { "const": "just-curious", "title": "Nowhere, just curious" }
+          ]
+        },
+        "wantFixSteps": { "type": "boolean", "title": "Include steps to fix it" }
+      },
+      "required": ["seenIn", "wantFixSteps"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "The first digit tells you the class of outcome" },
+        { "type": "Control", "scope": "#/properties/classes", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Debugging a specific response?",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/code" },
+            { "type": "Control", "scope": "#/properties/seenIn", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/wantFixSteps" }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "classes": [
+        { "class": "1xx Informational", "meaning": "Request received, keep going", "common": "100, 101" },
+        { "class": "2xx Success", "meaning": "The request worked", "common": "200, 201, 204" },
+        { "class": "3xx Redirection", "meaning": "Look somewhere else", "common": "301, 302, 304" },
+        { "class": "4xx Client error", "meaning": "The request was wrong", "common": "400, 401, 403, 404, 429" },
+        { "class": "5xx Server error", "meaning": "The server failed", "common": "500, 502, 503, 504" }
+      ],
+      "seenIn": "just-curious",
+      "wantFixSteps": false
+    }
+  }
+}

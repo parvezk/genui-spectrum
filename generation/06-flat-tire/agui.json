@@ -1,0 +1,112 @@
+{
+  "toolCall": {
+    "id": "call_flat_tire_06",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Present the flat-tire procedure as three checklists the user ticks off at the roadside (make the scene safe, change the wheel, before driving off). Also ask what kind of spare they have and whether they need roadside assistance; if they do, collect their location.",
+      "data": {
+        "safety": ["Pull over on flat, firm ground", "Hazard lights on", "Parking brake on, in Park or first gear", "Passengers out and clear", "Warning triangle 45 m behind", "Chock the opposite wheel"],
+        "change": ["Get out spare, jack and wrench", "Loosen nuts half a turn on the ground", "Jack at the jacking point", "Remove nuts and wheel", "Fit spare, hand-tighten in a star pattern", "Lower and tighten fully in a star pattern"],
+        "after": ["Stow everything", "Check spare pressure soon", "Space-saver: under 80 km/h", "Re-torque nuts after 50 km"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "safety": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "change": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "after": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "spare": { "type": "string", "enum": ["full-size", "space-saver", "sealant-kit", "none"] },
+          "needHelp": { "type": "boolean" },
+          "location": { "type": "string" }
+        },
+        "required": ["spare", "needHelp"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "safety": {
+          "type": "array",
+          "title": "1. Make the scene safe",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Pull over on flat, firm ground", "Hazard lights on", "Parking brake on, in Park or first gear", "Passengers out and clear", "Warning triangle 45 m behind", "Chock the opposite wheel"]
+          }
+        },
+        "change": {
+          "type": "array",
+          "title": "2. Change the wheel",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Get out spare, jack and wrench", "Loosen nuts half a turn on the ground", "Jack at the jacking point", "Remove nuts and wheel", "Fit spare, hand-tighten in a star pattern", "Lower and tighten fully in a star pattern"]
+          }
+        },
+        "after": {
+          "type": "array",
+          "title": "3. Before you drive off",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Stow everything", "Check spare pressure soon", "Space-saver: under 80 km/h", "Re-torque nuts after 50 km"]
+          }
+        },
+        "spare": {
+          "type": "string",
+          "title": "What spare do you have?",
+          "oneOf": [
+            { "const": "full-size", "title": "Full-size spare" },
+            { "const": "space-saver", "title": "Narrow space-saver" },
+            { "const": "sealant-kit", "title": "Sealant kit only" },
+            { "const": "none", "title": "Nothing" }
+          ]
+        },
+        "needHelp": { "type": "boolean", "title": "I need roadside assistance" },
+        "location": { "type": "string", "title": "Where are you? (road, direction, nearest exit)" }
+      },
+      "required": ["spare", "needHelp"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        {
+          "type": "Label",
+          "text": "Stay safe first: on a motorway or narrow shoulder, do not change the wheel. Get behind the barrier and ask for help below."
+        },
+        { "type": "Control", "scope": "#/properties/spare" },
+        {
+          "type": "Categorization",
+          "elements": [
+            { "type": "Category", "label": "Safety", "elements": [{ "type": "Control", "scope": "#/properties/safety" }] },
+            { "type": "Category", "label": "Change", "elements": [{ "type": "Control", "scope": "#/properties/change" }] },
+            { "type": "Category", "label": "Drive off", "elements": [{ "type": "Control", "scope": "#/properties/after" }] }
+          ]
+        },
+        {
+          "type": "Group",
+          "label": "Not safe, or stuck?",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/needHelp", "options": { "toggle": true } },
+            {
+              "type": "Control",
+              "scope": "#/properties/location",
+              "rule": {
+                "effect": "SHOW",
+                "condition": { "scope": "#/properties/needHelp", "schema": { "const": true } }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "safety": [],
+      "change": [],
+      "after": [],
+      "needHelp": false
+    }
+  }
+}

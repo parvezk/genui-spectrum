@@ -1,0 +1,659 @@
+{
+  "id": "03-sourdough-starter",
+  "index": 3,
+  "title": "Sourdough starter",
+  "category": "answer",
+  "prompt": "How do I make a sourdough starter from scratch? Give me the day-by-day plan.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Sourdough starter in 7 days\n\nA starter is just flour and water left to ferment until wild yeast and bacteria take hold. It takes about a week and a few minutes a day.\n\n**You need:** a clean jar (about 500 ml), a kitchen scale, whole-wheat or rye flour to begin, plain white bread flour for feeding, and lukewarm water. Keep the jar somewhere warm, ideally 24–26 °C.\n\n### Day-by-day plan\n\n| Day | What to do | What you should see |\n| --- | --- | --- |\n| **1** | Mix 50 g whole-wheat flour with 50 g water. Cover loosely. | A thick paste. Nothing else yet. |\n| **2** | Leave it alone. Stir once. | A few small bubbles, maybe none. |\n| **3** | Discard all but 50 g. Feed with 50 g white flour + 50 g water. | Bubbles, and a sharp or funky smell. |\n| **4** | Discard to 50 g and feed 50 g + 50 g again. | Often goes quiet. This lull is normal. |\n| **5** | Start feeding **twice a day**, 12 hours apart, same amounts. | Rises a little after each feed. |\n| **6** | Feed twice again. | Rises predictably; smells pleasantly tangy. |\n| **7** | Feed, then watch. | Doubles within 4–8 hours and is bubbly all the way through: it is ready. |\n\n### How to tell it is ready\n\n- It **doubles in volume** within 4–8 hours of a feed. Put a rubber band on the jar at the starting level to check.\n- It smells tangy and slightly sweet, like yoghurt, and no longer of nail polish or old socks.\n- A spoonful **floats** in a glass of water.\n\nIf it is not there on day 7, keep going with twice-daily feeds. In a cool kitchen it can take up to 14 days.\n\n### If something looks wrong\n\n- **Grey or brown liquid on top:** that is \"hooch\". The starter is hungry. Pour it off or stir it in, then feed.\n- **No activity after day 4:** move it somewhere warmer and use a little whole-wheat flour in the feed.\n- **Pink, orange or fuzzy patches:** that is mould or bad bacteria. Throw it out and start again.\n\n### Keeping it alive\n\nOnce active, store it in the fridge and feed it once a week, or keep it on the counter and feed it daily. To bake, feed it and use it when it peaks.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "sourdough-starter",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "sourdough-starter",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "intro",
+                "need-card",
+                "plan-title",
+                "plan-hint",
+                "days",
+                "ready-card",
+                "trouble-card",
+                "reminder-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Sourdough starter in 7 days"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "text": "Flour and water, left to ferment until wild yeast takes hold. A few minutes a day for about a week."
+            },
+            {
+              "id": "need-card",
+              "component": "Card",
+              "child": "need-col"
+            },
+            {
+              "id": "need-col",
+              "component": "Column",
+              "children": [
+                "need-title",
+                "need-text"
+              ]
+            },
+            {
+              "id": "need-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "You need"
+            },
+            {
+              "id": "need-text",
+              "component": "Text",
+              "text": "A clean 500 ml jar, a kitchen scale, whole-wheat or rye flour to begin, white bread flour for feeding, lukewarm water, and a warm spot (24–26 °C)."
+            },
+            {
+              "id": "plan-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Day-by-day plan"
+            },
+            {
+              "id": "plan-hint",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Tick each day off as you go."
+            },
+            {
+              "id": "days",
+              "component": "List",
+              "children": {
+                "componentId": "day-card",
+                "path": "/days"
+              }
+            },
+            {
+              "id": "day-card",
+              "component": "Card",
+              "child": "day-col"
+            },
+            {
+              "id": "day-col",
+              "component": "Column",
+              "children": [
+                "day-check",
+                "day-action",
+                "day-expect"
+              ]
+            },
+            {
+              "id": "day-check",
+              "component": "CheckBox",
+              "label": {
+                "path": "title"
+              },
+              "value": {
+                "path": "done"
+              }
+            },
+            {
+              "id": "day-action",
+              "component": "Text",
+              "text": {
+                "path": "action"
+              }
+            },
+            {
+              "id": "day-expect",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "expect"
+              }
+            },
+            {
+              "id": "ready-card",
+              "component": "Card",
+              "child": "ready-row"
+            },
+            {
+              "id": "ready-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "ready-icon",
+                "ready-col"
+              ]
+            },
+            {
+              "id": "ready-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "ready-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "ready-title",
+                "ready-1",
+                "ready-2",
+                "ready-3",
+                "ready-note"
+              ]
+            },
+            {
+              "id": "ready-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "It is ready when"
+            },
+            {
+              "id": "ready-1",
+              "component": "Text",
+              "text": "It **doubles** within 4–8 hours of a feed."
+            },
+            {
+              "id": "ready-2",
+              "component": "Text",
+              "text": "It smells tangy and slightly sweet, like yoghurt."
+            },
+            {
+              "id": "ready-3",
+              "component": "Text",
+              "text": "A spoonful **floats** in a glass of water."
+            },
+            {
+              "id": "ready-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Not there on day 7? Keep feeding twice a day. A cool kitchen can need up to 14 days."
+            },
+            {
+              "id": "trouble-card",
+              "component": "Card",
+              "child": "trouble-row"
+            },
+            {
+              "id": "trouble-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "trouble-icon",
+                "trouble-col"
+              ]
+            },
+            {
+              "id": "trouble-icon",
+              "component": "Icon",
+              "name": "warning"
+            },
+            {
+              "id": "trouble-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "trouble-title",
+                "trouble-1",
+                "trouble-2",
+                "trouble-3"
+              ]
+            },
+            {
+              "id": "trouble-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "If something looks wrong"
+            },
+            {
+              "id": "trouble-1",
+              "component": "Text",
+              "text": "**Grey liquid on top:** it is hungry. Pour it off and feed."
+            },
+            {
+              "id": "trouble-2",
+              "component": "Text",
+              "text": "**Quiet after day 4:** move it somewhere warmer and add some whole-wheat flour to the feed."
+            },
+            {
+              "id": "trouble-3",
+              "component": "Text",
+              "text": "**Pink, orange or fuzzy patches:** mould. Throw it out and start again."
+            },
+            {
+              "id": "reminder-card",
+              "component": "Card",
+              "child": "reminder-col"
+            },
+            {
+              "id": "reminder-col",
+              "component": "Column",
+              "children": [
+                "reminder-title",
+                "reminder-time",
+                "reminder-button"
+              ]
+            },
+            {
+              "id": "reminder-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Daily feeding reminder"
+            },
+            {
+              "id": "reminder-time",
+              "component": "DateTimeInput",
+              "label": "Feed at",
+              "enableTime": true,
+              "value": {
+                "path": "/reminderTime"
+              }
+            },
+            {
+              "id": "reminder-button",
+              "component": "Button",
+              "variant": "primary",
+              "child": "reminder-button-label",
+              "action": {
+                "event": {
+                  "name": "set_feeding_reminder",
+                  "context": {
+                    "time": {
+                      "path": "/reminderTime"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "reminder-button-label",
+              "component": "Text",
+              "text": "Remind me every day"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "sourdough-starter",
+          "path": "/",
+          "value": {
+            "reminderTime": "09:00",
+            "days": [
+              {
+                "title": "Day 1: Mix",
+                "done": false,
+                "action": "Mix 50 g whole-wheat flour with 50 g lukewarm water. Cover loosely.",
+                "expect": "A thick paste. Nothing else yet."
+              },
+              {
+                "title": "Day 2: Rest",
+                "done": false,
+                "action": "Leave it alone. Stir once.",
+                "expect": "A few small bubbles, maybe none."
+              },
+              {
+                "title": "Day 3: First feed",
+                "done": false,
+                "action": "Discard all but 50 g. Add 50 g white flour and 50 g water.",
+                "expect": "Bubbles and a sharp, funky smell."
+              },
+              {
+                "title": "Day 4: Feed",
+                "done": false,
+                "action": "Discard to 50 g and feed 50 g flour + 50 g water again.",
+                "expect": "Often goes quiet. The lull is normal."
+              },
+              {
+                "title": "Day 5: Feed twice",
+                "done": false,
+                "action": "Feed twice, 12 hours apart, same amounts.",
+                "expect": "Rises a little after each feed."
+              },
+              {
+                "title": "Day 6: Feed twice",
+                "done": false,
+                "action": "Feed twice again.",
+                "expect": "Rises predictably and smells pleasantly tangy."
+              },
+              {
+                "title": "Day 7: Test",
+                "done": false,
+                "action": "Feed, then watch the jar.",
+                "expect": "Doubles in 4–8 hours and is bubbly throughout: ready to bake."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Sourdough starter in 7 days</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 Georgia, \"Times New Roman\", serif; color: #3b2f2a; background: #fbf6ee; }\n  h1 { font-size: 20px; margin: 0 0 4px; }\n  h2 { font-size: 15px; margin: 0 0 6px; }\n  .lead { margin: 0 0 12px; color: #6b5a50; }\n  .ui { font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif; }\n  .progress { height: 8px; background: #eadfce; border-radius: 4px; overflow: hidden; margin: 4px 0 2px; }\n  .progress i { display: block; height: 100%; width: 0; background: #b7791f; transition: width .3s; }\n  .days { display: flex; gap: 6px; margin: 12px 0; }\n  .day { flex: 1; min-width: 0; padding: 8px 0; border: 1px solid #dccdb8; background: #fff; border-radius: 8px; text-align: center; cursor: pointer; font: 600 13px system-ui, sans-serif; color: #6b5a50; }\n  .day small { display: block; font-weight: 400; font-size: 10px; }\n  .day.sel { border-color: #b7791f; box-shadow: 0 0 0 2px #f1d9a8; color: #3b2f2a; }\n  .day.done { background: #f6ead3; }\n  .panel { display: grid; grid-template-columns: 110px 1fr; gap: 12px; background: #fff; border: 1px solid #dccdb8; border-radius: 10px; padding: 12px; }\n  .panel svg { width: 100%; height: auto; }\n  .panel p { margin: 0 0 8px; }\n  .expect { color: #6b5a50; font-style: italic; }\n  label.check { display: flex; gap: 8px; align-items: center; font: 13px system-ui, sans-serif; cursor: pointer; }\n  .box { background: #fff; border: 1px solid #dccdb8; border-radius: 10px; padding: 12px; margin-top: 12px; }\n  .calc { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 13px system-ui, sans-serif; }\n  .calc input { width: 70px; padding: 4px 6px; border: 1px solid #dccdb8; border-radius: 6px; font: inherit; }\n  .calc b { color: #b7791f; }\n  details { border-top: 1px solid #efe5d6; padding: 6px 0; }\n  details:first-of-type { border-top: 0; }\n  summary { cursor: pointer; font-weight: 600; }\n  details p { margin: 4px 0 2px; color: #6b5a50; }\n</style>\n</head>\n<body>\n  <h1>Sourdough starter in 7 days</h1>\n  <p class=\"lead\">Flour, water and patience. Pick a day to see what to do and what the jar should look like.</p>\n\n  <div class=\"ui\"><span id=\"count\"></span><div class=\"progress\"><i id=\"bar\"></i></div></div>\n\n  <div class=\"days\" id=\"days\"></div>\n\n  <div class=\"panel\">\n    <svg viewBox=\"0 0 110 150\" role=\"img\" aria-label=\"Jar showing how active the starter is\">\n      <rect x=\"18\" y=\"6\" width=\"74\" height=\"10\" rx=\"3\" fill=\"#c9b79c\"/>\n      <rect x=\"14\" y=\"16\" width=\"82\" height=\"128\" rx=\"12\" fill=\"#fdfaf5\" stroke=\"#a8957a\" stroke-width=\"2\"/>\n      <rect id=\"starter\" x=\"16\" y=\"100\" width=\"78\" height=\"42\" rx=\"10\" fill=\"#e8d5b0\"/>\n      <line id=\"band\" x1=\"12\" y1=\"100\" x2=\"98\" y2=\"100\" stroke=\"#c0392b\" stroke-width=\"2\"/>\n      <g id=\"bubbles\" fill=\"#fdfaf5\" stroke=\"#cdb88f\"></g>\n    </svg>\n    <div>\n      <h2 id=\"dayTitle\"></h2>\n      <p id=\"dayAction\"></p>\n      <p class=\"expect\" id=\"dayExpect\"></p>\n      <label class=\"check\"><input type=\"checkbox\" id=\"doneBox\"> Done for this day</label>\n    </div>\n  </div>\n\n  <div class=\"box\">\n    <h2>Feeding calculator</h2>\n    <div class=\"calc\">\n      <span>Keep</span><input id=\"keep\" type=\"number\" min=\"10\" max=\"500\" step=\"5\" value=\"50\"><span>g of starter, then add</span>\n      <b id=\"flour\"></b><span>flour and</span><b id=\"water\"></b><span>water (1:1:1).</span>\n    </div>\n  </div>\n\n  <div class=\"box\">\n    <h2>It is ready when…</h2>\n    <details open><summary>It doubles in 4–8 hours</summary><p>Mark the level with a rubber band after feeding (the red line in the jar) and check back.</p></details>\n    <details><summary>It smells like yoghurt</summary><p>Tangy and slightly sweet. Nail-polish or sock smells mean it is still settling down.</p></details>\n    <details><summary>A spoonful floats</summary><p>Drop a little into a glass of water. If it floats, it holds enough gas to raise bread.</p></details>\n    <details><summary>Something looks wrong?</summary><p>Grey liquid on top means it is hungry: pour it off and feed. No activity after day 4: move it somewhere warmer. Pink, orange or fuzzy patches are mould: start again.</p></details>\n  </div>\n\n<script>\n(function () {\n  var days = [\n    { name: 'Mix', action: 'Mix 50 g whole-wheat flour with 50 g lukewarm water in a clean jar. Cover loosely and keep it warm (24–26 °C).', expect: 'A thick paste. Nothing else yet.', activity: 0 },\n    { name: 'Rest', action: 'Leave it alone. Give it one stir.', expect: 'A few small bubbles, maybe none.', activity: 10 },\n    { name: 'Feed', action: 'Discard all but 50 g. Add 50 g white bread flour and 50 g water.', expect: 'Bubbles and a sharp, funky smell.', activity: 35 },\n    { name: 'Feed', action: 'Discard to 50 g and feed 50 g flour + 50 g water again.', expect: 'Often goes quiet. This lull is normal, keep going.', activity: 20 },\n    { name: 'Feed ×2', action: 'Start feeding twice a day, 12 hours apart, same amounts.', expect: 'Rises a little after each feed.', activity: 55 },\n    { name: 'Feed ×2', action: 'Feed twice again.', expect: 'Rises predictably and smells pleasantly tangy.', activity: 80 },\n    { name: 'Test', action: 'Feed, mark the level, and watch.', expect: 'Doubles within 4–8 hours and is bubbly throughout. Ready to bake!', activity: 100 }\n  ];\n  var done = [false, false, false, false, false, false, false];\n  var selected = 0;\n  var $ = function (id) { return document.getElementById(id); };\n  var SVG = 'http://www.w3.org/2000/svg';\n\n  var strip = $('days');\n  days.forEach(function (d, i) {\n    var b = document.createElement('button');\n    b.className = 'day';\n    b.type = 'button';\n    b.setAttribute('data-i', String(i));\n    b.appendChild(document.createTextNode(String(i + 1)));\n    var s = document.createElement('small');\n    s.textContent = d.name;\n    b.appendChild(s);\n    strip.appendChild(b);\n  });\n\n  function render() {\n    var d = days[selected];\n    var buttons = strip.querySelectorAll('.day');\n    for (var i = 0; i < buttons.length; i++) {\n      buttons[i].classList.toggle('sel', i === selected);\n      buttons[i].classList.toggle('done', done[i]);\n    }\n    $('dayTitle').textContent = 'Day ' + (selected + 1) + ': ' + d.name;\n    $('dayAction').textContent = d.action;\n    $('dayExpect').textContent = d.expect;\n    $('doneBox').checked = done[selected];\n\n    var n = done.filter(function (x) { return x; }).length;\n    $('count').textContent = n + ' of 7 days done';\n    $('bar').style.width = (n / 7 * 100) + '%';\n\n    // Jar: the starter sits at the band (y = 100) and rises with activity, up to double.\n    var rise = 42 * d.activity / 100;\n    var top = 100 - rise;\n    $('starter').setAttribute('y', String(top));\n    $('starter').setAttribute('height', String(42 + rise));\n    var g = $('bubbles');\n    while (g.firstChild) { g.removeChild(g.firstChild); }\n    var count = Math.round(d.activity / 7);\n    for (var k = 0; k < count; k++) {\n      var c = document.createElementNS(SVG, 'circle');\n      var x = 26 + ((k * 37) % 58);\n      var y = top + 8 + ((k * 23) % Math.max(10, 30 + rise));\n      c.setAttribute('cx', String(x));\n      c.setAttribute('cy', String(Math.min(y, 136)));\n      c.setAttribute('r', String(2 + (k % 3)));\n      g.appendChild(c);\n    }\n  }\n\n  function calc() {\n    var keep = parseFloat($('keep').value);\n    if (isNaN(keep) || keep < 0) { keep = 0; }\n    $('flour').textContent = keep + ' g';\n    $('water').textContent = keep + ' g';\n  }\n\n  strip.addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== strip && !t.classList.contains('day')) { t = t.parentNode; }\n    if (t && t !== strip) { selected = parseInt(t.getAttribute('data-i'), 10); render(); }\n  });\n  $('doneBox').addEventListener('change', function () { done[selected] = $('doneBox').checked; render(); });\n  $('keep').addEventListener('input', calc);\n  render();\n  calc();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_sourdough_starter_03",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the 7-day sourdough starter plan as a read-only table (day, what to do), then collect what is needed to turn it into a personal schedule: start date, flour, daily feeding time, kitchen temperature and whether to send reminders.",
+        "data": {
+          "plan": [
+            {
+              "day": 1,
+              "do": "Mix 50 g whole-wheat flour + 50 g water"
+            },
+            {
+              "day": 2,
+              "do": "Rest. Stir once"
+            },
+            {
+              "day": 3,
+              "do": "Discard to 50 g, feed 50 g + 50 g"
+            },
+            {
+              "day": 4,
+              "do": "Discard to 50 g, feed 50 g + 50 g"
+            },
+            {
+              "day": 5,
+              "do": "Feed twice, 12 hours apart"
+            },
+            {
+              "day": 6,
+              "do": "Feed twice, 12 hours apart"
+            },
+            {
+              "day": 7,
+              "do": "Feed and test: doubles in 4–8 h"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "flour": {
+              "type": "string",
+              "enum": [
+                "whole-wheat",
+                "rye",
+                "white"
+              ]
+            },
+            "feedTime": {
+              "type": "string",
+              "format": "time"
+            },
+            "kitchen": {
+              "type": "string",
+              "enum": [
+                "cool",
+                "moderate",
+                "warm"
+              ]
+            },
+            "reminders": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "startDate",
+            "flour",
+            "kitchen",
+            "reminders"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "array",
+            "title": "7-day plan",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "title": "Day"
+                },
+                "do": {
+                  "type": "string",
+                  "title": "What to do"
+                }
+              }
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Start on"
+          },
+          "flour": {
+            "type": "string",
+            "title": "Flour for day 1",
+            "oneOf": [
+              {
+                "const": "whole-wheat",
+                "title": "Whole-wheat"
+              },
+              {
+                "const": "rye",
+                "title": "Rye"
+              },
+              {
+                "const": "white",
+                "title": "White bread flour (slower start)"
+              }
+            ]
+          },
+          "feedTime": {
+            "type": "string",
+            "format": "time",
+            "title": "Daily feeding time"
+          },
+          "kitchen": {
+            "type": "string",
+            "title": "Kitchen temperature",
+            "oneOf": [
+              {
+                "const": "cool",
+                "title": "Cool, under 20 °C (expect 10–14 days)"
+              },
+              {
+                "const": "moderate",
+                "title": "Moderate, 20–24 °C"
+              },
+              {
+                "const": "warm",
+                "title": "Warm, above 24 °C"
+              }
+            ]
+          },
+          "reminders": {
+            "type": "boolean",
+            "title": "Send me a reminder for each feed"
+          }
+        },
+        "required": [
+          "startDate",
+          "flour",
+          "kitchen",
+          "reminders"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Sourdough starter: flour, water and about a week"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/plan",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Make it your schedule",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/startDate"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/feedTime"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/flour"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/kitchen",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/reminders",
+                "options": {
+                  "toggle": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "plan": [
+          {
+            "day": 1,
+            "do": "Mix 50 g whole-wheat flour + 50 g water"
+          },
+          {
+            "day": 2,
+            "do": "Rest. Stir once"
+          },
+          {
+            "day": 3,
+            "do": "Discard to 50 g, feed 50 g + 50 g"
+          },
+          {
+            "day": 4,
+            "do": "Discard to 50 g, feed 50 g + 50 g"
+          },
+          {
+            "day": 5,
+            "do": "Feed twice, 12 hours apart"
+          },
+          {
+            "day": 6,
+            "do": "Feed twice, 12 hours apart"
+          },
+          {
+            "day": 7,
+            "do": "Feed and test: doubles in 4–8 h"
+          }
+        ],
+        "flour": "whole-wheat",
+        "kitchen": "moderate",
+        "reminders": true
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A table of days plus troubleshooting bullets reads well and prints well, but it cannot remember which day you are on.",
+    "a2ui": "A data-bound list of cards with a checkbox per day and a reminder button fits the catalog nicely; it cannot show progress or what the jar should look like.",
+    "html": "Day picker, progress bar, an SVG jar that rises with activity and a feeding calculator, all custom; ticked days are lost on reload because the sandbox has no storage.",
+    "agui": "Turns the how-to into a scheduling form, which is useful, but the instructions themselves are squeezed into a disabled two-column table with no room for the tips."
+  }
+}

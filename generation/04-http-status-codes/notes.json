@@ -1,0 +1,6 @@
+{
+  "text": "A reference list is what Markdown is best at: complete, scannable and copyable, though you have to scroll to find a code.",
+  "a2ui": "Nested data-bound lists express class cards with code rows cleanly; there is no colour coding per class and no way to search or collapse them.",
+  "html": "Search, class filter chips and tap-to-expand fixes in a custom dark theme; the most useful as a lookup tool and the most code to get there.",
+  "agui": "The reference collapses into a five-row disabled table and the tool call has to invent a question (which code are you debugging?) to justify a form."
+}

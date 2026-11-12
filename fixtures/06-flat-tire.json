@@ -1,0 +1,631 @@
+{
+  "id": "06-flat-tire",
+  "index": 6,
+  "title": "Changing a flat tire",
+  "category": "answer",
+  "prompt": "How do I change a flat tire safely? Give me a checklist I can follow at the roadside.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Changing a flat tire: roadside checklist\n\n**Stay safe first.** If you are on a motorway or a narrow shoulder with fast traffic, do not change the wheel there. Get everyone out on the side away from traffic, stand behind the barrier and call roadside assistance.\n\n### 1. Make the scene safe\n\n- [ ] Pull over on **flat, firm ground**, well away from traffic.\n- [ ] Switch on the **hazard lights** and put on a hi-vis vest if you have one.\n- [ ] Apply the **parking brake**. Put the car in Park (or first gear for a manual).\n- [ ] Get passengers out and well clear of the road.\n- [ ] Place the **warning triangle** about 45 m (50 yards) behind the car.\n- [ ] **Chock** the wheel diagonally opposite the flat with a wedge, brick or rock.\n\n### 2. Change the wheel\n\n- [ ] Get out the spare, jack and wheel wrench. Check the spare has air.\n- [ ] Remove the hubcap if there is one. **Loosen each wheel nut half a turn** (anticlockwise) while the tire is still on the ground. Do not remove them yet.\n- [ ] Put the jack under the **jacking point** nearest the flat (see the owner's manual) and raise the car until the tire is about 5 cm off the ground.\n- [ ] **Never put any part of your body under the car** while it is on the jack.\n- [ ] Remove the nuts, keep them together, and pull the wheel straight off.\n- [ ] Fit the spare and **hand-tighten** the nuts in a **star pattern** (opposite nuts in turn, not round the circle).\n- [ ] Lower the car until the tire touches the ground, then tighten the nuts fully with the wrench, again in a star pattern.\n- [ ] Lower the car completely, remove the jack and give each nut a final check.\n\n### 3. Before you drive off\n\n- [ ] Stow the flat, jack, wrench, triangle and chock.\n- [ ] Check the spare's pressure at the next fuel station.\n- [ ] If it is a narrow **space-saver spare**, stay under **80 km/h (50 mph)** and replace it as soon as you can.\n- [ ] Have the wheel nuts re-torqued after about 50 km.\n\n### Call for help instead if\n\n- You are on a motorway or cannot get clear of traffic.\n- The ground is soft or sloping, or the jack will not sit securely.\n- A wheel nut will not budge, or the car has no spare (many newer cars carry only a sealant kit).\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "flat-tire",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "flat-tire",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "warning-card",
+                "sections",
+                "star-card",
+                "help-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Changing a flat tire"
+            },
+            {
+              "id": "warning-card",
+              "component": "Card",
+              "child": "warning-row"
+            },
+            {
+              "id": "warning-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "warning-icon",
+                "warning-text"
+              ]
+            },
+            {
+              "id": "warning-icon",
+              "component": "Icon",
+              "name": "warning"
+            },
+            {
+              "id": "warning-text",
+              "component": "Text",
+              "weight": 1,
+              "text": "**Stay safe first.** On a motorway or a narrow shoulder, do not change the wheel. Get everyone behind the barrier and call for help."
+            },
+            {
+              "id": "sections",
+              "component": "List",
+              "children": {
+                "componentId": "section-card",
+                "path": "/sections"
+              }
+            },
+            {
+              "id": "section-card",
+              "component": "Card",
+              "child": "section-col"
+            },
+            {
+              "id": "section-col",
+              "component": "Column",
+              "children": [
+                "section-title",
+                "section-steps"
+              ]
+            },
+            {
+              "id": "section-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "path": "title"
+              }
+            },
+            {
+              "id": "section-steps",
+              "component": "List",
+              "children": {
+                "componentId": "step-check",
+                "path": "steps"
+              }
+            },
+            {
+              "id": "step-check",
+              "component": "CheckBox",
+              "label": {
+                "path": "text"
+              },
+              "value": {
+                "path": "done"
+              }
+            },
+            {
+              "id": "star-card",
+              "component": "Card",
+              "child": "star-row"
+            },
+            {
+              "id": "star-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "star-icon",
+                "star-col"
+              ]
+            },
+            {
+              "id": "star-icon",
+              "component": "Icon",
+              "name": "star"
+            },
+            {
+              "id": "star-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "star-title",
+                "star-text"
+              ]
+            },
+            {
+              "id": "star-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Tighten in a star pattern"
+            },
+            {
+              "id": "star-text",
+              "component": "Text",
+              "text": "With five nuts, tighten 1, 3, 5, 2, 4: always jump to the nut opposite, never the neighbour. This seats the wheel evenly."
+            },
+            {
+              "id": "help-card",
+              "component": "Card",
+              "child": "help-col"
+            },
+            {
+              "id": "help-col",
+              "component": "Column",
+              "children": [
+                "help-title",
+                "help-text",
+                "help-location",
+                "help-button"
+              ]
+            },
+            {
+              "id": "help-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Not safe, or stuck?"
+            },
+            {
+              "id": "help-text",
+              "component": "Text",
+              "text": "Call for help if the ground is soft or sloping, a nut will not budge, or the car has no spare."
+            },
+            {
+              "id": "help-location",
+              "component": "TextField",
+              "label": "Where are you? (road, direction, nearest exit)",
+              "value": {
+                "path": "/location"
+              }
+            },
+            {
+              "id": "help-button",
+              "component": "Button",
+              "variant": "primary",
+              "child": "help-button-row",
+              "action": {
+                "event": {
+                  "name": "request_roadside_assistance",
+                  "context": {
+                    "location": {
+                      "path": "/location"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "help-button-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "help-button-icon",
+                "help-button-label"
+              ]
+            },
+            {
+              "id": "help-button-icon",
+              "component": "Icon",
+              "name": "call"
+            },
+            {
+              "id": "help-button-label",
+              "component": "Text",
+              "text": "Request roadside assistance"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "flat-tire",
+          "path": "/",
+          "value": {
+            "location": "",
+            "sections": [
+              {
+                "title": "1. Make the scene safe",
+                "steps": [
+                  {
+                    "text": "Pull over on flat, firm ground, well away from traffic",
+                    "done": false
+                  },
+                  {
+                    "text": "Hazard lights on; hi-vis vest if you have one",
+                    "done": false
+                  },
+                  {
+                    "text": "Parking brake on; car in Park or first gear",
+                    "done": false
+                  },
+                  {
+                    "text": "Passengers out and clear of the road",
+                    "done": false
+                  },
+                  {
+                    "text": "Warning triangle about 45 m behind the car",
+                    "done": false
+                  },
+                  {
+                    "text": "Chock the wheel diagonally opposite the flat",
+                    "done": false
+                  }
+                ]
+              },
+              {
+                "title": "2. Change the wheel",
+                "steps": [
+                  {
+                    "text": "Get out the spare, jack and wrench; check the spare has air",
+                    "done": false
+                  },
+                  {
+                    "text": "Loosen each nut half a turn while the tire is on the ground",
+                    "done": false
+                  },
+                  {
+                    "text": "Jack at the jacking point until the tire is 5 cm off the ground",
+                    "done": false
+                  },
+                  {
+                    "text": "Never put any part of your body under the car",
+                    "done": false
+                  },
+                  {
+                    "text": "Remove the nuts and pull the wheel straight off",
+                    "done": false
+                  },
+                  {
+                    "text": "Fit the spare; hand-tighten the nuts in a star pattern",
+                    "done": false
+                  },
+                  {
+                    "text": "Lower until the tire touches; tighten fully in a star pattern",
+                    "done": false
+                  },
+                  {
+                    "text": "Lower completely, remove the jack, check each nut again",
+                    "done": false
+                  }
+                ]
+              },
+              {
+                "title": "3. Before you drive off",
+                "steps": [
+                  {
+                    "text": "Stow the flat, jack, wrench, triangle and chock",
+                    "done": false
+                  },
+                  {
+                    "text": "Check the spare's pressure at the next fuel station",
+                    "done": false
+                  },
+                  {
+                    "text": "Space-saver spare: stay under 80 km/h (50 mph)",
+                    "done": false
+                  },
+                  {
+                    "text": "Have the nuts re-torqued after about 50 km",
+                    "done": false
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Changing a flat tire</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 15px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #111; background: #fffbea; }\n  h1 { font-size: 19px; margin: 0 0 8px; }\n  h2 { font-size: 15px; margin: 0; }\n  .warn { background: #111; color: #ffd400; border-radius: 10px; padding: 10px 12px; font-weight: 600; margin-bottom: 12px; }\n  .warn span { color: #fff; font-weight: 400; }\n  .top { position: sticky; top: 0; background: #fffbea; padding: 6px 0 8px; z-index: 2; }\n  .bar { height: 10px; background: #eadf9f; border-radius: 5px; overflow: hidden; }\n  .bar i { display: block; height: 100%; width: 0; background: #1a7f37; transition: width .25s; }\n  .top small { display: flex; justify-content: space-between; margin-top: 3px; color: #555; }\n  .next { background: #fff; border: 2px solid #111; border-radius: 10px; padding: 10px 12px; margin: 8px 0 12px; }\n  .next small { display: block; text-transform: uppercase; letter-spacing: .06em; font-size: 10px; color: #555; }\n  .next b { display: block; margin: 2px 0 8px; font-size: 16px; }\n  button { font: inherit; cursor: pointer; border-radius: 8px; border: 2px solid #111; background: #ffd400; padding: 8px 14px; font-weight: 700; }\n  button.ghost { background: #fff; font-weight: 500; border-width: 1px; }\n  section { background: #fff; border: 1px solid #e0d48a; border-radius: 10px; margin-bottom: 10px; overflow: hidden; }\n  section header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fff3b0; }\n  section header span { font-size: 12px; color: #555; }\n  label.item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #f1eac0; cursor: pointer; }\n  label.item input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: #1a7f37; }\n  label.item.done span { color: #777; text-decoration: line-through; }\n  label.item.current { background: #fff9d6; }\n  .star { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: center; padding: 12px; }\n  .star svg { width: 120px; height: 120px; }\n  .nut { fill: #fff; stroke: #111; stroke-width: 2; transition: fill .2s; }\n  .nut.on { fill: #ffd400; }\n  .nut.past { fill: #1a7f37; }\n  .nutLabel { font: 700 11px system-ui, sans-serif; text-anchor: middle; pointer-events: none; }\n  #path { fill: none; stroke: #1a7f37; stroke-width: 2; stroke-dasharray: 4 3; }\n</style>\n</head>\n<body>\n  <h1>Changing a flat tire</h1>\n  <div class=\"warn\">Stay safe first. <span>On a motorway or narrow shoulder, do not change the wheel: get behind the barrier and call for help.</span></div>\n\n  <div class=\"top\">\n    <div class=\"bar\"><i id=\"bar\"></i></div>\n    <small><span id=\"count\"></span><span id=\"phase\"></span></small>\n  </div>\n\n  <div class=\"next\">\n    <small id=\"nextLabel\">Next step</small>\n    <b id=\"nextText\"></b>\n    <button id=\"doneBtn\">Done, next</button>\n    <button id=\"resetBtn\" class=\"ghost\">Start over</button>\n  </div>\n\n  <div id=\"sections\"></div>\n\n  <section>\n    <header><h2>Star pattern for the nuts</h2></header>\n    <div class=\"star\">\n      <svg viewBox=\"0 0 120 120\" role=\"img\" aria-label=\"Five wheel nuts tightened in the order 1, 3, 5, 2, 4\">\n        <circle cx=\"60\" cy=\"60\" r=\"54\" fill=\"#333\"/>\n        <circle cx=\"60\" cy=\"60\" r=\"40\" fill=\"#bbb\"/>\n        <circle cx=\"60\" cy=\"60\" r=\"10\" fill=\"#333\"/>\n        <polyline id=\"path\" points=\"\"/>\n        <g id=\"nuts\"></g>\n      </svg>\n      <div>\n        <p style=\"margin:0 0 8px\">Jump to the nut <b>opposite</b>, never the neighbour, so the wheel seats evenly.</p>\n        <button id=\"starBtn\" class=\"ghost\">Show the order</button>\n        <p id=\"starText\" style=\"margin:8px 0 0; font-weight:600\"></p>\n      </div>\n    </div>\n  </section>\n\n<script>\n(function () {\n  var sections = [\n    { title: '1. Make the scene safe', steps: [\n      'Pull over on flat, firm ground, well away from traffic',\n      'Hazard lights on; hi-vis vest if you have one',\n      'Parking brake on; car in Park or first gear',\n      'Passengers out and clear of the road',\n      'Warning triangle about 45 m (50 yards) behind the car',\n      'Chock the wheel diagonally opposite the flat'\n    ] },\n    { title: '2. Change the wheel', steps: [\n      'Get out the spare, jack and wrench; check the spare has air',\n      'Loosen each nut half a turn while the tire is still on the ground',\n      'Jack at the jacking point until the tire is 5 cm off the ground',\n      'Never put any part of your body under the car',\n      'Remove the nuts, keep them together, pull the wheel straight off',\n      'Fit the spare and hand-tighten the nuts in a star pattern',\n      'Lower until the tire touches, then tighten fully in a star pattern',\n      'Lower completely, remove the jack, check each nut again'\n    ] },\n    { title: '3. Before you drive off', steps: [\n      'Stow the flat, jack, wrench, triangle and chock',\n      'Check the spare\\'s pressure at the next fuel station',\n      'Space-saver spare: stay under 80 km/h (50 mph)',\n      'Have the nuts re-torqued after about 50 km'\n    ] }\n  ];\n  var $ = function (id) { return document.getElementById(id); };\n  var boxes = [];   // { input, label, section, text }\n  var root = $('sections');\n\n  sections.forEach(function (sec, s) {\n    var el = document.createElement('section');\n    var head = document.createElement('header');\n    var h = document.createElement('h2');\n    h.textContent = sec.title;\n    var tally = document.createElement('span');\n    head.appendChild(h);\n    head.appendChild(tally);\n    el.appendChild(head);\n    sec.tally = tally;\n    sec.steps.forEach(function (text) {\n      var label = document.createElement('label');\n      label.className = 'item';\n      var input = document.createElement('input');\n      input.type = 'checkbox';\n      var span = document.createElement('span');\n      span.textContent = text;\n      label.appendChild(input);\n      label.appendChild(span);\n      el.appendChild(label);\n      boxes.push({ input: input, label: label, section: s, text: text });\n      input.addEventListener('change', render);\n    });\n    root.appendChild(el);\n  });\n\n  function render() {\n    var total = boxes.length;\n    var doneCount = 0;\n    var firstOpen = -1;\n    var perSection = sections.map(function () { return { done: 0, total: 0 }; });\n    boxes.forEach(function (b, i) {\n      perSection[b.section].total += 1;\n      if (b.input.checked) { doneCount += 1; perSection[b.section].done += 1; }\n      else if (firstOpen === -1) { firstOpen = i; }\n      b.label.classList.toggle('done', b.input.checked);\n    });\n    boxes.forEach(function (b, i) { b.label.classList.toggle('current', i === firstOpen); });\n    sections.forEach(function (sec, s) { sec.tally.textContent = perSection[s].done + ' / ' + perSection[s].total; });\n\n    $('bar').style.width = (doneCount / total * 100) + '%';\n    $('count').textContent = doneCount + ' of ' + total + ' steps done';\n    if (firstOpen === -1) {\n      $('phase').textContent = 'All done';\n      $('nextLabel').textContent = 'Finished';\n      $('nextText').textContent = 'You are ready to drive. Take it slowly and get the flat repaired.';\n      $('doneBtn').disabled = true;\n    } else {\n      $('phase').textContent = sections[boxes[firstOpen].section].title;\n      $('nextLabel').textContent = 'Next step';\n      $('nextText').textContent = boxes[firstOpen].text;\n      $('doneBtn').disabled = false;\n    }\n  }\n\n  $('doneBtn').addEventListener('click', function () {\n    for (var i = 0; i < boxes.length; i++) {\n      if (!boxes[i].input.checked) { boxes[i].input.checked = true; break; }\n    }\n    render();\n  });\n  $('resetBtn').addEventListener('click', function () {\n    boxes.forEach(function (b) { b.input.checked = false; });\n    render();\n  });\n\n  // Star pattern: five nuts, tightened 1, 3, 5, 2, 4.\n  var SVG = 'http://www.w3.org/2000/svg';\n  var order = [0, 2, 4, 1, 3];\n  var points = [];\n  var nutNodes = [];\n  for (var n = 0; n < 5; n++) {\n    var angle = (-90 + n * 72) * Math.PI / 180;\n    var x = 60 + 28 * Math.cos(angle);\n    var y = 60 + 28 * Math.sin(angle);\n    points.push([x, y]);\n    var c = document.createElementNS(SVG, 'circle');\n    c.setAttribute('cx', x.toFixed(1));\n    c.setAttribute('cy', y.toFixed(1));\n    c.setAttribute('r', '9');\n    c.setAttribute('class', 'nut');\n    var t = document.createElementNS(SVG, 'text');\n    t.setAttribute('x', x.toFixed(1));\n    t.setAttribute('y', (y + 4).toFixed(1));\n    t.setAttribute('class', 'nutLabel');\n    t.textContent = String(n + 1);\n    $('nuts').appendChild(c);\n    $('nuts').appendChild(t);\n    nutNodes.push(c);\n  }\n  var timer = null;\n  function showStar() {\n    if (timer) { clearInterval(timer); }\n    var k = 0;\n    nutNodes.forEach(function (node) { node.setAttribute('class', 'nut'); });\n    $('path').setAttribute('points', '');\n    $('starText').textContent = '';\n    timer = setInterval(function () {\n      if (k > 0) { nutNodes[order[k - 1]].setAttribute('class', 'nut past'); }\n      if (k === order.length) {\n        clearInterval(timer);\n        timer = null;\n        $('starText').textContent = 'Order: 1 → 3 → 5 → 2 → 4';\n        return;\n      }\n      nutNodes[order[k]].setAttribute('class', 'nut on');\n      var pts = order.slice(0, k + 1).map(function (i) { return points[i][0].toFixed(1) + ',' + points[i][1].toFixed(1); }).join(' ');\n      $('path').setAttribute('points', pts);\n      $('starText').textContent = 'Tighten nut ' + (order[k] + 1);\n      k += 1;\n    }, 700);\n  }\n  $('starBtn').addEventListener('click', showStar);\n\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_flat_tire_06",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Present the flat-tire procedure as three checklists the user ticks off at the roadside (make the scene safe, change the wheel, before driving off). Also ask what kind of spare they have and whether they need roadside assistance; if they do, collect their location.",
+        "data": {
+          "safety": [
+            "Pull over on flat, firm ground",
+            "Hazard lights on",
+            "Parking brake on, in Park or first gear",
+            "Passengers out and clear",
+            "Warning triangle 45 m behind",
+            "Chock the opposite wheel"
+          ],
+          "change": [
+            "Get out spare, jack and wrench",
+            "Loosen nuts half a turn on the ground",
+            "Jack at the jacking point",
+            "Remove nuts and wheel",
+            "Fit spare, hand-tighten in a star pattern",
+            "Lower and tighten fully in a star pattern"
+          ],
+          "after": [
+            "Stow everything",
+            "Check spare pressure soon",
+            "Space-saver: under 80 km/h",
+            "Re-torque nuts after 50 km"
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "safety": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "change": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "after": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "spare": {
+              "type": "string",
+              "enum": [
+                "full-size",
+                "space-saver",
+                "sealant-kit",
+                "none"
+              ]
+            },
+            "needHelp": {
+              "type": "boolean"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "spare",
+            "needHelp"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "safety": {
+            "type": "array",
+            "title": "1. Make the scene safe",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Pull over on flat, firm ground",
+                "Hazard lights on",
+                "Parking brake on, in Park or first gear",
+                "Passengers out and clear",
+                "Warning triangle 45 m behind",
+                "Chock the opposite wheel"
+              ]
+            }
+          },
+          "change": {
+            "type": "array",
+            "title": "2. Change the wheel",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Get out spare, jack and wrench",
+                "Loosen nuts half a turn on the ground",
+                "Jack at the jacking point",
+                "Remove nuts and wheel",
+                "Fit spare, hand-tighten in a star pattern",
+                "Lower and tighten fully in a star pattern"
+              ]
+            }
+          },
+          "after": {
+            "type": "array",
+            "title": "3. Before you drive off",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Stow everything",
+                "Check spare pressure soon",
+                "Space-saver: under 80 km/h",
+                "Re-torque nuts after 50 km"
+              ]
+            }
+          },
+          "spare": {
+            "type": "string",
+            "title": "What spare do you have?",
+            "oneOf": [
+              {
+                "const": "full-size",
+                "title": "Full-size spare"
+              },
+              {
+                "const": "space-saver",
+                "title": "Narrow space-saver"
+              },
+              {
+                "const": "sealant-kit",
+                "title": "Sealant kit only"
+              },
+              {
+                "const": "none",
+                "title": "Nothing"
+              }
+            ]
+          },
+          "needHelp": {
+            "type": "boolean",
+            "title": "I need roadside assistance"
+          },
+          "location": {
+            "type": "string",
+            "title": "Where are you? (road, direction, nearest exit)"
+          }
+        },
+        "required": [
+          "spare",
+          "needHelp"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Stay safe first: on a motorway or narrow shoulder, do not change the wheel. Get behind the barrier and ask for help below."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/spare"
+          },
+          {
+            "type": "Categorization",
+            "elements": [
+              {
+                "type": "Category",
+                "label": "Safety",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/safety"
+                  }
+                ]
+              },
+              {
+                "type": "Category",
+                "label": "Change",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/change"
+                  }
+                ]
+              },
+              {
+                "type": "Category",
+                "label": "Drive off",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/after"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Group",
+            "label": "Not safe, or stuck?",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/needHelp",
+                "options": {
+                  "toggle": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/location",
+                "rule": {
+                  "effect": "SHOW",
+                  "condition": {
+                    "scope": "#/properties/needHelp",
+                    "schema": {
+                      "const": true
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "safety": [],
+        "change": [],
+        "after": [],
+        "needHelp": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Task-list checkboxes render, but react-markdown shows them disabled, so the checklist can be read at the roadside and not ticked.",
+    "a2ui": "Nested lists of bound checkboxes give a working checklist and the help button carries the typed location; the star pattern can only be described in words.",
+    "html": "Sticky progress bar, a big next-step card, tickable sections and an animated star-pattern diagram, sized for a phone at the roadside; all hand-built.",
+    "agui": "Multi-select enums become real tickable checklists in tabs and a rule reveals the location field, but long steps had to be shortened to fit enum labels."
+  }
+}

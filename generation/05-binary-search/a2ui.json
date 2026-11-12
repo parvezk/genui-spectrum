@@ -1,0 +1,104 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "binary-search",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "binary-search",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "intro", "list-card", "trace-title", "trace", "result-card", "why-card", "growth-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Binary search" },
+        { "id": "intro", "component": "Text", "text": "Look at the middle of a **sorted** list, then throw away the half that cannot contain the target. Repeat until found." },
+
+        { "id": "list-card", "component": "Card", "child": "list-col" },
+        { "id": "list-col", "component": "Column", "children": ["list-caption", "list-items"] },
+        { "id": "list-caption", "component": "Text", "variant": "caption", "text": "The sorted list (indexes 0–10). Target: 34" },
+        { "id": "list-items", "component": "List", "direction": "horizontal", "children": { "componentId": "list-item", "path": "/items" } },
+        { "id": "list-item", "component": "Column", "align": "center", "children": ["item-value", "item-index"] },
+        { "id": "item-value", "component": "Text", "variant": "h5", "text": { "path": "value" } },
+        { "id": "item-index", "component": "Text", "variant": "caption", "text": { "path": "index" } },
+
+        { "id": "trace-title", "component": "Text", "variant": "h4", "text": "Searching for 34" },
+        { "id": "trace", "component": "List", "children": { "componentId": "step-card", "path": "/steps" } },
+        { "id": "step-card", "component": "Card", "child": "step-col" },
+        { "id": "step-col", "component": "Column", "children": ["step-head", "step-remaining", "step-decision"] },
+        { "id": "step-head", "component": "Row", "justify": "spaceBetween", "align": "center", "children": ["step-name", "step-range"] },
+        {
+          "id": "step-name",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "Step ${step}" }, "returnType": "string" }
+        },
+        {
+          "id": "step-range",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "low ${low} · high ${high} · mid ${mid}" }, "returnType": "string" }
+        },
+        { "id": "step-remaining", "component": "Text", "text": { "path": "remaining" } },
+        { "id": "step-decision", "component": "Text", "text": { "path": "decision" } },
+
+        { "id": "result-card", "component": "Card", "child": "result-row" },
+        { "id": "result-row", "component": "Row", "align": "center", "children": ["result-icon", "result-text"] },
+        { "id": "result-icon", "component": "Icon", "name": "check" },
+        { "id": "result-text", "component": "Text", "weight": 1, "text": "Found at index 7 after **4 comparisons**. A linear scan from the left would have needed 8." },
+
+        { "id": "why-card", "component": "Card", "child": "why-col" },
+        { "id": "why-col", "component": "Column", "children": ["why-title", "why-text", "why-formula"] },
+        { "id": "why-title", "component": "Text", "variant": "h5", "text": "Why it is O(log n)" },
+        { "id": "why-text", "component": "Text", "text": "Every comparison halves what is left: 11 → 5 → 2 → 1. You can only halve n about log₂ n times before one element remains." },
+        { "id": "why-formula", "component": "Text", "text": "Worst case: `floor(log₂ n) + 1` comparisons. Doubling the list adds just one step." },
+
+        { "id": "growth-card", "component": "Card", "child": "growth-col" },
+        { "id": "growth-col", "component": "Column", "children": ["growth-head", "growth-divider", "growth-rows"] },
+        { "id": "growth-head", "component": "Row", "children": ["growth-head-n", "growth-head-steps"] },
+        { "id": "growth-head-n", "component": "Text", "variant": "caption", "weight": 1, "text": "List size" },
+        { "id": "growth-head-steps", "component": "Text", "variant": "caption", "weight": 1, "text": "Worst-case comparisons" },
+        { "id": "growth-divider", "component": "Divider" },
+        { "id": "growth-rows", "component": "List", "children": { "componentId": "growth-row", "path": "/growth" } },
+        { "id": "growth-row", "component": "Row", "children": ["growth-n", "growth-steps"] },
+        { "id": "growth-n", "component": "Text", "weight": 1, "text": { "path": "size" } },
+        { "id": "growth-steps", "component": "Text", "weight": 1, "text": { "path": "steps" } }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "binary-search",
+      "path": "/",
+      "value": {
+        "items": [
+          { "index": "0", "value": "3" },
+          { "index": "1", "value": "8" },
+          { "index": "2", "value": "12" },
+          { "index": "3", "value": "17" },
+          { "index": "4", "value": "21" },
+          { "index": "5", "value": "26" },
+          { "index": "6", "value": "30" },
+          { "index": "7", "value": "34" },
+          { "index": "8", "value": "41" },
+          { "index": "9", "value": "47" },
+          { "index": "10", "value": "52" }
+        ],
+        "steps": [
+          { "step": 1, "low": 0, "high": 10, "mid": 5, "remaining": "In play: all 11 values. Middle value is **26**.", "decision": "26 < 34, so discard the left half." },
+          { "step": 2, "low": 6, "high": 10, "mid": 8, "remaining": "In play: 30, 34, 41, 47, 52. Middle value is **41**.", "decision": "41 > 34, so discard the right half." },
+          { "step": 3, "low": 6, "high": 7, "mid": 6, "remaining": "In play: 30, 34. Middle value is **30**.", "decision": "30 < 34, so discard the left half." },
+          { "step": 4, "low": 7, "high": 7, "mid": 7, "remaining": "In play: 34. Middle value is **34**.", "decision": "Match. Found at index 7." }
+        ],
+        "growth": [
+          { "size": "11", "steps": "4" },
+          { "size": "1,000", "steps": "10" },
+          { "size": "1,000,000", "steps": "20" },
+          { "size": "1,000,000,000", "steps": "30" }
+        ]
+      }
+    }
+  }
+]

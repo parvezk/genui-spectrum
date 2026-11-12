@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP status codes</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #e6edf3; background: #0d1117; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #9da7b3; }
+  input[type=search] { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #30363d; background: #161b22; color: inherit; font: inherit; }
+  input[type=search]:focus { outline: 2px solid #388bfd; border-color: transparent; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+  .chip { border: 1px solid #30363d; background: #161b22; color: #9da7b3; border-radius: 999px; padding: 4px 10px; font: 600 12px ui-monospace, Menlo, monospace; cursor: pointer; }
+  .chip.on { color: #0d1117; border-color: transparent; }
+  .c1 { --c: #8b949e; } .c2 { --c: #3fb950; } .c3 { --c: #58a6ff; } .c4 { --c: #d29922; } .c5 { --c: #f85149; }
+  .chip.on { background: var(--c); }
+  .group h2 { font-size: 13px; margin: 14px 0 2px; color: var(--c); font-family: ui-monospace, Menlo, monospace; }
+  .group p.meaning { margin: 0 0 6px; color: #9da7b3; font-size: 12.5px; }
+  .code { display: block; width: 100%; text-align: left; background: #161b22; border: 1px solid #30363d; border-left: 3px solid var(--c); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; color: inherit; font: inherit; cursor: pointer; }
+  .code:hover { border-color: #484f58; border-left-color: var(--c); }
+  .code b { font-family: ui-monospace, Menlo, monospace; color: var(--c); margin-right: 8px; }
+  .code .more { display: none; margin-top: 6px; color: #9da7b3; font-size: 12.5px; }
+  .code.open .more { display: block; }
+  .code .fix { color: #e6edf3; }
+  .empty { color: #9da7b3; padding: 20px 0; text-align: center; }
+  .foot { margin-top: 14px; padding: 10px; border: 1px dashed #30363d; border-radius: 8px; color: #9da7b3; font-size: 12.5px; }
+</style>
+</head>
+<body>
+  <h1>HTTP status codes</h1>
+  <p class="lead">The first digit is the class. Search by number or name, filter by class, and tap a code for what to do about it.</p>
+
+  <input id="q" type="search" placeholder="Try 404, gateway, redirect…" aria-label="Search status codes">
+  <div class="chips" id="chips"></div>
+  <div id="list"></div>
+  <div class="foot"><b>Rule of thumb:</b> a 4xx fails again until you change the request; a 5xx may succeed if you retry later.</div>
+
+<script>
+(function () {
+  var classes = {
+    1: { name: 'Informational', meaning: 'Request received, keep going. Interim responses.' },
+    2: { name: 'Success', meaning: 'The request was received, understood and accepted.' },
+    3: { name: 'Redirection', meaning: 'The client must look somewhere else to finish.' },
+    4: { name: 'Client error', meaning: 'The request itself is wrong. Fix it before retrying.' },
+    5: { name: 'Server error', meaning: 'The server failed to fulfil a valid request.' }
+  };
+  var codes = [
+    { code: 100, name: 'Continue', desc: 'Headers received; the client may send the body.', fix: 'Nothing to do. Clients that sent "Expect: 100-continue" now upload the body.' },
+    { code: 101, name: 'Switching Protocols', desc: 'The connection is being upgraded, for example to WebSocket.', fix: 'Nothing to do. Speak the new protocol on the same connection.' },
+    { code: 200, name: 'OK', desc: 'The standard success response, with a body.', fix: 'Use the response body.' },
+    { code: 201, name: 'Created', desc: 'A new resource was created, typically after POST.', fix: 'Read the Location header for the new resource URL.' },
+    { code: 204, name: 'No Content', desc: 'Success with nothing to return, common for DELETE.', fix: 'Do not try to parse a body; there is none.' },
+    { code: 301, name: 'Moved Permanently', desc: 'The resource has a new permanent URL.', fix: 'Follow the Location header and update stored links.' },
+    { code: 302, name: 'Found', desc: 'Temporary redirect.', fix: 'Follow the Location header but keep using the original URL next time.' },
+    { code: 304, name: 'Not Modified', desc: 'The cached copy is still valid; no body is sent.', fix: 'Serve the response from your cache.' },
+    { code: 400, name: 'Bad Request', desc: 'Malformed syntax or invalid parameters.', fix: 'Check the JSON, query string and required fields.' },
+    { code: 401, name: 'Unauthorized', desc: 'Not authenticated.', fix: 'Log in or send a valid token, then retry.' },
+    { code: 403, name: 'Forbidden', desc: 'Authenticated, but not allowed.', fix: 'Retrying will not help; you need different permissions.' },
+    { code: 404, name: 'Not Found', desc: 'Nothing exists at this URL.', fix: 'Check the path and the ID. The resource may have been deleted.' },
+    { code: 429, name: 'Too Many Requests', desc: 'Rate limited.', fix: 'Wait for the time in the Retry-After header, then back off.' },
+    { code: 500, name: 'Internal Server Error', desc: 'An unhandled failure on the server.', fix: 'Not your fault. Retry later and report it with the request ID.' },
+    { code: 502, name: 'Bad Gateway', desc: 'A proxy got an invalid response from upstream.', fix: 'Usually a deploy or crash upstream. Retry shortly.' },
+    { code: 503, name: 'Service Unavailable', desc: 'Overloaded or down for maintenance.', fix: 'Retry with backoff; honour Retry-After if present.' },
+    { code: 504, name: 'Gateway Timeout', desc: 'A proxy gave up waiting for upstream.', fix: 'Retry; if it persists the upstream service is too slow.' }
+  ];
+
+  var active = { 1: true, 2: true, 3: true, 4: true, 5: true };
+  var open = {};
+  var chips = document.getElementById('chips');
+  var list = document.getElementById('list');
+  var q = document.getElementById('q');
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined) { n.textContent = text; }
+    return n;
+  }
+
+  [1, 2, 3, 4, 5].forEach(function (c) {
+    var chip = el('button', 'chip on c' + c, c + 'xx ' + classes[c].name);
+    chip.type = 'button';
+    chip.setAttribute('data-class', String(c));
+    chip.setAttribute('aria-pressed', 'true');
+    chips.appendChild(chip);
+  });
+
+  function render() {
+    var term = q.value.trim().toLowerCase();
+    list.textContent = '';
+    var shown = 0;
+    [1, 2, 3, 4, 5].forEach(function (c) {
+      if (!active[c]) { return; }
+      var matches = codes.filter(function (x) {
+        if (Math.floor(x.code / 100) !== c) { return false; }
+        if (!term) { return true; }
+        return String(x.code).indexOf(term) === 0 || (x.name + ' ' + x.desc).toLowerCase().indexOf(term) !== -1;
+      });
+      if (!matches.length) { return; }
+      var group = el('section', 'group c' + c);
+      group.appendChild(el('h2', '', c + 'xx · ' + classes[c].name));
+      group.appendChild(el('p', 'meaning', classes[c].meaning));
+      matches.forEach(function (x) {
+        var b = el('button', 'code' + (open[x.code] ? ' open' : ''));
+        b.type = 'button';
+        b.setAttribute('data-code', String(x.code));
+        b.setAttribute('aria-expanded', open[x.code] ? 'true' : 'false');
+        b.appendChild(el('b', '', String(x.code)));
+        b.appendChild(el('span', '', x.name));
+        var more = el('div', 'more');
+        more.appendChild(el('div', '', x.desc));
+        more.appendChild(el('div', 'fix', 'What to do: ' + x.fix));
+        b.appendChild(more);
+        group.appendChild(b);
+        shown += 1;
+      });
+      list.appendChild(group);
+    });
+    if (!shown) { list.appendChild(el('p', 'empty', 'No codes match. Try a number like 404 or a word like "timeout".')); }
+  }
+
+  chips.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t.getAttribute || !t.getAttribute('data-class')) { return; }
+    var c = parseInt(t.getAttribute('data-class'), 10);
+    active[c] = !active[c];
+    t.classList.toggle('on', active[c]);
+    t.setAttribute('aria-pressed', active[c] ? 'true' : 'false');
+    render();
+  });
+  list.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== list && !(t.getAttribute && t.getAttribute('data-code'))) { t = t.parentNode; }
+    if (!t || t === list) { return; }
+    var code = t.getAttribute('data-code');
+    open[code] = !open[code];
+    render();
+  });
+  q.addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

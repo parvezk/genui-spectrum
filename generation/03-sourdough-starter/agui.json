@@ -1,0 +1,108 @@
+{
+  "toolCall": {
+    "id": "call_sourdough_starter_03",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the 7-day sourdough starter plan as a read-only table (day, what to do), then collect what is needed to turn it into a personal schedule: start date, flour, daily feeding time, kitchen temperature and whether to send reminders.",
+      "data": {
+        "plan": [
+          { "day": 1, "do": "Mix 50 g whole-wheat flour + 50 g water" },
+          { "day": 2, "do": "Rest. Stir once" },
+          { "day": 3, "do": "Discard to 50 g, feed 50 g + 50 g" },
+          { "day": 4, "do": "Discard to 50 g, feed 50 g + 50 g" },
+          { "day": 5, "do": "Feed twice, 12 hours apart" },
+          { "day": 6, "do": "Feed twice, 12 hours apart" },
+          { "day": 7, "do": "Feed and test: doubles in 4–8 h" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "startDate": { "type": "string", "format": "date" },
+          "flour": { "type": "string", "enum": ["whole-wheat", "rye", "white"] },
+          "feedTime": { "type": "string", "format": "time" },
+          "kitchen": { "type": "string", "enum": ["cool", "moderate", "warm"] },
+          "reminders": { "type": "boolean" }
+        },
+        "required": ["startDate", "flour", "kitchen", "reminders"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "array",
+          "title": "7-day plan",
+          "items": {
+            "type": "object",
+            "properties": {
+              "day": { "type": "integer", "title": "Day" },
+              "do": { "type": "string", "title": "What to do" }
+            }
+          }
+        },
+        "startDate": { "type": "string", "format": "date", "title": "Start on" },
+        "flour": {
+          "type": "string",
+          "title": "Flour for day 1",
+          "oneOf": [
+            { "const": "whole-wheat", "title": "Whole-wheat" },
+            { "const": "rye", "title": "Rye" },
+            { "const": "white", "title": "White bread flour (slower start)" }
+          ]
+        },
+        "feedTime": { "type": "string", "format": "time", "title": "Daily feeding time" },
+        "kitchen": {
+          "type": "string",
+          "title": "Kitchen temperature",
+          "oneOf": [
+            { "const": "cool", "title": "Cool, under 20 °C (expect 10–14 days)" },
+            { "const": "moderate", "title": "Moderate, 20–24 °C" },
+            { "const": "warm", "title": "Warm, above 24 °C" }
+          ]
+        },
+        "reminders": { "type": "boolean", "title": "Send me a reminder for each feed" }
+      },
+      "required": ["startDate", "flour", "kitchen", "reminders"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Sourdough starter: flour, water and about a week" },
+        { "type": "Control", "scope": "#/properties/plan", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Make it your schedule",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/startDate" },
+                { "type": "Control", "scope": "#/properties/feedTime" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/flour" },
+            { "type": "Control", "scope": "#/properties/kitchen", "options": { "format": "radio" } },
+            { "type": "Control", "scope": "#/properties/reminders", "options": { "toggle": true } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "plan": [
+        { "day": 1, "do": "Mix 50 g whole-wheat flour + 50 g water" },
+        { "day": 2, "do": "Rest. Stir once" },
+        { "day": 3, "do": "Discard to 50 g, feed 50 g + 50 g" },
+        { "day": 4, "do": "Discard to 50 g, feed 50 g + 50 g" },
+        { "day": 5, "do": "Feed twice, 12 hours apart" },
+        { "day": 6, "do": "Feed twice, 12 hours apart" },
+        { "day": 7, "do": "Feed and test: doubles in 4–8 h" }
+      ],
+      "flour": "whole-wheat",
+      "kitchen": "moderate",
+      "reminders": true
+    }
+  }
+}

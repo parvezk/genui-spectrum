@@ -1,0 +1,85 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "sourdough-starter",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "sourdough-starter",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "intro", "need-card", "plan-title", "plan-hint", "days", "ready-card", "trouble-card", "reminder-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Sourdough starter in 7 days" },
+        { "id": "intro", "component": "Text", "text": "Flour and water, left to ferment until wild yeast takes hold. A few minutes a day for about a week." },
+
+        { "id": "need-card", "component": "Card", "child": "need-col" },
+        { "id": "need-col", "component": "Column", "children": ["need-title", "need-text"] },
+        { "id": "need-title", "component": "Text", "variant": "h5", "text": "You need" },
+        { "id": "need-text", "component": "Text", "text": "A clean 500 ml jar, a kitchen scale, whole-wheat or rye flour to begin, white bread flour for feeding, lukewarm water, and a warm spot (24–26 °C)." },
+
+        { "id": "plan-title", "component": "Text", "variant": "h4", "text": "Day-by-day plan" },
+        { "id": "plan-hint", "component": "Text", "variant": "caption", "text": "Tick each day off as you go." },
+        { "id": "days", "component": "List", "children": { "componentId": "day-card", "path": "/days" } },
+        { "id": "day-card", "component": "Card", "child": "day-col" },
+        { "id": "day-col", "component": "Column", "children": ["day-check", "day-action", "day-expect"] },
+        { "id": "day-check", "component": "CheckBox", "label": { "path": "title" }, "value": { "path": "done" } },
+        { "id": "day-action", "component": "Text", "text": { "path": "action" } },
+        { "id": "day-expect", "component": "Text", "variant": "caption", "text": { "path": "expect" } },
+
+        { "id": "ready-card", "component": "Card", "child": "ready-row" },
+        { "id": "ready-row", "component": "Row", "align": "start", "children": ["ready-icon", "ready-col"] },
+        { "id": "ready-icon", "component": "Icon", "name": "check" },
+        { "id": "ready-col", "component": "Column", "weight": 1, "children": ["ready-title", "ready-1", "ready-2", "ready-3", "ready-note"] },
+        { "id": "ready-title", "component": "Text", "variant": "h5", "text": "It is ready when" },
+        { "id": "ready-1", "component": "Text", "text": "It **doubles** within 4–8 hours of a feed." },
+        { "id": "ready-2", "component": "Text", "text": "It smells tangy and slightly sweet, like yoghurt." },
+        { "id": "ready-3", "component": "Text", "text": "A spoonful **floats** in a glass of water." },
+        { "id": "ready-note", "component": "Text", "variant": "caption", "text": "Not there on day 7? Keep feeding twice a day. A cool kitchen can need up to 14 days." },
+
+        { "id": "trouble-card", "component": "Card", "child": "trouble-row" },
+        { "id": "trouble-row", "component": "Row", "align": "start", "children": ["trouble-icon", "trouble-col"] },
+        { "id": "trouble-icon", "component": "Icon", "name": "warning" },
+        { "id": "trouble-col", "component": "Column", "weight": 1, "children": ["trouble-title", "trouble-1", "trouble-2", "trouble-3"] },
+        { "id": "trouble-title", "component": "Text", "variant": "h5", "text": "If something looks wrong" },
+        { "id": "trouble-1", "component": "Text", "text": "**Grey liquid on top:** it is hungry. Pour it off and feed." },
+        { "id": "trouble-2", "component": "Text", "text": "**Quiet after day 4:** move it somewhere warmer and add some whole-wheat flour to the feed." },
+        { "id": "trouble-3", "component": "Text", "text": "**Pink, orange or fuzzy patches:** mould. Throw it out and start again." },
+
+        { "id": "reminder-card", "component": "Card", "child": "reminder-col" },
+        { "id": "reminder-col", "component": "Column", "children": ["reminder-title", "reminder-time", "reminder-button"] },
+        { "id": "reminder-title", "component": "Text", "variant": "h5", "text": "Daily feeding reminder" },
+        { "id": "reminder-time", "component": "DateTimeInput", "label": "Feed at", "enableTime": true, "value": { "path": "/reminderTime" } },
+        {
+          "id": "reminder-button",
+          "component": "Button",
+          "variant": "primary",
+          "child": "reminder-button-label",
+          "action": { "event": { "name": "set_feeding_reminder", "context": { "time": { "path": "/reminderTime" } } } }
+        },
+        { "id": "reminder-button-label", "component": "Text", "text": "Remind me every day" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "sourdough-starter",
+      "path": "/",
+      "value": {
+        "reminderTime": "09:00",
+        "days": [
+          { "title": "Day 1: Mix", "done": false, "action": "Mix 50 g whole-wheat flour with 50 g lukewarm water. Cover loosely.", "expect": "A thick paste. Nothing else yet." },
+          { "title": "Day 2: Rest", "done": false, "action": "Leave it alone. Stir once.", "expect": "A few small bubbles, maybe none." },
+          { "title": "Day 3: First feed", "done": false, "action": "Discard all but 50 g. Add 50 g white flour and 50 g water.", "expect": "Bubbles and a sharp, funky smell." },
+          { "title": "Day 4: Feed", "done": false, "action": "Discard to 50 g and feed 50 g flour + 50 g water again.", "expect": "Often goes quiet. The lull is normal." },
+          { "title": "Day 5: Feed twice", "done": false, "action": "Feed twice, 12 hours apart, same amounts.", "expect": "Rises a little after each feed." },
+          { "title": "Day 6: Feed twice", "done": false, "action": "Feed twice again.", "expect": "Rises predictably and smells pleasantly tangy." },
+          { "title": "Day 7: Test", "done": false, "action": "Feed, then watch the jar.", "expect": "Doubles in 4–8 hours and is bubbly throughout: ready to bake." }
+        ]
+      }
+    }
+  }
+]

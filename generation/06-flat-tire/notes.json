@@ -1,0 +1,6 @@
+{
+  "text": "Task-list checkboxes render, but react-markdown shows them disabled, so the checklist can be read at the roadside and not ticked.",
+  "a2ui": "Nested lists of bound checkboxes give a working checklist and the help button carries the typed location; the star pattern can only be described in words.",
+  "html": "Sticky progress bar, a big next-step card, tickable sections and an animated star-pattern diagram, sized for a phone at the roadside; all hand-built.",
+  "agui": "Multi-select enums become real tickable checklists in tabs and a rule reveals the location field, but long steps had to be shortened to fit enum labels."
+}

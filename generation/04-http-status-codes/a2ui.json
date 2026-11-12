@@ -1,0 +1,108 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "http-status-codes",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "http-status-codes",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "intro", "classes", "rule-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "HTTP status code classes" },
+        { "id": "intro", "component": "Text", "text": "The first digit of the three-digit code tells you the class of outcome. The other two narrow it down." },
+
+        { "id": "classes", "component": "List", "children": { "componentId": "class-card", "path": "/classes" } },
+        { "id": "class-card", "component": "Card", "child": "class-col" },
+        { "id": "class-col", "component": "Column", "children": ["class-head", "class-meaning", "class-divider", "class-codes"] },
+        { "id": "class-head", "component": "Row", "align": "center", "children": ["class-range", "class-name"] },
+        { "id": "class-range", "component": "Text", "variant": "h3", "text": { "path": "range" } },
+        { "id": "class-name", "component": "Text", "variant": "h5", "weight": 1, "text": { "path": "name" } },
+        { "id": "class-meaning", "component": "Text", "text": { "path": "meaning" } },
+        { "id": "class-divider", "component": "Divider" },
+        { "id": "class-codes", "component": "List", "children": { "componentId": "code-row", "path": "codes" } },
+        { "id": "code-row", "component": "Row", "align": "start", "children": ["code-number", "code-col"] },
+        { "id": "code-number", "component": "Text", "variant": "h5", "weight": 1, "text": { "path": "code" } },
+        { "id": "code-col", "component": "Column", "weight": 5, "children": ["code-name", "code-desc"] },
+        { "id": "code-name", "component": "Text", "text": { "path": "name" } },
+        { "id": "code-desc", "component": "Text", "variant": "caption", "text": { "path": "desc" } },
+
+        { "id": "rule-card", "component": "Card", "child": "rule-row" },
+        { "id": "rule-row", "component": "Row", "align": "start", "children": ["rule-icon", "rule-text"] },
+        { "id": "rule-icon", "component": "Icon", "name": "info" },
+        {
+          "id": "rule-text",
+          "component": "Text",
+          "weight": 1,
+          "text": "**Rule of thumb:** a 4xx will fail again until you change the request. A 5xx may succeed if you retry later."
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "http-status-codes",
+      "path": "/",
+      "value": {
+        "classes": [
+          {
+            "range": "1xx",
+            "name": "Informational",
+            "meaning": "Request received, keep going. These are interim responses.",
+            "codes": [
+              { "code": "100", "name": "Continue", "desc": "Headers received; the client may send the body." },
+              { "code": "101", "name": "Switching Protocols", "desc": "The connection is being upgraded, for example to WebSocket." }
+            ]
+          },
+          {
+            "range": "2xx",
+            "name": "Success",
+            "meaning": "The request was received, understood and accepted.",
+            "codes": [
+              { "code": "200", "name": "OK", "desc": "The standard success response, with a body." },
+              { "code": "201", "name": "Created", "desc": "A new resource was created, typically after POST." },
+              { "code": "204", "name": "No Content", "desc": "Success with nothing to return, common for DELETE." }
+            ]
+          },
+          {
+            "range": "3xx",
+            "name": "Redirection",
+            "meaning": "The client must look somewhere else to finish the request.",
+            "codes": [
+              { "code": "301", "name": "Moved Permanently", "desc": "The resource has a new permanent URL; update links." },
+              { "code": "302", "name": "Found", "desc": "Temporary redirect; keep using the original URL." },
+              { "code": "304", "name": "Not Modified", "desc": "The cached copy is still valid; no body is sent." }
+            ]
+          },
+          {
+            "range": "4xx",
+            "name": "Client error",
+            "meaning": "The request itself is wrong. Fix it before retrying.",
+            "codes": [
+              { "code": "400", "name": "Bad Request", "desc": "Malformed syntax or invalid parameters." },
+              { "code": "401", "name": "Unauthorized", "desc": "Not authenticated; log in or send credentials." },
+              { "code": "403", "name": "Forbidden", "desc": "Authenticated, but not allowed." },
+              { "code": "404", "name": "Not Found", "desc": "Nothing exists at this URL." },
+              { "code": "429", "name": "Too Many Requests", "desc": "Rate limited; slow down and retry later." }
+            ]
+          },
+          {
+            "range": "5xx",
+            "name": "Server error",
+            "meaning": "The server failed to fulfil a valid request.",
+            "codes": [
+              { "code": "500", "name": "Internal Server Error", "desc": "An unhandled failure on the server." },
+              { "code": "502", "name": "Bad Gateway", "desc": "A proxy got an invalid response from upstream." },
+              { "code": "503", "name": "Service Unavailable", "desc": "Overloaded or down for maintenance; usually temporary." },
+              { "code": "504", "name": "Gateway Timeout", "desc": "A proxy gave up waiting for upstream." }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

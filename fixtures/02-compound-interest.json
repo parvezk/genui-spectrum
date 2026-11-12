@@ -1,0 +1,766 @@
+{
+  "id": "02-compound-interest",
+  "index": 2,
+  "title": "Compound interest",
+  "category": "answer",
+  "prompt": "How does compound interest work? Show what $5,000 grows to at 6% a year, compounded annually, over 20 years.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## How compound interest works\n\nWith compound interest you earn interest on your interest. Each year's interest is added to the balance, and next year's interest is calculated on that larger balance. With simple interest, by contrast, you only ever earn on the original amount.\n\nThe formula for annual compounding is:\n\n```\nA = P × (1 + r)^t\n```\n\nwhere `P` is the starting amount, `r` the yearly rate and `t` the number of years.\n\n### $5,000 at 6% for 20 years\n\n```\nA = 5,000 × 1.06^20 = 5,000 × 3.2071 = $16,035.68\n```\n\n| Year | Balance | Interest earned that year |\n| ---: | ---: | ---: |\n| 0 | $5,000.00 | — |\n| 1 | $5,300.00 | $300.00 |\n| 5 | $6,691.13 | $378.74 |\n| 10 | $8,954.24 | $506.84 |\n| 15 | $11,982.79 | $678.27 |\n| 20 | $16,035.68 | $907.68 |\n\nYour $5,000 becomes **$16,035.68**: you put in $5,000 and interest adds **$11,035.68**.\n\n### Why it matters\n\n- **The yearly interest keeps growing.** It is $300 in year 1 and $907.68 in year 20, even though the rate never changes.\n- **Simple interest would give much less.** At 6% simple interest you would earn a flat $300 a year and finish with $11,000. Compounding adds an extra **$5,035.68**.\n- **Rule of 72.** Divide 72 by the rate to estimate the doubling time: 72 ÷ 6 = 12 years. The balance does pass $10,000 during year 12.\n- **Time does most of the work.** More than half of the total interest ($5,974.70 of $11,035.68) arrives in the last eight years, which is why starting early beats contributing more later.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "compound-interest",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "compound-interest",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "intro",
+                "stats",
+                "formula-card",
+                "table-card",
+                "compare-card",
+                "what-if-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Compound interest"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "text": "You earn interest on your interest: each year's interest joins the balance, and next year's interest is calculated on the larger amount."
+            },
+            {
+              "id": "stats",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "stat-start",
+                "stat-end",
+                "stat-earned"
+              ]
+            },
+            {
+              "id": "stat-start",
+              "component": "Card",
+              "weight": 1,
+              "child": "stat-start-col"
+            },
+            {
+              "id": "stat-start-col",
+              "component": "Column",
+              "children": [
+                "stat-start-label",
+                "stat-start-value"
+              ]
+            },
+            {
+              "id": "stat-start-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "You start with"
+            },
+            {
+              "id": "stat-start-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "/principal"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "stat-end",
+              "component": "Card",
+              "weight": 1,
+              "child": "stat-end-col"
+            },
+            {
+              "id": "stat-end-col",
+              "component": "Column",
+              "children": [
+                "stat-end-label",
+                "stat-end-value"
+              ]
+            },
+            {
+              "id": "stat-end-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "After 20 years"
+            },
+            {
+              "id": "stat-end-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "/finalBalance"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "stat-earned",
+              "component": "Card",
+              "weight": 1,
+              "child": "stat-earned-col"
+            },
+            {
+              "id": "stat-earned-col",
+              "component": "Column",
+              "children": [
+                "stat-earned-label",
+                "stat-earned-value"
+              ]
+            },
+            {
+              "id": "stat-earned-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Interest earned"
+            },
+            {
+              "id": "stat-earned-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "/interestEarned"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "formula-card",
+              "component": "Card",
+              "child": "formula-col"
+            },
+            {
+              "id": "formula-col",
+              "component": "Column",
+              "children": [
+                "formula-title",
+                "formula-text",
+                "formula-worked"
+              ]
+            },
+            {
+              "id": "formula-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "The formula"
+            },
+            {
+              "id": "formula-text",
+              "component": "Text",
+              "text": "`A = P × (1 + r)^t` where P is the starting amount, r the yearly rate and t the years."
+            },
+            {
+              "id": "formula-worked",
+              "component": "Text",
+              "text": "`5,000 × 1.06^20 = 5,000 × 3.2071 = $16,035.68`"
+            },
+            {
+              "id": "table-card",
+              "component": "Card",
+              "child": "table-col"
+            },
+            {
+              "id": "table-col",
+              "component": "Column",
+              "children": [
+                "table-title",
+                "table-head",
+                "table-divider",
+                "table-rows"
+              ]
+            },
+            {
+              "id": "table-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Year by year"
+            },
+            {
+              "id": "table-head",
+              "component": "Row",
+              "children": [
+                "head-year",
+                "head-balance",
+                "head-interest"
+              ]
+            },
+            {
+              "id": "head-year",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Year"
+            },
+            {
+              "id": "head-balance",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 2,
+              "text": "Balance"
+            },
+            {
+              "id": "head-interest",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 2,
+              "text": "Interest that year"
+            },
+            {
+              "id": "table-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "table-rows",
+              "component": "List",
+              "children": {
+                "componentId": "table-row",
+                "path": "/schedule"
+              }
+            },
+            {
+              "id": "table-row",
+              "component": "Row",
+              "children": [
+                "cell-year",
+                "cell-balance",
+                "cell-interest"
+              ]
+            },
+            {
+              "id": "cell-year",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "year"
+              }
+            },
+            {
+              "id": "cell-balance",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "balance"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "cell-interest",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "interest"
+                  },
+                  "currency": "USD",
+                  "decimals": 2
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "compare-card",
+              "component": "Card",
+              "child": "compare-col"
+            },
+            {
+              "id": "compare-col",
+              "component": "Column",
+              "children": [
+                "compare-title",
+                "compare-1",
+                "compare-2",
+                "compare-3"
+              ]
+            },
+            {
+              "id": "compare-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Why it matters"
+            },
+            {
+              "id": "compare-1",
+              "component": "Text",
+              "text": "**Simple interest** would pay a flat $300 a year and end at $11,000. Compounding adds an extra **$5,035.68**."
+            },
+            {
+              "id": "compare-2",
+              "component": "Text",
+              "text": "**Rule of 72:** 72 ÷ 6 = 12 years to double. The balance passes $10,000 during year 12."
+            },
+            {
+              "id": "compare-3",
+              "component": "Text",
+              "text": "**Time does the work:** yearly interest grows from $300.00 in year 1 to $907.68 in year 20 at the same rate."
+            },
+            {
+              "id": "what-if-card",
+              "component": "Card",
+              "child": "what-if-col"
+            },
+            {
+              "id": "what-if-col",
+              "component": "Column",
+              "children": [
+                "what-if-title",
+                "what-if-note",
+                "rate-slider",
+                "rate-readout",
+                "years-slider",
+                "years-readout",
+                "recalc"
+              ]
+            },
+            {
+              "id": "what-if-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Try other numbers"
+            },
+            {
+              "id": "what-if-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "The figures above are for 6% and 20 years. Pick new values and ask for a recalculation."
+            },
+            {
+              "id": "rate-slider",
+              "component": "Slider",
+              "label": "Yearly rate (%)",
+              "min": 1,
+              "max": 12,
+              "value": {
+                "path": "/whatIf/rate"
+              }
+            },
+            {
+              "id": "rate-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Rate: ${/whatIf/rate}%"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "years-slider",
+              "component": "Slider",
+              "label": "Years",
+              "min": 1,
+              "max": 40,
+              "value": {
+                "path": "/whatIf/years"
+              }
+            },
+            {
+              "id": "years-readout",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Years: ${/whatIf/years}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "recalc",
+              "component": "Button",
+              "variant": "primary",
+              "child": "recalc-label",
+              "action": {
+                "event": {
+                  "name": "recalculate_compound_interest",
+                  "context": {
+                    "principal": {
+                      "path": "/principal"
+                    },
+                    "ratePercent": {
+                      "path": "/whatIf/rate"
+                    },
+                    "years": {
+                      "path": "/whatIf/years"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "recalc-label",
+              "component": "Text",
+              "text": "Recalculate"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "compound-interest",
+          "path": "/",
+          "value": {
+            "principal": 5000,
+            "finalBalance": 16035.68,
+            "interestEarned": 11035.68,
+            "schedule": [
+              {
+                "year": "1",
+                "balance": 5300,
+                "interest": 300
+              },
+              {
+                "year": "5",
+                "balance": 6691.13,
+                "interest": 378.74
+              },
+              {
+                "year": "10",
+                "balance": 8954.24,
+                "interest": 506.84
+              },
+              {
+                "year": "15",
+                "balance": 11982.79,
+                "interest": 678.27
+              },
+              {
+                "year": "20",
+                "balance": 16035.68,
+                "interest": 907.68
+              }
+            ],
+            "whatIf": {
+              "rate": 6,
+              "years": 20
+            }
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Compound interest</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1f2933; background: #f6f8f7; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #52606d; }\n  .card { background: #fff; border: 1px solid #e1e7e4; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .inputs { display: grid; gap: 10px; }\n  .field { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; font-size: 13px; }\n  .field input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: #0f766e; }\n  .field input[type=number] { width: 110px; padding: 4px 6px; border: 1px solid #cbd5d1; border-radius: 6px; font: inherit; text-align: right; }\n  .field output { font-weight: 600; color: #0f766e; }\n  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\n  .stat { background: #fff; border: 1px solid #e1e7e4; border-radius: 10px; padding: 10px; }\n  .stat.big { grid-column: 1 / -1; background: #0f766e; border-color: #0f766e; color: #fff; }\n  .stat small { display: block; font-size: 11px; opacity: .8; }\n  .stat b { font-size: 16px; }\n  .stat.big b { font-size: 24px; }\n  svg { width: 100%; height: auto; display: block; }\n  .axis { font-size: 9px; fill: #7b8794; }\n  .legend { display: flex; gap: 14px; font-size: 12px; color: #52606d; margin-top: 6px; }\n  .legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }\n  table { width: 100%; border-collapse: collapse; font-size: 13px; }\n  th, td { text-align: right; padding: 5px 6px; border-bottom: 1px solid #edf1ef; }\n  th:first-child, td:first-child { text-align: left; }\n  th { font-size: 11px; color: #7b8794; font-weight: 600; }\n  tr.last td { font-weight: 700; color: #0f766e; }\n</style>\n</head>\n<body>\n  <h1>Compound interest</h1>\n  <p class=\"lead\">Interest is added to the balance each year, so the next year's interest is earned on a bigger amount. Move the sliders to see it happen.</p>\n\n  <div class=\"card inputs\">\n    <div class=\"field\">\n      <label for=\"principal\">Starting amount ($)</label>\n      <input id=\"principal\" type=\"number\" min=\"0\" step=\"100\" value=\"5000\">\n    </div>\n    <div class=\"field\">\n      <label for=\"rate\">Yearly rate</label><output id=\"rateOut\"></output>\n      <input id=\"rate\" type=\"range\" min=\"0.5\" max=\"12\" step=\"0.5\" value=\"6\">\n    </div>\n    <div class=\"field\">\n      <label for=\"years\">Time</label><output id=\"yearsOut\"></output>\n      <input id=\"years\" type=\"range\" min=\"1\" max=\"40\" step=\"1\" value=\"20\">\n    </div>\n  </div>\n\n  <div class=\"stats\">\n    <div class=\"stat big\"><small>Final balance</small><b id=\"final\"></b></div>\n    <div class=\"stat\"><small>Interest earned</small><b id=\"interest\"></b></div>\n    <div class=\"stat\"><small>Extra vs simple interest</small><b id=\"extra\"></b></div>\n    <div class=\"stat\"><small>Money doubles every</small><b id=\"double\"></b></div>\n    <div class=\"stat\"><small>Interest in the final year</small><b id=\"lastYear\"></b></div>\n  </div>\n\n  <div class=\"card\">\n    <svg viewBox=\"0 0 340 180\" role=\"img\" aria-label=\"Balance over time, compound versus simple interest\">\n      <line x1=\"44\" y1=\"8\" x2=\"44\" y2=\"158\" stroke=\"#d5dcd9\"/>\n      <line x1=\"44\" y1=\"158\" x2=\"332\" y2=\"158\" stroke=\"#d5dcd9\"/>\n      <line x1=\"44\" y1=\"83\" x2=\"332\" y2=\"83\" stroke=\"#edf1ef\"/>\n      <text class=\"axis\" id=\"yMax\" x=\"40\" y=\"12\" text-anchor=\"end\"></text>\n      <text class=\"axis\" id=\"yMid\" x=\"40\" y=\"86\" text-anchor=\"end\"></text>\n      <text class=\"axis\" x=\"40\" y=\"161\" text-anchor=\"end\">$0</text>\n      <text class=\"axis\" x=\"44\" y=\"172\">Year 0</text>\n      <text class=\"axis\" id=\"xEnd\" x=\"332\" y=\"172\" text-anchor=\"end\"></text>\n      <path id=\"area\" fill=\"#0f766e\" opacity=\".12\"/>\n      <path id=\"lineSimple\" fill=\"none\" stroke=\"#9aa5b1\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/>\n      <path id=\"lineCompound\" fill=\"none\" stroke=\"#0f766e\" stroke-width=\"2.5\"/>\n    </svg>\n    <div class=\"legend\"><span><i style=\"background:#0f766e\"></i>Compound</span><span><i style=\"background:#9aa5b1\"></i>Simple</span></div>\n  </div>\n\n  <div class=\"card\">\n    <table>\n      <thead><tr><th>Year</th><th>Balance</th><th>Interest that year</th></tr></thead>\n      <tbody id=\"rows\"></tbody>\n    </table>\n  </div>\n\n<script>\n(function () {\n  var $ = function (id) { return document.getElementById(id); };\n  var money = function (n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };\n  var money0 = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };\n\n  function render() {\n    var P = parseFloat($('principal').value);\n    if (isNaN(P) || P < 0) { P = 0; }\n    var r = parseFloat($('rate').value) / 100;\n    var years = parseInt($('years').value, 10);\n\n    $('rateOut').textContent = (r * 100).toFixed(1) + '%';\n    $('yearsOut').textContent = years + (years === 1 ? ' year' : ' years');\n\n    var compound = [];\n    var simple = [];\n    for (var y = 0; y <= years; y++) {\n      compound.push(P * Math.pow(1 + r, y));\n      simple.push(P * (1 + r * y));\n    }\n    var finalBalance = compound[years];\n\n    $('final').textContent = money(finalBalance);\n    $('interest').textContent = money(finalBalance - P);\n    $('extra').textContent = money(finalBalance - simple[years]);\n    $('double').textContent = (Math.log(2) / Math.log(1 + r)).toFixed(1) + ' years';\n    $('lastYear').textContent = money(compound[years] - compound[years - 1]);\n\n    var left = 44, right = 332, top = 8, bottom = 158;\n    var max = Math.max(finalBalance, 1);\n    var px = function (i) { return left + (right - left) * (i / years); };\n    var py = function (v) { return bottom - (bottom - top) * (v / max); };\n    var line = function (values) {\n      return values.map(function (v, i) { return (i === 0 ? 'M' : 'L') + px(i).toFixed(1) + ' ' + py(v).toFixed(1); }).join(' ');\n    };\n    $('lineCompound').setAttribute('d', line(compound));\n    $('lineSimple').setAttribute('d', line(simple));\n    $('area').setAttribute('d', line(compound) + ' L' + right + ' ' + bottom + ' L' + left + ' ' + bottom + ' Z');\n    $('yMax').textContent = money0(max);\n    $('yMid').textContent = money0(max / 2);\n    $('xEnd').textContent = 'Year ' + years;\n\n    var stepSize = years <= 10 ? 1 : (years <= 25 ? 5 : 10);\n    var body = $('rows');\n    body.textContent = '';\n    for (var n = 1; n <= years; n++) {\n      if (n !== 1 && n !== years && n % stepSize !== 0) { continue; }\n      var tr = document.createElement('tr');\n      if (n === years) { tr.className = 'last'; }\n      var cells = [String(n), money(compound[n]), money(compound[n] - compound[n - 1])];\n      for (var c = 0; c < cells.length; c++) {\n        var td = document.createElement('td');\n        td.textContent = cells[c];\n        tr.appendChild(td);\n      }\n      body.appendChild(tr);\n    }\n  }\n\n  $('principal').addEventListener('input', render);\n  $('rate').addEventListener('input', render);\n  $('years').addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_compound_interest_02",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show how $5,000 grows at 6% compounded annually over 20 years as a read-only milestone table, then let the user change the starting amount, rate, years and compounding frequency to request a new calculation.",
+        "data": {
+          "principal": 5000,
+          "annualRatePercent": 6,
+          "years": 20,
+          "finalBalance": 16035.68,
+          "milestones": [
+            {
+              "year": 1,
+              "balance": 5300
+            },
+            {
+              "year": 5,
+              "balance": 6691.13
+            },
+            {
+              "year": 10,
+              "balance": 8954.24
+            },
+            {
+              "year": 15,
+              "balance": 11982.79
+            },
+            {
+              "year": 20,
+              "balance": 16035.68
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "principal": {
+              "type": "number",
+              "minimum": 0
+            },
+            "annualRatePercent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "years": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "compounding": {
+              "type": "string",
+              "enum": [
+                "annually",
+                "monthly",
+                "daily"
+              ]
+            }
+          },
+          "required": [
+            "principal",
+            "annualRatePercent",
+            "years",
+            "compounding"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "milestones": {
+            "type": "array",
+            "title": "$5,000 at 6% a year, compounded annually",
+            "items": {
+              "type": "object",
+              "properties": {
+                "year": {
+                  "type": "integer",
+                  "title": "Year"
+                },
+                "balance": {
+                  "type": "number",
+                  "title": "Balance ($)"
+                }
+              }
+            }
+          },
+          "principal": {
+            "type": "number",
+            "title": "Starting amount ($)",
+            "minimum": 0
+          },
+          "annualRatePercent": {
+            "type": "number",
+            "title": "Yearly rate (%)",
+            "minimum": 0,
+            "maximum": 20,
+            "default": 6
+          },
+          "years": {
+            "type": "integer",
+            "title": "Years",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20
+          },
+          "compounding": {
+            "type": "string",
+            "title": "Interest is added",
+            "oneOf": [
+              {
+                "const": "annually",
+                "title": "Once a year"
+              },
+              {
+                "const": "monthly",
+                "title": "Every month"
+              },
+              {
+                "const": "daily",
+                "title": "Every day"
+              }
+            ]
+          }
+        },
+        "required": [
+          "principal",
+          "annualRatePercent",
+          "years",
+          "compounding"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "After 20 years: $16,035.68 ($11,035.68 of it is interest)"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/milestones",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Try other numbers",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/principal"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/annualRatePercent",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/years",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/compounding",
+                "options": {
+                  "format": "radio"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "milestones": [
+          {
+            "year": 1,
+            "balance": 5300
+          },
+          {
+            "year": 5,
+            "balance": 6691.13
+          },
+          {
+            "year": 10,
+            "balance": 8954.24
+          },
+          {
+            "year": 15,
+            "balance": 11982.79
+          },
+          {
+            "year": 20,
+            "balance": 16035.68
+          }
+        ],
+        "principal": 5000,
+        "annualRatePercent": 6,
+        "years": 20,
+        "compounding": "annually"
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "States the formula and the milestone table clearly, but the numbers are frozen at 6% and 20 years and the curve has to be imagined.",
+    "a2ui": "Stat cards, a bound table and sliders look right, but the catalog has no arithmetic or chart, so moving a slider changes only its readout until the agent recalculates.",
+    "html": "A live calculator with a compound-versus-simple chart that redraws on every slider move; the only approach where the reader can actually feel the curve bend.",
+    "agui": "Good at collecting new inputs with typed, range-checked controls, but the result is a disabled table and nothing updates until the form is submitted back to the agent."
+  }
+}

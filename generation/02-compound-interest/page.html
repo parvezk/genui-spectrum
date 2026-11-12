@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compound interest</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8f7; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #52606d; }
+  .card { background: #fff; border: 1px solid #e1e7e4; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .inputs { display: grid; gap: 10px; }
+  .field { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; font-size: 13px; }
+  .field input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: #0f766e; }
+  .field input[type=number] { width: 110px; padding: 4px 6px; border: 1px solid #cbd5d1; border-radius: 6px; font: inherit; text-align: right; }
+  .field output { font-weight: 600; color: #0f766e; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stat { background: #fff; border: 1px solid #e1e7e4; border-radius: 10px; padding: 10px; }
+  .stat.big { grid-column: 1 / -1; background: #0f766e; border-color: #0f766e; color: #fff; }
+  .stat small { display: block; font-size: 11px; opacity: .8; }
+  .stat b { font-size: 16px; }
+  .stat.big b { font-size: 24px; }
+  svg { width: 100%; height: auto; display: block; }
+  .axis { font-size: 9px; fill: #7b8794; }
+  .legend { display: flex; gap: 14px; font-size: 12px; color: #52606d; margin-top: 6px; }
+  .legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: right; padding: 5px 6px; border-bottom: 1px solid #edf1ef; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-size: 11px; color: #7b8794; font-weight: 600; }
+  tr.last td { font-weight: 700; color: #0f766e; }
+</style>
+</head>
+<body>
+  <h1>Compound interest</h1>
+  <p class="lead">Interest is added to the balance each year, so the next year's interest is earned on a bigger amount. Move the sliders to see it happen.</p>
+
+  <div class="card inputs">
+    <div class="field">
+      <label for="principal">Starting amount ($)</label>
+      <input id="principal" type="number" min="0" step="100" value="5000">
+    </div>
+    <div class="field">
+      <label for="rate">Yearly rate</label><output id="rateOut"></output>
+      <input id="rate" type="range" min="0.5" max="12" step="0.5" value="6">
+    </div>
+    <div class="field">
+      <label for="years">Time</label><output id="yearsOut"></output>
+      <input id="years" type="range" min="1" max="40" step="1" value="20">
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat big"><small>Final balance</small><b id="final"></b></div>
+    <div class="stat"><small>Interest earned</small><b id="interest"></b></div>
+    <div class="stat"><small>Extra vs simple interest</small><b id="extra"></b></div>
+    <div class="stat"><small>Money doubles every</small><b id="double"></b></div>
+    <div class="stat"><small>Interest in the final year</small><b id="lastYear"></b></div>
+  </div>
+
+  <div class="card">
+    <svg viewBox="0 0 340 180" role="img" aria-label="Balance over time, compound versus simple interest">
+      <line x1="44" y1="8" x2="44" y2="158" stroke="#d5dcd9"/>
+      <line x1="44" y1="158" x2="332" y2="158" stroke="#d5dcd9"/>
+      <line x1="44" y1="83" x2="332" y2="83" stroke="#edf1ef"/>
+      <text class="axis" id="yMax" x="40" y="12" text-anchor="end"></text>
+      <text class="axis" id="yMid" x="40" y="86" text-anchor="end"></text>
+      <text class="axis" x="40" y="161" text-anchor="end">$0</text>
+      <text class="axis" x="44" y="172">Year 0</text>
+      <text class="axis" id="xEnd" x="332" y="172" text-anchor="end"></text>
+      <path id="area" fill="#0f766e" opacity=".12"/>
+      <path id="lineSimple" fill="none" stroke="#9aa5b1" stroke-width="2" stroke-dasharray="4 3"/>
+      <path id="lineCompound" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+    </svg>
+    <div class="legend"><span><i style="background:#0f766e"></i>Compound</span><span><i style="background:#9aa5b1"></i>Simple</span></div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th>Year</th><th>Balance</th><th>Interest that year</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  var money0 = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  function render() {
+    var P = parseFloat($('principal').value);
+    if (isNaN(P) || P < 0) { P = 0; }
+    var r = parseFloat($('rate').value) / 100;
+    var years = parseInt($('years').value, 10);
+
+    $('rateOut').textContent = (r * 100).toFixed(1) + '%';
+    $('yearsOut').textContent = years + (years === 1 ? ' year' : ' years');
+
+    var compound = [];
+    var simple = [];
+    for (var y = 0; y <= years; y++) {
+      compound.push(P * Math.pow(1 + r, y));
+      simple.push(P * (1 + r * y));
+    }
+    var finalBalance = compound[years];
+
+    $('final').textContent = money(finalBalance);
+    $('interest').textContent = money(finalBalance - P);
+    $('extra').textContent = money(finalBalance - simple[years]);
+    $('double').textContent = (Math.log(2) / Math.log(1 + r)).toFixed(1) + ' years';
+    $('lastYear').textContent = money(compound[years] - compound[years - 1]);
+
+    var left = 44, right = 332, top = 8, bottom = 158;
+    var max = Math.max(finalBalance, 1);
+    var px = function (i) { return left + (right - left) * (i / years); };
+    var py = function (v) { return bottom - (bottom - top) * (v / max); };
+    var line = function (values) {
+      return values.map(function (v, i) { return (i === 0 ? 'M' : 'L') + px(i).toFixed(1) + ' ' + py(v).toFixed(1); }).join(' ');
+    };
+    $('lineCompound').setAttribute('d', line(compound));
+    $('lineSimple').setAttribute('d', line(simple));
+    $('area').setAttribute('d', line(compound) + ' L' + right + ' ' + bottom + ' L' + left + ' ' + bottom + ' Z');
+    $('yMax').textContent = money0(max);
+    $('yMid').textContent = money0(max / 2);
+    $('xEnd').textContent = 'Year ' + years;
+
+    var stepSize = years <= 10 ? 1 : (years <= 25 ? 5 : 10);
+    var body = $('rows');
+    body.textContent = '';
+    for (var n = 1; n <= years; n++) {
+      if (n !== 1 && n !== years && n % stepSize !== 0) { continue; }
+      var tr = document.createElement('tr');
+      if (n === years) { tr.className = 'last'; }
+      var cells = [String(n), money(compound[n]), money(compound[n] - compound[n - 1])];
+      for (var c = 0; c < cells.length; c++) {
+        var td = document.createElement('td');
+        td.textContent = cells[c];
+        tr.appendChild(td);
+      }
+      body.appendChild(tr);
+    }
+  }
+
+  $('principal').addEventListener('input', render);
+  $('rate').addEventListener('input', render);
+  $('years').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

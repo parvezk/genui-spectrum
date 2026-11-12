@@ -1,0 +1,722 @@
+{
+  "id": "05-binary-search",
+  "index": 5,
+  "title": "Binary search",
+  "category": "answer",
+  "prompt": "Explain binary search and why it runs in O(log n). Use the sorted list 3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52 and search for 34.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Binary search\n\nBinary search finds a value in a **sorted** list by repeatedly looking at the middle element and throwing away the half that cannot contain the target.\n\n1. Keep two pointers, `low` and `high`, around the part of the list still in play.\n2. Look at the middle element, `mid = floor((low + high) / 2)`.\n3. If it is the target, stop. If it is too small, move `low` to `mid + 1`. If it is too big, move `high` to `mid - 1`.\n4. Repeat until found, or until `low` passes `high` (not in the list).\n\n### Searching for 34\n\nThe list has 11 elements, at indexes 0 to 10:\n\n```\nindex:  0  1   2   3   4   5   6   7   8   9  10\nvalue:  3  8  12  17  21  26  30  34  41  47  52\n```\n\n| Step | low | high | mid | Value at mid | Decision |\n| ---: | ---: | ---: | ---: | ---: | --- |\n| 1 | 0 | 10 | 5 | 26 | 26 < 34, discard the left half |\n| 2 | 6 | 10 | 8 | 41 | 41 > 34, discard the right half |\n| 3 | 6 | 7 | 6 | 30 | 30 < 34, discard the left half |\n| 4 | 7 | 7 | 7 | 34 | Found at index 7 |\n\nFour comparisons. A linear scan from the left would have needed eight.\n\n### Why it is O(log n)\n\nEach comparison cuts the remaining range roughly in half: 11 → 5 → 2 → 1. Starting from `n` elements, you can only halve about `log₂ n` times before one element is left, so the worst case is `floor(log₂ n) + 1` comparisons.\n\n| List size | Worst-case comparisons |\n| ---: | ---: |\n| 11 | 4 |\n| 1,000 | 10 |\n| 1,000,000 | 20 |\n| 1,000,000,000 | 30 |\n\nDoubling the list adds just **one** more step. That is what logarithmic growth means.\n\n```python\ndef binary_search(items, target):\n    low, high = 0, len(items) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if items[mid] == target:\n            return mid\n        if items[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n```\n\n**The catch:** the list must already be sorted, and you need random access to the middle (an array, not a linked list).\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "binary-search",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "binary-search",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "intro",
+                "list-card",
+                "trace-title",
+                "trace",
+                "result-card",
+                "why-card",
+                "growth-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Binary search"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "text": "Look at the middle of a **sorted** list, then throw away the half that cannot contain the target. Repeat until found."
+            },
+            {
+              "id": "list-card",
+              "component": "Card",
+              "child": "list-col"
+            },
+            {
+              "id": "list-col",
+              "component": "Column",
+              "children": [
+                "list-caption",
+                "list-items"
+              ]
+            },
+            {
+              "id": "list-caption",
+              "component": "Text",
+              "variant": "caption",
+              "text": "The sorted list (indexes 0–10). Target: 34"
+            },
+            {
+              "id": "list-items",
+              "component": "List",
+              "direction": "horizontal",
+              "children": {
+                "componentId": "list-item",
+                "path": "/items"
+              }
+            },
+            {
+              "id": "list-item",
+              "component": "Column",
+              "align": "center",
+              "children": [
+                "item-value",
+                "item-index"
+              ]
+            },
+            {
+              "id": "item-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "path": "value"
+              }
+            },
+            {
+              "id": "item-index",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "index"
+              }
+            },
+            {
+              "id": "trace-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Searching for 34"
+            },
+            {
+              "id": "trace",
+              "component": "List",
+              "children": {
+                "componentId": "step-card",
+                "path": "/steps"
+              }
+            },
+            {
+              "id": "step-card",
+              "component": "Card",
+              "child": "step-col"
+            },
+            {
+              "id": "step-col",
+              "component": "Column",
+              "children": [
+                "step-head",
+                "step-remaining",
+                "step-decision"
+              ]
+            },
+            {
+              "id": "step-head",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "align": "center",
+              "children": [
+                "step-name",
+                "step-range"
+              ]
+            },
+            {
+              "id": "step-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "Step ${step}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "step-range",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "low ${low} · high ${high} · mid ${mid}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "step-remaining",
+              "component": "Text",
+              "text": {
+                "path": "remaining"
+              }
+            },
+            {
+              "id": "step-decision",
+              "component": "Text",
+              "text": {
+                "path": "decision"
+              }
+            },
+            {
+              "id": "result-card",
+              "component": "Card",
+              "child": "result-row"
+            },
+            {
+              "id": "result-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "result-icon",
+                "result-text"
+              ]
+            },
+            {
+              "id": "result-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "result-text",
+              "component": "Text",
+              "weight": 1,
+              "text": "Found at index 7 after **4 comparisons**. A linear scan from the left would have needed 8."
+            },
+            {
+              "id": "why-card",
+              "component": "Card",
+              "child": "why-col"
+            },
+            {
+              "id": "why-col",
+              "component": "Column",
+              "children": [
+                "why-title",
+                "why-text",
+                "why-formula"
+              ]
+            },
+            {
+              "id": "why-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Why it is O(log n)"
+            },
+            {
+              "id": "why-text",
+              "component": "Text",
+              "text": "Every comparison halves what is left: 11 → 5 → 2 → 1. You can only halve n about log₂ n times before one element remains."
+            },
+            {
+              "id": "why-formula",
+              "component": "Text",
+              "text": "Worst case: `floor(log₂ n) + 1` comparisons. Doubling the list adds just one step."
+            },
+            {
+              "id": "growth-card",
+              "component": "Card",
+              "child": "growth-col"
+            },
+            {
+              "id": "growth-col",
+              "component": "Column",
+              "children": [
+                "growth-head",
+                "growth-divider",
+                "growth-rows"
+              ]
+            },
+            {
+              "id": "growth-head",
+              "component": "Row",
+              "children": [
+                "growth-head-n",
+                "growth-head-steps"
+              ]
+            },
+            {
+              "id": "growth-head-n",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "List size"
+            },
+            {
+              "id": "growth-head-steps",
+              "component": "Text",
+              "variant": "caption",
+              "weight": 1,
+              "text": "Worst-case comparisons"
+            },
+            {
+              "id": "growth-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "growth-rows",
+              "component": "List",
+              "children": {
+                "componentId": "growth-row",
+                "path": "/growth"
+              }
+            },
+            {
+              "id": "growth-row",
+              "component": "Row",
+              "children": [
+                "growth-n",
+                "growth-steps"
+              ]
+            },
+            {
+              "id": "growth-n",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "size"
+              }
+            },
+            {
+              "id": "growth-steps",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "steps"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "binary-search",
+          "path": "/",
+          "value": {
+            "items": [
+              {
+                "index": "0",
+                "value": "3"
+              },
+              {
+                "index": "1",
+                "value": "8"
+              },
+              {
+                "index": "2",
+                "value": "12"
+              },
+              {
+                "index": "3",
+                "value": "17"
+              },
+              {
+                "index": "4",
+                "value": "21"
+              },
+              {
+                "index": "5",
+                "value": "26"
+              },
+              {
+                "index": "6",
+                "value": "30"
+              },
+              {
+                "index": "7",
+                "value": "34"
+              },
+              {
+                "index": "8",
+                "value": "41"
+              },
+              {
+                "index": "9",
+                "value": "47"
+              },
+              {
+                "index": "10",
+                "value": "52"
+              }
+            ],
+            "steps": [
+              {
+                "step": 1,
+                "low": 0,
+                "high": 10,
+                "mid": 5,
+                "remaining": "In play: all 11 values. Middle value is **26**.",
+                "decision": "26 < 34, so discard the left half."
+              },
+              {
+                "step": 2,
+                "low": 6,
+                "high": 10,
+                "mid": 8,
+                "remaining": "In play: 30, 34, 41, 47, 52. Middle value is **41**.",
+                "decision": "41 > 34, so discard the right half."
+              },
+              {
+                "step": 3,
+                "low": 6,
+                "high": 7,
+                "mid": 6,
+                "remaining": "In play: 30, 34. Middle value is **30**.",
+                "decision": "30 < 34, so discard the left half."
+              },
+              {
+                "step": 4,
+                "low": 7,
+                "high": 7,
+                "mid": 7,
+                "remaining": "In play: 34. Middle value is **34**.",
+                "decision": "Match. Found at index 7."
+              }
+            ],
+            "growth": [
+              {
+                "size": "11",
+                "steps": "4"
+              },
+              {
+                "size": "1,000",
+                "steps": "10"
+              },
+              {
+                "size": "1,000,000",
+                "steps": "20"
+              },
+              {
+                "size": "1,000,000,000",
+                "steps": "30"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Binary search</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1e1b4b; background: #f5f3ff; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  h2 { font-size: 14px; margin: 0 0 6px; }\n  .lead { margin: 0 0 12px; color: #4c4a6b; }\n  .card { background: #fff; border: 1px solid #ddd6fe; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }\n  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #c4b5fd; background: #fff; font: inherit; cursor: pointer; color: inherit; }\n  button.primary { background: #6d28d9; border-color: #6d28d9; color: #fff; }\n  button:disabled { opacity: .45; cursor: default; }\n  input[type=number] { width: 70px; padding: 5px 6px; border: 1px solid #c4b5fd; border-radius: 6px; font: inherit; }\n  .cells { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin: 12px 0 2px; }\n  .cell { border: 1px solid #c4b5fd; border-radius: 6px; text-align: center; padding: 6px 0 2px; background: #fff; cursor: pointer; transition: all .25s; font: inherit; color: inherit; }\n  .cell b { display: block; font-size: 13px; }\n  .cell small { font-size: 9px; color: #8b88a8; }\n  .cell.out { opacity: .28; background: #eee; text-decoration: line-through; }\n  .cell.mid { background: #fde68a; border-color: #d97706; transform: translateY(-3px); }\n  .cell.found { background: #86efac; border-color: #16a34a; transform: translateY(-3px); }\n  .marks { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; font-size: 10px; text-align: center; color: #6d28d9; font-weight: 700; min-height: 16px; }\n  ol { margin: 0; padding-left: 20px; }\n  ol li { margin-bottom: 4px; }\n  .muted { color: #8b88a8; }\n  .counts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }\n  .count { background: #f5f3ff; border-radius: 8px; padding: 8px; }\n  .count b { font-size: 20px; display: block; }\n  .count small { color: #4c4a6b; }\n  input[type=range] { width: 100%; accent-color: #6d28d9; }\n  .growth b { color: #6d28d9; }\n</style>\n</head>\n<body>\n  <h1>Binary search</h1>\n  <p class=\"lead\">Check the middle of a sorted list, discard the half that cannot hold the target, repeat. Step through it, or click any value to search for that instead.</p>\n\n  <div class=\"card\">\n    <div class=\"row\">\n      <label for=\"target\">Target</label>\n      <input id=\"target\" type=\"number\" value=\"34\">\n      <button id=\"step\" class=\"primary\">Step</button>\n      <button id=\"reset\">Reset</button>\n    </div>\n    <div class=\"cells\" id=\"cells\"></div>\n    <div class=\"marks\" id=\"marks\"></div>\n  </div>\n\n  <div class=\"card\">\n    <div class=\"counts\">\n      <div class=\"count\"><b id=\"binCount\">0</b><small>comparisons so far (binary)</small></div>\n      <div class=\"count\"><b id=\"linCount\">8</b><small>comparisons a left-to-right scan needs</small></div>\n    </div>\n  </div>\n\n  <div class=\"card\">\n    <h2>What happened</h2>\n    <ol id=\"log\"></ol>\n    <p class=\"muted\" id=\"hint\">Press Step to make the first comparison.</p>\n  </div>\n\n  <div class=\"card growth\">\n    <h2>Why it is O(log n)</h2>\n    <p style=\"margin:0 0 8px\">Each comparison halves what is left, so the worst case is floor(log₂ n) + 1 comparisons. Drag to grow the list:</p>\n    <input id=\"size\" type=\"range\" min=\"1\" max=\"30\" value=\"10\" aria-label=\"List size as a power of two\">\n    <p style=\"margin:6px 0 0\">A sorted list of <b id=\"n\"></b> items needs at most <b id=\"maxSteps\"></b> comparisons. A linear scan could need all <b id=\"n2\"></b>.</p>\n  </div>\n\n<script>\n(function () {\n  var list = [3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52];\n  var $ = function (id) { return document.getElementById(id); };\n  var target, low, high, mid, comparisons, done, found, log;\n\n  var cells = $('cells');\n  var marks = $('marks');\n  list.forEach(function (v, i) {\n    var c = document.createElement('button');\n    c.type = 'button';\n    c.className = 'cell';\n    c.setAttribute('data-i', String(i));\n    var b = document.createElement('b');\n    b.textContent = String(v);\n    var s = document.createElement('small');\n    s.textContent = String(i);\n    c.appendChild(b);\n    c.appendChild(s);\n    cells.appendChild(c);\n    marks.appendChild(document.createElement('span'));\n  });\n\n  function reset() {\n    var t = parseInt($('target').value, 10);\n    target = isNaN(t) ? 34 : t;\n    low = 0;\n    high = list.length - 1;\n    mid = -1;\n    comparisons = 0;\n    done = false;\n    found = false;\n    log = [];\n    render();\n  }\n\n  function step() {\n    if (done) { return; }\n    mid = Math.floor((low + high) / 2);\n    comparisons += 1;\n    var v = list[mid];\n    if (v === target) {\n      found = true;\n      done = true;\n      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. Match! Found at index ' + mid + '.');\n    } else if (v < target) {\n      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. ' + v + ' < ' + target + ', so discard the left half.');\n      low = mid + 1;\n    } else {\n      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. ' + v + ' > ' + target + ', so discard the right half.');\n      high = mid - 1;\n    }\n    if (!done && low > high) {\n      done = true;\n      log.push('Nothing is left to check: ' + target + ' is not in the list.');\n    }\n    render();\n  }\n\n  function render() {\n    var cellNodes = cells.children;\n    var markNodes = marks.children;\n    for (var i = 0; i < list.length; i++) {\n      var out = i < low || i > high;\n      var isMid = i === mid;\n      cellNodes[i].className = 'cell' + (found && isMid ? ' found' : (isMid && comparisons > 0 ? ' mid' : (out ? ' out' : '')));\n      var label = '';\n      if (!done) {\n        if (i === low && i === high) { label = 'low=high'; }\n        else if (i === low) { label = 'low'; }\n        else if (i === high) { label = 'high'; }\n      }\n      markNodes[i].textContent = label;\n    }\n    $('binCount').textContent = String(comparisons);\n    var at = list.indexOf(target);\n    $('linCount').textContent = String(at === -1 ? list.length : at + 1);\n\n    var ol = $('log');\n    ol.textContent = '';\n    log.forEach(function (line) {\n      var li = document.createElement('li');\n      li.textContent = line;\n      ol.appendChild(li);\n    });\n    $('hint').textContent = done\n      ? (found ? 'Done in ' + comparisons + ' comparison' + (comparisons === 1 ? '' : 's') + '.' : 'Done: not found after ' + comparisons + ' comparisons.')\n      : (comparisons === 0 ? 'Press Step to make the first comparison.' : 'Press Step to continue.');\n    $('step').disabled = done;\n  }\n\n  function growth() {\n    var k = parseInt($('size').value, 10);\n    var n = Math.pow(2, k);\n    $('n').textContent = n.toLocaleString('en-US');\n    $('n2').textContent = n.toLocaleString('en-US');\n    $('maxSteps').textContent = String(k + 1);\n  }\n\n  $('step').addEventListener('click', step);\n  $('reset').addEventListener('click', reset);\n  $('target').addEventListener('input', reset);\n  cells.addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== cells && !t.classList.contains('cell')) { t = t.parentNode; }\n    if (!t || t === cells) { return; }\n    $('target').value = String(list[parseInt(t.getAttribute('data-i'), 10)]);\n    reset();\n  });\n  $('size').addEventListener('input', growth);\n  reset();\n  growth();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_binary_search_05",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the four steps of binary search for 34 in the given sorted list as a read-only trace table (step, low, high, mid, value, decision), with one line on why it is O(log n). Then let the user ask for another target to be traced and choose a language for a code sample.",
+        "data": {
+          "list": [
+            3,
+            8,
+            12,
+            17,
+            21,
+            26,
+            30,
+            34,
+            41,
+            47,
+            52
+          ],
+          "target": 34,
+          "trace": [
+            {
+              "step": 1,
+              "low": 0,
+              "high": 10,
+              "mid": 5,
+              "value": 26,
+              "decision": "26 < 34: discard left half"
+            },
+            {
+              "step": 2,
+              "low": 6,
+              "high": 10,
+              "mid": 8,
+              "value": 41,
+              "decision": "41 > 34: discard right half"
+            },
+            {
+              "step": 3,
+              "low": 6,
+              "high": 7,
+              "mid": 6,
+              "value": 30,
+              "decision": "30 < 34: discard left half"
+            },
+            {
+              "step": 4,
+              "low": 7,
+              "high": 7,
+              "mid": 7,
+              "value": 34,
+              "decision": "Found at index 7"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "nextTarget": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60
+            },
+            "codeLanguage": {
+              "type": "string",
+              "enum": [
+                "none",
+                "python",
+                "javascript",
+                "java"
+              ]
+            },
+            "showRecursive": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "codeLanguage"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "trace": {
+            "type": "array",
+            "title": "Searching 3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52 for 34",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "title": "Step"
+                },
+                "low": {
+                  "type": "integer",
+                  "title": "low"
+                },
+                "high": {
+                  "type": "integer",
+                  "title": "high"
+                },
+                "mid": {
+                  "type": "integer",
+                  "title": "mid"
+                },
+                "value": {
+                  "type": "integer",
+                  "title": "Value"
+                },
+                "decision": {
+                  "type": "string",
+                  "title": "Decision"
+                }
+              }
+            }
+          },
+          "nextTarget": {
+            "type": "integer",
+            "title": "Trace another target (0–60, optional)",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "codeLanguage": {
+            "type": "string",
+            "title": "Show the code in",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "No code, thanks"
+              },
+              {
+                "const": "python",
+                "title": "Python"
+              },
+              {
+                "const": "javascript",
+                "title": "JavaScript"
+              },
+              {
+                "const": "java",
+                "title": "Java"
+              }
+            ]
+          },
+          "showRecursive": {
+            "type": "boolean",
+            "title": "Also show the recursive version"
+          }
+        },
+        "required": [
+          "codeLanguage"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Binary search: 4 comparisons to find 34 among 11 values"
+          },
+          {
+            "type": "Label",
+            "text": "Each comparison halves what is left (11 → 5 → 2 → 1), so the worst case is floor(log₂ n) + 1 comparisons."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/trace",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Go further",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/nextTarget"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/codeLanguage"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/showRecursive",
+                "rule": {
+                  "effect": "HIDE",
+                  "condition": {
+                    "scope": "#/properties/codeLanguage",
+                    "schema": {
+                      "const": "none"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "trace": [
+          {
+            "step": 1,
+            "low": 0,
+            "high": 10,
+            "mid": 5,
+            "value": 26,
+            "decision": "26 < 34: discard left half"
+          },
+          {
+            "step": 2,
+            "low": 6,
+            "high": 10,
+            "mid": 8,
+            "value": 41,
+            "decision": "41 > 34: discard right half"
+          },
+          {
+            "step": 3,
+            "low": 6,
+            "high": 7,
+            "mid": 6,
+            "value": 30,
+            "decision": "30 < 34: discard left half"
+          },
+          {
+            "step": 4,
+            "low": 7,
+            "high": 7,
+            "mid": 7,
+            "value": 34,
+            "decision": "Found at index 7"
+          }
+        ],
+        "codeLanguage": "python",
+        "showRecursive": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "The trace table, growth table and code sample explain it fully; the reader replays the halving in their head.",
+    "a2ui": "A horizontal list shows the array and bound cards show each step, but it cannot highlight or grey out cells, so the halving is described and not shown.",
+    "html": "A stepper that greys out discarded halves, lets you search for any value and compares against a linear scan, plus a slider for how log n grows; fully bespoke.",
+    "agui": "The trace fits a table well, but as six disabled input columns it is hard to read, and the form can only request another trace and never run one."
+  }
+}

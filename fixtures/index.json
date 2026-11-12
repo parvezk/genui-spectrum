@@ -20,6 +20,71 @@
         "html": true,
         "agui": true
       }
+    },
+    {
+      "id": "02-compound-interest",
+      "index": 2,
+      "title": "Compound interest",
+      "category": "answer",
+      "prompt": "How does compound interest work? Show what $5,000 grows to at 6% a year, compounded annually, over 20 years.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "03-sourdough-starter",
+      "index": 3,
+      "title": "Sourdough starter",
+      "category": "answer",
+      "prompt": "How do I make a sourdough starter from scratch? Give me the day-by-day plan.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "04-http-status-codes",
+      "index": 4,
+      "title": "HTTP status codes",
+      "category": "answer",
+      "prompt": "What do the HTTP status code classes mean? Give the most common codes in each.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "05-binary-search",
+      "index": 5,
+      "title": "Binary search",
+      "category": "answer",
+      "prompt": "Explain binary search and why it runs in O(log n). Use the sorted list 3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52 and search for 34.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "06-flat-tire",
+      "index": 6,
+      "title": "Changing a flat tire",
+      "category": "answer",
+      "prompt": "How do I change a flat tire safely? Give me a checklist I can follow at the roadside.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
     }
   ]
 }

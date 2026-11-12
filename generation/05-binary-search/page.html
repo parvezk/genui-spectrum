@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Binary search</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1e1b4b; background: #f5f3ff; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 14px; margin: 0 0 6px; }
+  .lead { margin: 0 0 12px; color: #4c4a6b; }
+  .card { background: #fff; border: 1px solid #ddd6fe; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { padding: 6px 12px; border-radius: 6px; border: 1px solid #c4b5fd; background: #fff; font: inherit; cursor: pointer; color: inherit; }
+  button.primary { background: #6d28d9; border-color: #6d28d9; color: #fff; }
+  button:disabled { opacity: .45; cursor: default; }
+  input[type=number] { width: 70px; padding: 5px 6px; border: 1px solid #c4b5fd; border-radius: 6px; font: inherit; }
+  .cells { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin: 12px 0 2px; }
+  .cell { border: 1px solid #c4b5fd; border-radius: 6px; text-align: center; padding: 6px 0 2px; background: #fff; cursor: pointer; transition: all .25s; font: inherit; color: inherit; }
+  .cell b { display: block; font-size: 13px; }
+  .cell small { font-size: 9px; color: #8b88a8; }
+  .cell.out { opacity: .28; background: #eee; text-decoration: line-through; }
+  .cell.mid { background: #fde68a; border-color: #d97706; transform: translateY(-3px); }
+  .cell.found { background: #86efac; border-color: #16a34a; transform: translateY(-3px); }
+  .marks { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; font-size: 10px; text-align: center; color: #6d28d9; font-weight: 700; min-height: 16px; }
+  ol { margin: 0; padding-left: 20px; }
+  ol li { margin-bottom: 4px; }
+  .muted { color: #8b88a8; }
+  .counts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .count { background: #f5f3ff; border-radius: 8px; padding: 8px; }
+  .count b { font-size: 20px; display: block; }
+  .count small { color: #4c4a6b; }
+  input[type=range] { width: 100%; accent-color: #6d28d9; }
+  .growth b { color: #6d28d9; }
+</style>
+</head>
+<body>
+  <h1>Binary search</h1>
+  <p class="lead">Check the middle of a sorted list, discard the half that cannot hold the target, repeat. Step through it, or click any value to search for that instead.</p>
+
+  <div class="card">
+    <div class="row">
+      <label for="target">Target</label>
+      <input id="target" type="number" value="34">
+      <button id="step" class="primary">Step</button>
+      <button id="reset">Reset</button>
+    </div>
+    <div class="cells" id="cells"></div>
+    <div class="marks" id="marks"></div>
+  </div>
+
+  <div class="card">
+    <div class="counts">
+      <div class="count"><b id="binCount">0</b><small>comparisons so far (binary)</small></div>
+      <div class="count"><b id="linCount">8</b><small>comparisons a left-to-right scan needs</small></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What happened</h2>
+    <ol id="log"></ol>
+    <p class="muted" id="hint">Press Step to make the first comparison.</p>
+  </div>
+
+  <div class="card growth">
+    <h2>Why it is O(log n)</h2>
+    <p style="margin:0 0 8px">Each comparison halves what is left, so the worst case is floor(log₂ n) + 1 comparisons. Drag to grow the list:</p>
+    <input id="size" type="range" min="1" max="30" value="10" aria-label="List size as a power of two">
+    <p style="margin:6px 0 0">A sorted list of <b id="n"></b> items needs at most <b id="maxSteps"></b> comparisons. A linear scan could need all <b id="n2"></b>.</p>
+  </div>
+
+<script>
+(function () {
+  var list = [3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52];
+  var $ = function (id) { return document.getElementById(id); };
+  var target, low, high, mid, comparisons, done, found, log;
+
+  var cells = $('cells');
+  var marks = $('marks');
+  list.forEach(function (v, i) {
+    var c = document.createElement('button');
+    c.type = 'button';
+    c.className = 'cell';
+    c.setAttribute('data-i', String(i));
+    var b = document.createElement('b');
+    b.textContent = String(v);
+    var s = document.createElement('small');
+    s.textContent = String(i);
+    c.appendChild(b);
+    c.appendChild(s);
+    cells.appendChild(c);
+    marks.appendChild(document.createElement('span'));
+  });
+
+  function reset() {
+    var t = parseInt($('target').value, 10);
+    target = isNaN(t) ? 34 : t;
+    low = 0;
+    high = list.length - 1;
+    mid = -1;
+    comparisons = 0;
+    done = false;
+    found = false;
+    log = [];
+    render();
+  }
+
+  function step() {
+    if (done) { return; }
+    mid = Math.floor((low + high) / 2);
+    comparisons += 1;
+    var v = list[mid];
+    if (v === target) {
+      found = true;
+      done = true;
+      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. Match! Found at index ' + mid + '.');
+    } else if (v < target) {
+      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. ' + v + ' < ' + target + ', so discard the left half.');
+      low = mid + 1;
+    } else {
+      log.push('low ' + low + ', high ' + high + ' → mid ' + mid + ' holds ' + v + '. ' + v + ' > ' + target + ', so discard the right half.');
+      high = mid - 1;
+    }
+    if (!done && low > high) {
+      done = true;
+      log.push('Nothing is left to check: ' + target + ' is not in the list.');
+    }
+    render();
+  }
+
+  function render() {
+    var cellNodes = cells.children;
+    var markNodes = marks.children;
+    for (var i = 0; i < list.length; i++) {
+      var out = i < low || i > high;
+      var isMid = i === mid;
+      cellNodes[i].className = 'cell' + (found && isMid ? ' found' : (isMid && comparisons > 0 ? ' mid' : (out ? ' out' : '')));
+      var label = '';
+      if (!done) {
+        if (i === low && i === high) { label = 'low=high'; }
+        else if (i === low) { label = 'low'; }
+        else if (i === high) { label = 'high'; }
+      }
+      markNodes[i].textContent = label;
+    }
+    $('binCount').textContent = String(comparisons);
+    var at = list.indexOf(target);
+    $('linCount').textContent = String(at === -1 ? list.length : at + 1);
+
+    var ol = $('log');
+    ol.textContent = '';
+    log.forEach(function (line) {
+      var li = document.createElement('li');
+      li.textContent = line;
+      ol.appendChild(li);
+    });
+    $('hint').textContent = done
+      ? (found ? 'Done in ' + comparisons + ' comparison' + (comparisons === 1 ? '' : 's') + '.' : 'Done: not found after ' + comparisons + ' comparisons.')
+      : (comparisons === 0 ? 'Press Step to make the first comparison.' : 'Press Step to continue.');
+    $('step').disabled = done;
+  }
+
+  function growth() {
+    var k = parseInt($('size').value, 10);
+    var n = Math.pow(2, k);
+    $('n').textContent = n.toLocaleString('en-US');
+    $('n2').textContent = n.toLocaleString('en-US');
+    $('maxSteps').textContent = String(k + 1);
+  }
+
+  $('step').addEventListener('click', step);
+  $('reset').addEventListener('click', reset);
+  $('target').addEventListener('input', reset);
+  cells.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== cells && !t.classList.contains('cell')) { t = t.parentNode; }
+    if (!t || t === cells) { return; }
+    $('target').value = String(list[parseInt(t.getAttribute('data-i'), 10)]);
+    reset();
+  });
+  $('size').addEventListener('input', growth);
+  reset();
+  growth();
+})();
+</script>
+</body>
+</html>

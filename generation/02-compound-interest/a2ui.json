@@ -1,0 +1,146 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "compound-interest",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "compound-interest",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "intro", "stats", "formula-card", "table-card", "compare-card", "what-if-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Compound interest" },
+        {
+          "id": "intro",
+          "component": "Text",
+          "text": "You earn interest on your interest: each year's interest joins the balance, and next year's interest is calculated on the larger amount."
+        },
+
+        { "id": "stats", "component": "Row", "justify": "spaceBetween", "children": ["stat-start", "stat-end", "stat-earned"] },
+        { "id": "stat-start", "component": "Card", "weight": 1, "child": "stat-start-col" },
+        { "id": "stat-start-col", "component": "Column", "children": ["stat-start-label", "stat-start-value"] },
+        { "id": "stat-start-label", "component": "Text", "variant": "caption", "text": "You start with" },
+        {
+          "id": "stat-start-value",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/principal" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+        { "id": "stat-end", "component": "Card", "weight": 1, "child": "stat-end-col" },
+        { "id": "stat-end-col", "component": "Column", "children": ["stat-end-label", "stat-end-value"] },
+        { "id": "stat-end-label", "component": "Text", "variant": "caption", "text": "After 20 years" },
+        {
+          "id": "stat-end-value",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/finalBalance" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+        { "id": "stat-earned", "component": "Card", "weight": 1, "child": "stat-earned-col" },
+        { "id": "stat-earned-col", "component": "Column", "children": ["stat-earned-label", "stat-earned-value"] },
+        { "id": "stat-earned-label", "component": "Text", "variant": "caption", "text": "Interest earned" },
+        {
+          "id": "stat-earned-value",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/interestEarned" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+
+        { "id": "formula-card", "component": "Card", "child": "formula-col" },
+        { "id": "formula-col", "component": "Column", "children": ["formula-title", "formula-text", "formula-worked"] },
+        { "id": "formula-title", "component": "Text", "variant": "h5", "text": "The formula" },
+        { "id": "formula-text", "component": "Text", "text": "`A = P × (1 + r)^t` where P is the starting amount, r the yearly rate and t the years." },
+        { "id": "formula-worked", "component": "Text", "text": "`5,000 × 1.06^20 = 5,000 × 3.2071 = $16,035.68`" },
+
+        { "id": "table-card", "component": "Card", "child": "table-col" },
+        { "id": "table-col", "component": "Column", "children": ["table-title", "table-head", "table-divider", "table-rows"] },
+        { "id": "table-title", "component": "Text", "variant": "h5", "text": "Year by year" },
+        { "id": "table-head", "component": "Row", "children": ["head-year", "head-balance", "head-interest"] },
+        { "id": "head-year", "component": "Text", "variant": "caption", "weight": 1, "text": "Year" },
+        { "id": "head-balance", "component": "Text", "variant": "caption", "weight": 2, "text": "Balance" },
+        { "id": "head-interest", "component": "Text", "variant": "caption", "weight": 2, "text": "Interest that year" },
+        { "id": "table-divider", "component": "Divider" },
+        { "id": "table-rows", "component": "List", "children": { "componentId": "table-row", "path": "/schedule" } },
+        { "id": "table-row", "component": "Row", "children": ["cell-year", "cell-balance", "cell-interest"] },
+        { "id": "cell-year", "component": "Text", "weight": 1, "text": { "path": "year" } },
+        {
+          "id": "cell-balance",
+          "component": "Text",
+          "weight": 2,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "balance" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+        {
+          "id": "cell-interest",
+          "component": "Text",
+          "weight": 2,
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "interest" }, "currency": "USD", "decimals": 2 }, "returnType": "string" }
+        },
+
+        { "id": "compare-card", "component": "Card", "child": "compare-col" },
+        { "id": "compare-col", "component": "Column", "children": ["compare-title", "compare-1", "compare-2", "compare-3"] },
+        { "id": "compare-title", "component": "Text", "variant": "h5", "text": "Why it matters" },
+        { "id": "compare-1", "component": "Text", "text": "**Simple interest** would pay a flat $300 a year and end at $11,000. Compounding adds an extra **$5,035.68**." },
+        { "id": "compare-2", "component": "Text", "text": "**Rule of 72:** 72 ÷ 6 = 12 years to double. The balance passes $10,000 during year 12." },
+        { "id": "compare-3", "component": "Text", "text": "**Time does the work:** yearly interest grows from $300.00 in year 1 to $907.68 in year 20 at the same rate." },
+
+        { "id": "what-if-card", "component": "Card", "child": "what-if-col" },
+        { "id": "what-if-col", "component": "Column", "children": ["what-if-title", "what-if-note", "rate-slider", "rate-readout", "years-slider", "years-readout", "recalc"] },
+        { "id": "what-if-title", "component": "Text", "variant": "h5", "text": "Try other numbers" },
+        { "id": "what-if-note", "component": "Text", "variant": "caption", "text": "The figures above are for 6% and 20 years. Pick new values and ask for a recalculation." },
+        { "id": "rate-slider", "component": "Slider", "label": "Yearly rate (%)", "min": 1, "max": 12, "value": { "path": "/whatIf/rate" } },
+        {
+          "id": "rate-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "Rate: ${/whatIf/rate}%" }, "returnType": "string" }
+        },
+        { "id": "years-slider", "component": "Slider", "label": "Years", "min": 1, "max": 40, "value": { "path": "/whatIf/years" } },
+        {
+          "id": "years-readout",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "Years: ${/whatIf/years}" }, "returnType": "string" }
+        },
+        {
+          "id": "recalc",
+          "component": "Button",
+          "variant": "primary",
+          "child": "recalc-label",
+          "action": {
+            "event": {
+              "name": "recalculate_compound_interest",
+              "context": {
+                "principal": { "path": "/principal" },
+                "ratePercent": { "path": "/whatIf/rate" },
+                "years": { "path": "/whatIf/years" }
+              }
+            }
+          }
+        },
+        { "id": "recalc-label", "component": "Text", "text": "Recalculate" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "compound-interest",
+      "path": "/",
+      "value": {
+        "principal": 5000,
+        "finalBalance": 16035.68,
+        "interestEarned": 11035.68,
+        "schedule": [
+          { "year": "1", "balance": 5300.0, "interest": 300.0 },
+          { "year": "5", "balance": 6691.13, "interest": 378.74 },
+          { "year": "10", "balance": 8954.24, "interest": 506.84 },
+          { "year": "15", "balance": 11982.79, "interest": 678.27 },
+          { "year": "20", "balance": 16035.68, "interest": 907.68 }
+        ],
+        "whatIf": { "rate": 6, "years": 20 }
+      }
+    }
+  }
+]

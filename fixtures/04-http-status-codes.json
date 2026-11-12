@@ -1,0 +1,658 @@
+{
+  "id": "04-http-status-codes",
+  "index": 4,
+  "title": "HTTP status codes",
+  "category": "answer",
+  "prompt": "What do the HTTP status code classes mean? Give the most common codes in each.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## HTTP status code classes\n\nEvery HTTP response starts with a three-digit status code. The **first digit** tells you the class of outcome; the other two narrow it down.\n\n| Class | Meaning | Who should act |\n| --- | --- | --- |\n| **1xx** Informational | Request received, keep going | Nobody, it is interim |\n| **2xx** Success | The request worked | Nobody |\n| **3xx** Redirection | Look somewhere else | The client follows the redirect |\n| **4xx** Client error | The request was wrong | Fix the request |\n| **5xx** Server error | The server failed on a valid request | Fix (or wait for) the server |\n\n### 1xx Informational\n\n- `100 Continue` — the server got the headers; the client may send the body.\n- `101 Switching Protocols` — the connection is being upgraded, for example to WebSocket.\n\n### 2xx Success\n\n- `200 OK` — the standard success response, with a body.\n- `201 Created` — a new resource was created, typically after `POST`.\n- `204 No Content` — success with nothing to return, common for `DELETE`.\n\n### 3xx Redirection\n\n- `301 Moved Permanently` — the resource has a new permanent URL; update links.\n- `302 Found` — temporary redirect; keep using the original URL.\n- `304 Not Modified` — the cached copy is still valid; no body is sent.\n\n### 4xx Client error\n\n- `400 Bad Request` — malformed syntax or invalid parameters.\n- `401 Unauthorized` — not authenticated; log in or send credentials.\n- `403 Forbidden` — authenticated, but not allowed.\n- `404 Not Found` — nothing exists at this URL.\n- `429 Too Many Requests` — rate limited; slow down and retry later.\n\n### 5xx Server error\n\n- `500 Internal Server Error` — an unhandled failure on the server.\n- `502 Bad Gateway` — a proxy got an invalid response from the upstream server.\n- `503 Service Unavailable` — overloaded or down for maintenance; usually temporary.\n- `504 Gateway Timeout` — a proxy gave up waiting for the upstream server.\n\n**Rule of thumb:** 4xx means retrying the same request will fail again until you change it; 5xx means the same request may succeed later.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "http-status-codes",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "http-status-codes",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "intro",
+                "classes",
+                "rule-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "HTTP status code classes"
+            },
+            {
+              "id": "intro",
+              "component": "Text",
+              "text": "The first digit of the three-digit code tells you the class of outcome. The other two narrow it down."
+            },
+            {
+              "id": "classes",
+              "component": "List",
+              "children": {
+                "componentId": "class-card",
+                "path": "/classes"
+              }
+            },
+            {
+              "id": "class-card",
+              "component": "Card",
+              "child": "class-col"
+            },
+            {
+              "id": "class-col",
+              "component": "Column",
+              "children": [
+                "class-head",
+                "class-meaning",
+                "class-divider",
+                "class-codes"
+              ]
+            },
+            {
+              "id": "class-head",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "class-range",
+                "class-name"
+              ]
+            },
+            {
+              "id": "class-range",
+              "component": "Text",
+              "variant": "h3",
+              "text": {
+                "path": "range"
+              }
+            },
+            {
+              "id": "class-name",
+              "component": "Text",
+              "variant": "h5",
+              "weight": 1,
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "class-meaning",
+              "component": "Text",
+              "text": {
+                "path": "meaning"
+              }
+            },
+            {
+              "id": "class-divider",
+              "component": "Divider"
+            },
+            {
+              "id": "class-codes",
+              "component": "List",
+              "children": {
+                "componentId": "code-row",
+                "path": "codes"
+              }
+            },
+            {
+              "id": "code-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "code-number",
+                "code-col"
+              ]
+            },
+            {
+              "id": "code-number",
+              "component": "Text",
+              "variant": "h5",
+              "weight": 1,
+              "text": {
+                "path": "code"
+              }
+            },
+            {
+              "id": "code-col",
+              "component": "Column",
+              "weight": 5,
+              "children": [
+                "code-name",
+                "code-desc"
+              ]
+            },
+            {
+              "id": "code-name",
+              "component": "Text",
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "code-desc",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "desc"
+              }
+            },
+            {
+              "id": "rule-card",
+              "component": "Card",
+              "child": "rule-row"
+            },
+            {
+              "id": "rule-row",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "rule-icon",
+                "rule-text"
+              ]
+            },
+            {
+              "id": "rule-icon",
+              "component": "Icon",
+              "name": "info"
+            },
+            {
+              "id": "rule-text",
+              "component": "Text",
+              "weight": 1,
+              "text": "**Rule of thumb:** a 4xx will fail again until you change the request. A 5xx may succeed if you retry later."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "http-status-codes",
+          "path": "/",
+          "value": {
+            "classes": [
+              {
+                "range": "1xx",
+                "name": "Informational",
+                "meaning": "Request received, keep going. These are interim responses.",
+                "codes": [
+                  {
+                    "code": "100",
+                    "name": "Continue",
+                    "desc": "Headers received; the client may send the body."
+                  },
+                  {
+                    "code": "101",
+                    "name": "Switching Protocols",
+                    "desc": "The connection is being upgraded, for example to WebSocket."
+                  }
+                ]
+              },
+              {
+                "range": "2xx",
+                "name": "Success",
+                "meaning": "The request was received, understood and accepted.",
+                "codes": [
+                  {
+                    "code": "200",
+                    "name": "OK",
+                    "desc": "The standard success response, with a body."
+                  },
+                  {
+                    "code": "201",
+                    "name": "Created",
+                    "desc": "A new resource was created, typically after POST."
+                  },
+                  {
+                    "code": "204",
+                    "name": "No Content",
+                    "desc": "Success with nothing to return, common for DELETE."
+                  }
+                ]
+              },
+              {
+                "range": "3xx",
+                "name": "Redirection",
+                "meaning": "The client must look somewhere else to finish the request.",
+                "codes": [
+                  {
+                    "code": "301",
+                    "name": "Moved Permanently",
+                    "desc": "The resource has a new permanent URL; update links."
+                  },
+                  {
+                    "code": "302",
+                    "name": "Found",
+                    "desc": "Temporary redirect; keep using the original URL."
+                  },
+                  {
+                    "code": "304",
+                    "name": "Not Modified",
+                    "desc": "The cached copy is still valid; no body is sent."
+                  }
+                ]
+              },
+              {
+                "range": "4xx",
+                "name": "Client error",
+                "meaning": "The request itself is wrong. Fix it before retrying.",
+                "codes": [
+                  {
+                    "code": "400",
+                    "name": "Bad Request",
+                    "desc": "Malformed syntax or invalid parameters."
+                  },
+                  {
+                    "code": "401",
+                    "name": "Unauthorized",
+                    "desc": "Not authenticated; log in or send credentials."
+                  },
+                  {
+                    "code": "403",
+                    "name": "Forbidden",
+                    "desc": "Authenticated, but not allowed."
+                  },
+                  {
+                    "code": "404",
+                    "name": "Not Found",
+                    "desc": "Nothing exists at this URL."
+                  },
+                  {
+                    "code": "429",
+                    "name": "Too Many Requests",
+                    "desc": "Rate limited; slow down and retry later."
+                  }
+                ]
+              },
+              {
+                "range": "5xx",
+                "name": "Server error",
+                "meaning": "The server failed to fulfil a valid request.",
+                "codes": [
+                  {
+                    "code": "500",
+                    "name": "Internal Server Error",
+                    "desc": "An unhandled failure on the server."
+                  },
+                  {
+                    "code": "502",
+                    "name": "Bad Gateway",
+                    "desc": "A proxy got an invalid response from upstream."
+                  },
+                  {
+                    "code": "503",
+                    "name": "Service Unavailable",
+                    "desc": "Overloaded or down for maintenance; usually temporary."
+                  },
+                  {
+                    "code": "504",
+                    "name": "Gateway Timeout",
+                    "desc": "A proxy gave up waiting for upstream."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>HTTP status codes</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #e6edf3; background: #0d1117; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #9da7b3; }\n  input[type=search] { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #30363d; background: #161b22; color: inherit; font: inherit; }\n  input[type=search]:focus { outline: 2px solid #388bfd; border-color: transparent; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }\n  .chip { border: 1px solid #30363d; background: #161b22; color: #9da7b3; border-radius: 999px; padding: 4px 10px; font: 600 12px ui-monospace, Menlo, monospace; cursor: pointer; }\n  .chip.on { color: #0d1117; border-color: transparent; }\n  .c1 { --c: #8b949e; } .c2 { --c: #3fb950; } .c3 { --c: #58a6ff; } .c4 { --c: #d29922; } .c5 { --c: #f85149; }\n  .chip.on { background: var(--c); }\n  .group h2 { font-size: 13px; margin: 14px 0 2px; color: var(--c); font-family: ui-monospace, Menlo, monospace; }\n  .group p.meaning { margin: 0 0 6px; color: #9da7b3; font-size: 12.5px; }\n  .code { display: block; width: 100%; text-align: left; background: #161b22; border: 1px solid #30363d; border-left: 3px solid var(--c); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; color: inherit; font: inherit; cursor: pointer; }\n  .code:hover { border-color: #484f58; border-left-color: var(--c); }\n  .code b { font-family: ui-monospace, Menlo, monospace; color: var(--c); margin-right: 8px; }\n  .code .more { display: none; margin-top: 6px; color: #9da7b3; font-size: 12.5px; }\n  .code.open .more { display: block; }\n  .code .fix { color: #e6edf3; }\n  .empty { color: #9da7b3; padding: 20px 0; text-align: center; }\n  .foot { margin-top: 14px; padding: 10px; border: 1px dashed #30363d; border-radius: 8px; color: #9da7b3; font-size: 12.5px; }\n</style>\n</head>\n<body>\n  <h1>HTTP status codes</h1>\n  <p class=\"lead\">The first digit is the class. Search by number or name, filter by class, and tap a code for what to do about it.</p>\n\n  <input id=\"q\" type=\"search\" placeholder=\"Try 404, gateway, redirect…\" aria-label=\"Search status codes\">\n  <div class=\"chips\" id=\"chips\"></div>\n  <div id=\"list\"></div>\n  <div class=\"foot\"><b>Rule of thumb:</b> a 4xx fails again until you change the request; a 5xx may succeed if you retry later.</div>\n\n<script>\n(function () {\n  var classes = {\n    1: { name: 'Informational', meaning: 'Request received, keep going. Interim responses.' },\n    2: { name: 'Success', meaning: 'The request was received, understood and accepted.' },\n    3: { name: 'Redirection', meaning: 'The client must look somewhere else to finish.' },\n    4: { name: 'Client error', meaning: 'The request itself is wrong. Fix it before retrying.' },\n    5: { name: 'Server error', meaning: 'The server failed to fulfil a valid request.' }\n  };\n  var codes = [\n    { code: 100, name: 'Continue', desc: 'Headers received; the client may send the body.', fix: 'Nothing to do. Clients that sent \"Expect: 100-continue\" now upload the body.' },\n    { code: 101, name: 'Switching Protocols', desc: 'The connection is being upgraded, for example to WebSocket.', fix: 'Nothing to do. Speak the new protocol on the same connection.' },\n    { code: 200, name: 'OK', desc: 'The standard success response, with a body.', fix: 'Use the response body.' },\n    { code: 201, name: 'Created', desc: 'A new resource was created, typically after POST.', fix: 'Read the Location header for the new resource URL.' },\n    { code: 204, name: 'No Content', desc: 'Success with nothing to return, common for DELETE.', fix: 'Do not try to parse a body; there is none.' },\n    { code: 301, name: 'Moved Permanently', desc: 'The resource has a new permanent URL.', fix: 'Follow the Location header and update stored links.' },\n    { code: 302, name: 'Found', desc: 'Temporary redirect.', fix: 'Follow the Location header but keep using the original URL next time.' },\n    { code: 304, name: 'Not Modified', desc: 'The cached copy is still valid; no body is sent.', fix: 'Serve the response from your cache.' },\n    { code: 400, name: 'Bad Request', desc: 'Malformed syntax or invalid parameters.', fix: 'Check the JSON, query string and required fields.' },\n    { code: 401, name: 'Unauthorized', desc: 'Not authenticated.', fix: 'Log in or send a valid token, then retry.' },\n    { code: 403, name: 'Forbidden', desc: 'Authenticated, but not allowed.', fix: 'Retrying will not help; you need different permissions.' },\n    { code: 404, name: 'Not Found', desc: 'Nothing exists at this URL.', fix: 'Check the path and the ID. The resource may have been deleted.' },\n    { code: 429, name: 'Too Many Requests', desc: 'Rate limited.', fix: 'Wait for the time in the Retry-After header, then back off.' },\n    { code: 500, name: 'Internal Server Error', desc: 'An unhandled failure on the server.', fix: 'Not your fault. Retry later and report it with the request ID.' },\n    { code: 502, name: 'Bad Gateway', desc: 'A proxy got an invalid response from upstream.', fix: 'Usually a deploy or crash upstream. Retry shortly.' },\n    { code: 503, name: 'Service Unavailable', desc: 'Overloaded or down for maintenance.', fix: 'Retry with backoff; honour Retry-After if present.' },\n    { code: 504, name: 'Gateway Timeout', desc: 'A proxy gave up waiting for upstream.', fix: 'Retry; if it persists the upstream service is too slow.' }\n  ];\n\n  var active = { 1: true, 2: true, 3: true, 4: true, 5: true };\n  var open = {};\n  var chips = document.getElementById('chips');\n  var list = document.getElementById('list');\n  var q = document.getElementById('q');\n\n  function el(tag, cls, text) {\n    var n = document.createElement(tag);\n    if (cls) { n.className = cls; }\n    if (text !== undefined) { n.textContent = text; }\n    return n;\n  }\n\n  [1, 2, 3, 4, 5].forEach(function (c) {\n    var chip = el('button', 'chip on c' + c, c + 'xx ' + classes[c].name);\n    chip.type = 'button';\n    chip.setAttribute('data-class', String(c));\n    chip.setAttribute('aria-pressed', 'true');\n    chips.appendChild(chip);\n  });\n\n  function render() {\n    var term = q.value.trim().toLowerCase();\n    list.textContent = '';\n    var shown = 0;\n    [1, 2, 3, 4, 5].forEach(function (c) {\n      if (!active[c]) { return; }\n      var matches = codes.filter(function (x) {\n        if (Math.floor(x.code / 100) !== c) { return false; }\n        if (!term) { return true; }\n        return String(x.code).indexOf(term) === 0 || (x.name + ' ' + x.desc).toLowerCase().indexOf(term) !== -1;\n      });\n      if (!matches.length) { return; }\n      var group = el('section', 'group c' + c);\n      group.appendChild(el('h2', '', c + 'xx · ' + classes[c].name));\n      group.appendChild(el('p', 'meaning', classes[c].meaning));\n      matches.forEach(function (x) {\n        var b = el('button', 'code' + (open[x.code] ? ' open' : ''));\n        b.type = 'button';\n        b.setAttribute('data-code', String(x.code));\n        b.setAttribute('aria-expanded', open[x.code] ? 'true' : 'false');\n        b.appendChild(el('b', '', String(x.code)));\n        b.appendChild(el('span', '', x.name));\n        var more = el('div', 'more');\n        more.appendChild(el('div', '', x.desc));\n        more.appendChild(el('div', 'fix', 'What to do: ' + x.fix));\n        b.appendChild(more);\n        group.appendChild(b);\n        shown += 1;\n      });\n      list.appendChild(group);\n    });\n    if (!shown) { list.appendChild(el('p', 'empty', 'No codes match. Try a number like 404 or a word like \"timeout\".')); }\n  }\n\n  chips.addEventListener('click', function (e) {\n    var t = e.target;\n    if (!t.getAttribute || !t.getAttribute('data-class')) { return; }\n    var c = parseInt(t.getAttribute('data-class'), 10);\n    active[c] = !active[c];\n    t.classList.toggle('on', active[c]);\n    t.setAttribute('aria-pressed', active[c] ? 'true' : 'false');\n    render();\n  });\n  list.addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== list && !(t.getAttribute && t.getAttribute('data-code'))) { t = t.parentNode; }\n    if (!t || t === list) { return; }\n    var code = t.getAttribute('data-code');\n    open[code] = !open[code];\n    render();\n  });\n  q.addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_http_status_codes_04",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the five HTTP status code classes as a read-only reference table (class, meaning, common codes). Then ask whether the user is looking at a specific code right now, where they saw it, and whether they want steps to fix it.",
+        "data": {
+          "classes": [
+            {
+              "class": "1xx Informational",
+              "meaning": "Request received, keep going",
+              "common": "100, 101"
+            },
+            {
+              "class": "2xx Success",
+              "meaning": "The request worked",
+              "common": "200, 201, 204"
+            },
+            {
+              "class": "3xx Redirection",
+              "meaning": "Look somewhere else",
+              "common": "301, 302, 304"
+            },
+            {
+              "class": "4xx Client error",
+              "meaning": "The request was wrong",
+              "common": "400, 401, 403, 404, 429"
+            },
+            {
+              "class": "5xx Server error",
+              "meaning": "The server failed",
+              "common": "500, 502, 503, 504"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer",
+              "enum": [
+                100,
+                101,
+                200,
+                201,
+                204,
+                301,
+                302,
+                304,
+                400,
+                401,
+                403,
+                404,
+                429,
+                500,
+                502,
+                503,
+                504
+              ]
+            },
+            "seenIn": {
+              "type": "string",
+              "enum": [
+                "browser",
+                "api-client",
+                "server-logs",
+                "just-curious"
+              ]
+            },
+            "wantFixSteps": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "seenIn",
+            "wantFixSteps"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "classes": {
+            "type": "array",
+            "title": "Status code classes",
+            "items": {
+              "type": "object",
+              "properties": {
+                "class": {
+                  "type": "string",
+                  "title": "Class"
+                },
+                "meaning": {
+                  "type": "string",
+                  "title": "Meaning"
+                },
+                "common": {
+                  "type": "string",
+                  "title": "Common codes"
+                }
+              }
+            }
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code you are looking at (optional)",
+            "oneOf": [
+              {
+                "const": 100,
+                "title": "100 Continue"
+              },
+              {
+                "const": 101,
+                "title": "101 Switching Protocols"
+              },
+              {
+                "const": 200,
+                "title": "200 OK"
+              },
+              {
+                "const": 201,
+                "title": "201 Created"
+              },
+              {
+                "const": 204,
+                "title": "204 No Content"
+              },
+              {
+                "const": 301,
+                "title": "301 Moved Permanently"
+              },
+              {
+                "const": 302,
+                "title": "302 Found"
+              },
+              {
+                "const": 304,
+                "title": "304 Not Modified"
+              },
+              {
+                "const": 400,
+                "title": "400 Bad Request"
+              },
+              {
+                "const": 401,
+                "title": "401 Unauthorized"
+              },
+              {
+                "const": 403,
+                "title": "403 Forbidden"
+              },
+              {
+                "const": 404,
+                "title": "404 Not Found"
+              },
+              {
+                "const": 429,
+                "title": "429 Too Many Requests"
+              },
+              {
+                "const": 500,
+                "title": "500 Internal Server Error"
+              },
+              {
+                "const": 502,
+                "title": "502 Bad Gateway"
+              },
+              {
+                "const": 503,
+                "title": "503 Service Unavailable"
+              },
+              {
+                "const": 504,
+                "title": "504 Gateway Timeout"
+              }
+            ]
+          },
+          "seenIn": {
+            "type": "string",
+            "title": "Where did you see it?",
+            "oneOf": [
+              {
+                "const": "browser",
+                "title": "In the browser"
+              },
+              {
+                "const": "api-client",
+                "title": "In an API client or my code"
+              },
+              {
+                "const": "server-logs",
+                "title": "In server logs"
+              },
+              {
+                "const": "just-curious",
+                "title": "Nowhere, just curious"
+              }
+            ]
+          },
+          "wantFixSteps": {
+            "type": "boolean",
+            "title": "Include steps to fix it"
+          }
+        },
+        "required": [
+          "seenIn",
+          "wantFixSteps"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "The first digit tells you the class of outcome"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/classes",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Debugging a specific response?",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/code"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/seenIn",
+                "options": {
+                  "format": "radio"
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/wantFixSteps"
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "classes": [
+          {
+            "class": "1xx Informational",
+            "meaning": "Request received, keep going",
+            "common": "100, 101"
+          },
+          {
+            "class": "2xx Success",
+            "meaning": "The request worked",
+            "common": "200, 201, 204"
+          },
+          {
+            "class": "3xx Redirection",
+            "meaning": "Look somewhere else",
+            "common": "301, 302, 304"
+          },
+          {
+            "class": "4xx Client error",
+            "meaning": "The request was wrong",
+            "common": "400, 401, 403, 404, 429"
+          },
+          {
+            "class": "5xx Server error",
+            "meaning": "The server failed",
+            "common": "500, 502, 503, 504"
+          }
+        ],
+        "seenIn": "just-curious",
+        "wantFixSteps": false
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A reference list is what Markdown is best at: complete, scannable and copyable, though you have to scroll to find a code.",
+    "a2ui": "Nested data-bound lists express class cards with code rows cleanly; there is no colour coding per class and no way to search or collapse them.",
+    "html": "Search, class filter chips and tap-to-expand fixes in a custom dark theme; the most useful as a lookup tool and the most code to get there.",
+    "agui": "The reference collapses into a five-row disabled table and the tool call has to invent a question (which code are you debugging?) to justify a form."
+  }
+}

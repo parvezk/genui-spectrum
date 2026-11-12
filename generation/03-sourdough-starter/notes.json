@@ -1,0 +1,6 @@
+{
+  "text": "A table of days plus troubleshooting bullets reads well and prints well, but it cannot remember which day you are on.",
+  "a2ui": "A data-bound list of cards with a checkbox per day and a reminder button fits the catalog nicely; it cannot show progress or what the jar should look like.",
+  "html": "Day picker, progress bar, an SVG jar that rises with activity and a feeding calculator, all custom; ticked days are lost on reload because the sandbox has no storage.",
+  "agui": "Turns the how-to into a scheduling form, which is useful, but the instructions themselves are squeezed into a disabled two-column table with no room for the tips."
+}

@@ -1,0 +1,6 @@
+{
+  "text": "The trace table, growth table and code sample explain it fully; the reader replays the halving in their head.",
+  "a2ui": "A horizontal list shows the array and bound cards show each step, but it cannot highlight or grey out cells, so the halving is described and not shown.",
+  "html": "A stepper that greys out discarded halves, lets you search for any value and compares against a linear scan, plus a slider for how log n grows; fully bespoke.",
+  "agui": "The trace fits a table well, but as six disabled input columns it is hard to read, and the form can only request another trace and never run one."
+}
