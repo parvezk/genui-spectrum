@@ -1,0 +1,155 @@
+{
+  "description": "The 25 prompts every approach receives verbatim. Data a rendering needs is in the prompt itself, so all four approaches work from the same facts.",
+  "prompts": [
+    {
+      "id": "01-tcp-handshake",
+      "category": "answer",
+      "title": "TCP three-way handshake",
+      "prompt": "Explain how the TCP three-way handshake works."
+    },
+    {
+      "id": "02-compound-interest",
+      "category": "answer",
+      "title": "Compound interest",
+      "prompt": "How does compound interest work? Show what $5,000 grows to at 6% a year, compounded annually, over 20 years."
+    },
+    {
+      "id": "03-sourdough-starter",
+      "category": "answer",
+      "title": "Sourdough starter",
+      "prompt": "How do I make a sourdough starter from scratch? Give me the day-by-day plan."
+    },
+    {
+      "id": "04-http-status-codes",
+      "category": "answer",
+      "title": "HTTP status codes",
+      "prompt": "What do the HTTP status code classes mean? Give the most common codes in each."
+    },
+    {
+      "id": "05-binary-search",
+      "category": "answer",
+      "title": "Binary search",
+      "prompt": "Explain binary search and why it runs in O(log n). Use the sorted list 3, 8, 12, 17, 21, 26, 30, 34, 41, 47, 52 and search for 34."
+    },
+    {
+      "id": "06-flat-tire",
+      "category": "answer",
+      "title": "Changing a flat tire",
+      "prompt": "How do I change a flat tire safely? Give me a checklist I can follow at the roadside."
+    },
+    {
+      "id": "07-rest-vs-graphql",
+      "category": "comparison",
+      "title": "REST vs GraphQL",
+      "prompt": "Compare REST and GraphQL for the backend of a mobile app."
+    },
+    {
+      "id": "08-phone-plans",
+      "category": "comparison",
+      "title": "Phone plans",
+      "prompt": "Compare these phone plans and recommend one for someone who uses about 12 GB a month and takes two one-week trips abroad a year. Basic: $25/month, 5 GB, extra data $10 per GB, no roaming. Plus: $40/month, 20 GB, roaming $5 per day. Max: $60/month, unlimited data, roaming included."
+    },
+    {
+      "id": "09-sorting-algorithms",
+      "category": "comparison",
+      "title": "Sorting algorithms",
+      "prompt": "Compare bubble sort, merge sort and quicksort: time complexity, space, stability, and when to use each."
+    },
+    {
+      "id": "10-ev-vs-gas",
+      "category": "comparison",
+      "title": "EV vs gas car cost",
+      "prompt": "Compare the five-year cost of owning an EV versus a gas car. EV: $38,000 purchase, $0.04 per mile for energy, $400 a year maintenance. Gas: $30,000 purchase, $0.13 per mile for fuel, $900 a year maintenance. I drive 12,000 miles a year."
+    },
+    {
+      "id": "11-scrum-kanban-waterfall",
+      "category": "comparison",
+      "title": "Scrum vs Kanban vs Waterfall",
+      "prompt": "Compare Scrum, Kanban and Waterfall. Which fits a 6-person team maintaining a live product with frequent urgent bug fixes?"
+    },
+    {
+      "id": "12-weekend-cities",
+      "category": "comparison",
+      "title": "Weekend city trip",
+      "prompt": "Compare Lisbon, Prague and Copenhagen for a 3-night weekend trip in May. Return flights: $180, $140, $210. Hotel per night: $120, $90, $190. Food per day (3 days): $45, $35, $70. Average high: 22°C, 19°C, 16°C. I care most about cost, then weather."
+    },
+    {
+      "id": "13-monthly-revenue",
+      "category": "data",
+      "title": "Monthly revenue chart",
+      "prompt": "Show monthly revenue for 2024 as a chart and call out the best and worst months. In $k: Jan 42, Feb 38, Mar 51, Apr 47, May 55, Jun 61, Jul 58, Aug 49, Sep 63, Oct 67, Nov 72, Dec 80."
+    },
+    {
+      "id": "14-weather-week",
+      "category": "data",
+      "title": "7-day forecast",
+      "prompt": "Show the 7-day forecast for Lisbon (high/low in °C) and tell me the best day for the beach. Mon sunny 24/16, Tue sunny 26/17, Wed partly cloudy 23/16, Thu rain 19/14, Fri rain 18/13, Sat cloudy 20/14, Sun sunny 23/15."
+    },
+    {
+      "id": "15-task-board",
+      "category": "data",
+      "title": "Sprint task board",
+      "prompt": "Show these sprint tasks as a board grouped by status, with points per column. To do: Add password reset (Maya, 3), Write API docs (Tom, 2). In progress: Checkout redesign (Priya, 8), Fix login timeout (Maya, 3), Upgrade Postgres (Tom, 5). Review: Search filters (Leo, 5). Done: Dark mode (Priya, 5), Rate limiting (Leo, 3)."
+    },
+    {
+      "id": "16-expense-breakdown",
+      "category": "data",
+      "title": "Expense breakdown",
+      "prompt": "Break down my monthly spending by category and show each one's share of the total. Rent $1,800, Groceries $520, Dining out $340, Transport $210, Other $195, Utilities $160, Subscriptions $75."
+    },
+    {
+      "id": "17-service-health",
+      "category": "data",
+      "title": "Service health dashboard",
+      "prompt": "Show a health dashboard for these services and flag anything breaching the SLO (p95 latency under 300 ms, error rate under 1%). api-gateway: p95 120 ms, errors 0.2%, uptime 99.98%. auth: 85 ms, 0.1%, 99.99%. payments: 340 ms, 1.8%, 99.71%. search: 210 ms, 0.6%, 99.90%. notifications: 95 ms, 0.3%, 99.95%."
+    },
+    {
+      "id": "18-team-directory",
+      "category": "data",
+      "title": "Team directory",
+      "prompt": "Show the team directory so I can search and sort it. Ana Ruiz (Engineering, Lisbon), Ben Okafor (Design, London), Chloe Tan (Engineering, Singapore), Dev Patel (Product, London), Elena Rossi (Marketing, Milan), Farid Haddad (Engineering, Berlin), Grace Kim (Design, Seoul), Hugo Martin (Sales, Paris)."
+    },
+    {
+      "id": "19-book-table",
+      "category": "input",
+      "title": "Restaurant booking",
+      "prompt": "Book me a table for dinner at Luigi's Trattoria. They take reservations from 17:30 to 21:30 in 30-minute slots, for 1 to 8 people, indoors or on the terrace."
+    },
+    {
+      "id": "20-flight-filters",
+      "category": "input",
+      "title": "Flight filters",
+      "prompt": "I'm choosing a flight from New York to Lisbon. Let me filter by max price, stops and airline, then pick one. TAP TP202 nonstop 18:30 $640. United UA64 nonstop 20:15 $710. Delta DL272 1 stop 16:05 $520. Iberia IB6252 1 stop 21:40 $480. Air France AF11 1 stop 19:00 $560. TAP TP210 nonstop 22:55 $590."
+    },
+    {
+      "id": "21-bug-report",
+      "category": "input",
+      "title": "Bug report form",
+      "prompt": "I want to report a bug in the mobile app. Collect what the team needs to triage it."
+    },
+    {
+      "id": "22-offsite-rsvp",
+      "category": "input",
+      "title": "Offsite RSVP",
+      "prompt": "Collect my RSVP for the team offsite in Porto on 12–13 September: whether I'm coming, and if so my dietary needs, whether I need a hotel room, and my T-shirt size."
+    },
+    {
+      "id": "23-notification-prefs",
+      "category": "input",
+      "title": "Notification preferences",
+      "prompt": "Let me set my notification preferences: email, push and SMS for each of mentions, direct messages, weekly digest and product updates, plus quiet hours."
+    },
+    {
+      "id": "24-split-bill",
+      "category": "input",
+      "title": "Split the bill",
+      "prompt": "Help me split a $186.40 dinner bill between 4 people with a tip."
+    },
+    {
+      "id": "25-csat-survey",
+      "category": "input",
+      "title": "Support satisfaction survey",
+      "prompt": "Give me a short satisfaction survey for a customer who just finished a support chat."
+    }
+  ]
+}
