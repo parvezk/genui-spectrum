@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service health</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px; font: 13px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #c9d1d9; background: #0b0f14; }
+  h1 { font: 700 17px system-ui, sans-serif; margin: 0 0 10px; color: #f0f6fc; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .tile { background: #11161d; border: 1px solid #222a35; border-radius: 8px; padding: 8px 10px; }
+  .tile small { display: block; color: #7d8590; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+  .tile b { font-size: 20px; color: #f0f6fc; }
+  .tile.bad b { color: #ff7b72; } .tile.good b { color: #3fb950; }
+  .panel { background: #11161d; border: 1px solid #222a35; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+  .panel h2 { font: 600 12px system-ui, sans-serif; margin: 0 0 8px; color: #7d8590; text-transform: uppercase; letter-spacing: .06em; }
+  .slo { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin-bottom: 6px; }
+  .slo input { grid-column: 1 / -1; width: 100%; accent-color: #58a6ff; }
+  .slo output { color: #58a6ff; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: right; font-weight: 500; color: #7d8590; font-size: 11px; padding: 4px; cursor: pointer; white-space: nowrap; user-select: none; }
+  th:first-child, td:first-child { text-align: left; }
+  th.sorted { color: #f0f6fc; }
+  td { padding: 7px 4px; border-top: 1px solid #222a35; text-align: right; vertical-align: middle; }
+  td .name { color: #f0f6fc; font-weight: 600; display: block; }
+  .pill { display: inline-block; font-size: 10px; padding: 0 6px; border-radius: 999px; font-weight: 700; }
+  .pill.ok { background: #12261e; color: #3fb950; } .pill.warn { background: #2e2a12; color: #d29922; } .pill.bad { background: #3a1616; color: #ff7b72; }
+  .over { color: #ff7b72; font-weight: 700; }
+  .near { color: #d29922; }
+  .gauge { position: relative; height: 4px; background: #222a35; border-radius: 2px; margin-top: 3px; min-width: 50px; }
+  .gauge i { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; background: #3fb950; }
+  .gauge i.near { background: #d29922; } .gauge i.over { background: #ff7b72; }
+  .gauge u { position: absolute; top: -3px; width: 1px; height: 10px; background: #f0f6fc; }
+  .note { color: #7d8590; font: 12px system-ui, sans-serif; margin: 0; }
+</style>
+</head>
+<body>
+  <h1>Service health</h1>
+
+  <div class="tiles">
+    <div class="tile bad" id="tBad"><small>Breaching SLO</small><b id="breaching"></b></div>
+    <div class="tile good"><small>Within SLO</small><b id="healthy"></b></div>
+    <div class="tile"><small>Slowest p95</small><b id="slowest"></b></div>
+    <div class="tile"><small>Highest error rate</small><b id="worstErr"></b></div>
+  </div>
+
+  <div class="panel">
+    <h2>SLO thresholds</h2>
+    <div class="slo"><label for="p95">p95 latency under</label><output id="p95Out"></output><input id="p95" type="range" min="100" max="500" step="10" value="300"></div>
+    <div class="slo"><label for="err">Error rate under</label><output id="errOut"></output><input id="err" type="range" min="0.2" max="3" step="0.1" value="1"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Services (click a column to sort)</h2>
+    <table>
+      <thead><tr>
+        <th data-key="name">service</th><th data-key="p95">p95 ms</th><th data-key="err">err %</th><th data-key="up">uptime %</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="note" id="note"></p>
+
+<script>
+(function () {
+  var services = [
+    { name: 'api-gateway', p95: 120, err: 0.2, up: 99.98 },
+    { name: 'auth', p95: 85, err: 0.1, up: 99.99 },
+    { name: 'payments', p95: 340, err: 1.8, up: 99.71 },
+    { name: 'search', p95: 210, err: 0.6, up: 99.90 },
+    { name: 'notifications', p95: 95, err: 0.3, up: 99.95 }
+  ];
+  var sortKey = 'p95';
+  var sortDir = -1;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined) { n.textContent = text; }
+    return n;
+  }
+  function level(value, limit) {
+    if (value >= limit) { return 'over'; }
+    if (value >= limit * 0.6) { return 'near'; }
+    return '';
+  }
+  function gauge(value, limit, scaleMax) {
+    var g = el('div', 'gauge');
+    var fill = el('i', level(value, limit));
+    fill.style.width = Math.min(100, value / scaleMax * 100) + '%';
+    var mark = el('u');
+    mark.style.left = Math.min(100, limit / scaleMax * 100) + '%';
+    g.appendChild(fill); g.appendChild(mark);
+    return g;
+  }
+
+  function render() {
+    var p95Limit = parseInt($('p95').value, 10);
+    var errLimit = parseFloat($('err').value);
+    $('p95Out').textContent = p95Limit + ' ms';
+    $('errOut').textContent = errLimit.toFixed(1) + '%';
+
+    var list = services.slice().sort(function (a, b) {
+      if (sortKey === 'name') { return a.name < b.name ? -sortDir : (a.name > b.name ? sortDir : 0); }
+      return (a[sortKey] - b[sortKey]) * sortDir;
+    });
+    var bad = [];
+    var body = $('rows');
+    body.textContent = '';
+    var p95Scale = Math.max(500, p95Limit);
+    var errScale = Math.max(3, errLimit);
+
+    list.forEach(function (s) {
+      var p95Level = level(s.p95, p95Limit);
+      var errLevel = level(s.err, errLimit);
+      var breach = p95Level === 'over' || errLevel === 'over';
+      var near = !breach && (p95Level === 'near' || errLevel === 'near');
+      if (breach) { bad.push(s.name); }
+
+      var tr = el('tr');
+      var c1 = el('td');
+      c1.appendChild(el('span', 'name', s.name));
+      c1.appendChild(el('span', 'pill ' + (breach ? 'bad' : (near ? 'warn' : 'ok')), breach ? 'BREACH' : (near ? 'WATCH' : 'OK')));
+      var c2 = el('td', p95Level, String(s.p95));
+      c2.appendChild(gauge(s.p95, p95Limit, p95Scale));
+      var c3 = el('td', errLevel, s.err.toFixed(1));
+      c3.appendChild(gauge(s.err, errLimit, errScale));
+      var c4 = el('td', '', s.up.toFixed(2));
+      [c1, c2, c3, c4].forEach(function (c) { tr.appendChild(c); });
+      body.appendChild(tr);
+    });
+
+    $('breaching').textContent = String(bad.length);
+    $('healthy').textContent = String(services.length - bad.length);
+    $('tBad').className = 'tile ' + (bad.length ? 'bad' : 'good');
+    var slow = services.reduce(function (a, b) { return b.p95 > a.p95 ? b : a; });
+    var errs = services.reduce(function (a, b) { return b.err > a.err ? b : a; });
+    $('slowest').textContent = slow.p95 + ' ms';
+    $('worstErr').textContent = errs.err.toFixed(1) + '%';
+    $('note').textContent = bad.length
+      ? 'Breaching: ' + bad.join(', ') + '. The white tick on each bar is the SLO limit.'
+      : 'Everything is within the SLO at these thresholds. The white tick on each bar is the limit.';
+
+    var heads = document.querySelectorAll('th');
+    for (var i = 0; i < heads.length; i++) {
+      var key = heads[i].getAttribute('data-key');
+      var base = heads[i].textContent.replace(/ [▲▼]$/, '');
+      heads[i].textContent = base + (key === sortKey ? (sortDir === 1 ? ' ▲' : ' ▼') : '');
+      heads[i].className = key === sortKey ? 'sorted' : '';
+    }
+  }
+
+  document.querySelector('thead').addEventListener('click', function (e) {
+    var key = e.target.getAttribute('data-key');
+    if (!key) { return; }
+    if (key === sortKey) { sortDir = -sortDir; }
+    else { sortKey = key; sortDir = key === 'name' || key === 'up' ? 1 : -1; }
+    render();
+  });
+  $('p95').addEventListener('input', render);
+  $('err').addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

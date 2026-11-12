@@ -1,0 +1,121 @@
+{
+  "toolCall": {
+    "id": "call_monthly_revenue_13",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show 2024 monthly revenue as a read-only table (month, revenue in $k, change vs previous month) with the best month (Dec, $80k) and worst month (Feb, $38k) called out. Then let the user choose a month to drill into, what to compare it with and how they want the follow-up delivered.",
+      "data": {
+        "unit": "USD thousands",
+        "best": { "month": "Dec", "revenue": 80 },
+        "worst": { "month": "Feb", "revenue": 38 },
+        "total": 683,
+        "months": [
+          { "month": "Jan", "revenue": 42, "change": "—" },
+          { "month": "Feb", "revenue": 38, "change": "−4 (worst)" },
+          { "month": "Mar", "revenue": 51, "change": "+13" },
+          { "month": "Apr", "revenue": 47, "change": "−4" },
+          { "month": "May", "revenue": 55, "change": "+8" },
+          { "month": "Jun", "revenue": 61, "change": "+6" },
+          { "month": "Jul", "revenue": 58, "change": "−3" },
+          { "month": "Aug", "revenue": 49, "change": "−9" },
+          { "month": "Sep", "revenue": 63, "change": "+14" },
+          { "month": "Oct", "revenue": 67, "change": "+4" },
+          { "month": "Nov", "revenue": 72, "change": "+5" },
+          { "month": "Dec", "revenue": 80, "change": "+8 (best)" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "focusMonth": { "type": "string", "enum": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+          "compareWith": { "type": "string", "enum": ["previous-month", "yearly-average", "best-month"] },
+          "deliverAs": { "type": "string", "enum": ["summary", "csv", "slide"] }
+        },
+        "required": ["focusMonth", "compareWith", "deliverAs"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "months": {
+          "type": "array",
+          "title": "Revenue by month ($k)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "month": { "type": "string", "title": "Month" },
+              "revenue": { "type": "number", "title": "Revenue" },
+              "change": { "type": "string", "title": "Change" }
+            }
+          }
+        },
+        "focusMonth": {
+          "type": "string",
+          "title": "Drill into",
+          "enum": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        },
+        "compareWith": {
+          "type": "string",
+          "title": "Compare with",
+          "oneOf": [
+            { "const": "previous-month", "title": "The previous month" },
+            { "const": "yearly-average", "title": "The yearly average ($56.9k)" },
+            { "const": "best-month", "title": "The best month (Dec)" }
+          ]
+        },
+        "deliverAs": {
+          "type": "string",
+          "title": "Send it as",
+          "oneOf": [
+            { "const": "summary", "title": "A short written summary" },
+            { "const": "csv", "title": "A CSV file" },
+            { "const": "slide", "title": "A slide" }
+          ]
+        }
+      },
+      "required": ["focusMonth", "compareWith", "deliverAs"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Best: December, $80k. Worst: February, $38k. Total: $683k." },
+        { "type": "Control", "scope": "#/properties/months", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Look closer",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/focusMonth" },
+                { "type": "Control", "scope": "#/properties/compareWith" }
+              ]
+            },
+            { "type": "Control", "scope": "#/properties/deliverAs", "options": { "format": "radio" } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "months": [
+        { "month": "Jan", "revenue": 42, "change": "—" },
+        { "month": "Feb", "revenue": 38, "change": "−4 (worst)" },
+        { "month": "Mar", "revenue": 51, "change": "+13" },
+        { "month": "Apr", "revenue": 47, "change": "−4" },
+        { "month": "May", "revenue": 55, "change": "+8" },
+        { "month": "Jun", "revenue": 61, "change": "+6" },
+        { "month": "Jul", "revenue": 58, "change": "−3" },
+        { "month": "Aug", "revenue": 49, "change": "−9" },
+        { "month": "Sep", "revenue": 63, "change": "+14" },
+        { "month": "Oct", "revenue": 67, "change": "+4" },
+        { "month": "Nov", "revenue": 72, "change": "+5" },
+        { "month": "Dec", "revenue": 80, "change": "+8 (best)" }
+      ],
+      "focusMonth": "Dec",
+      "compareWith": "previous-month",
+      "deliverAs": "summary"
+    }
+  }
+}

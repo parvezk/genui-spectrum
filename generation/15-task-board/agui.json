@@ -1,0 +1,91 @@
+{
+  "toolCall": {
+    "id": "call_task_board_15",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the eight sprint tasks grouped by status with points per column (To do 5, In progress 16, Review 5, Done 8; 34 in total). Let the user update each task's status, owner or points and return the updated list.",
+      "data": {
+        "pointsByStatus": { "todo": 5, "in-progress": 16, "review": 5, "done": 8 },
+        "tasks": [
+          { "title": "Add password reset", "owner": "Maya", "points": 3, "status": "todo" },
+          { "title": "Write API docs", "owner": "Tom", "points": 2, "status": "todo" },
+          { "title": "Checkout redesign", "owner": "Priya", "points": 8, "status": "in-progress" },
+          { "title": "Fix login timeout", "owner": "Maya", "points": 3, "status": "in-progress" },
+          { "title": "Upgrade Postgres", "owner": "Tom", "points": 5, "status": "in-progress" },
+          { "title": "Search filters", "owner": "Leo", "points": 5, "status": "review" },
+          { "title": "Dark mode", "owner": "Priya", "points": 5, "status": "done" },
+          { "title": "Rate limiting", "owner": "Leo", "points": 3, "status": "done" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string", "minLength": 1 },
+                "owner": { "type": "string", "enum": ["Maya", "Tom", "Priya", "Leo"] },
+                "points": { "type": "integer", "minimum": 1, "maximum": 13 },
+                "status": { "type": "string", "enum": ["todo", "in-progress", "review", "done"] }
+              },
+              "required": ["title", "owner", "points", "status"]
+            }
+          }
+        },
+        "required": ["tasks"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "title": "Sprint tasks",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string", "title": "Task", "minLength": 1 },
+              "owner": { "type": "string", "title": "Owner", "enum": ["Maya", "Tom", "Priya", "Leo"] },
+              "points": { "type": "integer", "title": "Pts", "minimum": 1, "maximum": 13 },
+              "status": {
+                "type": "string",
+                "title": "Status",
+                "oneOf": [
+                  { "const": "todo", "title": "To do" },
+                  { "const": "in-progress", "title": "In progress" },
+                  { "const": "review", "title": "Review" },
+                  { "const": "done", "title": "Done" }
+                ]
+              }
+            },
+            "required": ["title", "owner", "points", "status"]
+          }
+        }
+      },
+      "required": ["tasks"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "34 points this sprint: To do 5 · In progress 16 · Review 5 · Done 8" },
+        { "type": "Control", "scope": "#/properties/tasks", "options": { "showSortButtons": true } }
+      ]
+    },
+    "initialData": {
+      "tasks": [
+        { "title": "Add password reset", "owner": "Maya", "points": 3, "status": "todo" },
+        { "title": "Write API docs", "owner": "Tom", "points": 2, "status": "todo" },
+        { "title": "Checkout redesign", "owner": "Priya", "points": 8, "status": "in-progress" },
+        { "title": "Fix login timeout", "owner": "Maya", "points": 3, "status": "in-progress" },
+        { "title": "Upgrade Postgres", "owner": "Tom", "points": 5, "status": "in-progress" },
+        { "title": "Search filters", "owner": "Leo", "points": 5, "status": "review" },
+        { "title": "Dark mode", "owner": "Priya", "points": 5, "status": "done" },
+        { "title": "Rate limiting", "owner": "Leo", "points": 3, "status": "done" }
+      ]
+    }
+  }
+}

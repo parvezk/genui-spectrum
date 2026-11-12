@@ -1,0 +1,97 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "monthly-revenue",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "monthly-revenue",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "stats-top", "stats-bottom", "chart-card", "insight-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Monthly revenue, 2024" },
+
+        { "id": "stats-top", "component": "Row", "children": ["best-card", "worst-card"] },
+        { "id": "best-card", "component": "Card", "weight": 1, "child": "best-col" },
+        { "id": "best-col", "component": "Column", "children": ["best-label", "best-value", "best-note"] },
+        { "id": "best-label", "component": "Text", "variant": "caption", "text": "Best month" },
+        { "id": "best-value", "component": "Text", "variant": "h4", "text": "Dec · $80k" },
+        { "id": "best-note", "component": "Text", "variant": "caption", "text": "+$8k on November" },
+        { "id": "worst-card", "component": "Card", "weight": 1, "child": "worst-col" },
+        { "id": "worst-col", "component": "Column", "children": ["worst-label", "worst-value", "worst-note"] },
+        { "id": "worst-label", "component": "Text", "variant": "caption", "text": "Worst month" },
+        { "id": "worst-value", "component": "Text", "variant": "h4", "text": "Feb · $38k" },
+        { "id": "worst-note", "component": "Text", "variant": "caption", "text": "−$4k on January" },
+
+        { "id": "stats-bottom", "component": "Row", "children": ["total-card", "avg-card"] },
+        { "id": "total-card", "component": "Card", "weight": 1, "child": "total-col" },
+        { "id": "total-col", "component": "Column", "children": ["total-label", "total-value"] },
+        { "id": "total-label", "component": "Text", "variant": "caption", "text": "Total for the year" },
+        {
+          "id": "total-value",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatString", "args": { "value": "$${/totalK}k" }, "returnType": "string" }
+        },
+        { "id": "avg-card", "component": "Card", "weight": 1, "child": "avg-col" },
+        { "id": "avg-col", "component": "Column", "children": ["avg-label", "avg-value"] },
+        { "id": "avg-label", "component": "Text", "variant": "caption", "text": "Monthly average" },
+        {
+          "id": "avg-value",
+          "component": "Text",
+          "variant": "h4",
+          "text": { "call": "formatString", "args": { "value": "$${/averageK}k" }, "returnType": "string" }
+        },
+
+        { "id": "chart-card", "component": "Card", "child": "chart-col" },
+        { "id": "chart-col", "component": "Column", "children": ["chart-caption", "chart-rows"] },
+        { "id": "chart-caption", "component": "Text", "variant": "caption", "text": "Revenue by month. Each block is $4k." },
+        { "id": "chart-rows", "component": "List", "children": { "componentId": "month-row", "path": "/months" } },
+        { "id": "month-row", "component": "Row", "align": "center", "children": ["month-name", "month-bar", "month-value"] },
+        { "id": "month-name", "component": "Text", "weight": 1, "text": { "path": "month" } },
+        { "id": "month-bar", "component": "Text", "weight": 6, "text": { "path": "bar" } },
+        {
+          "id": "month-value",
+          "component": "Text",
+          "weight": 2,
+          "text": { "call": "formatString", "args": { "value": "$${revenue}k ${flag}" }, "returnType": "string" }
+        },
+
+        { "id": "insight-card", "component": "Card", "child": "insight-col" },
+        { "id": "insight-col", "component": "Column", "children": ["insight-title", "insight-1", "insight-2", "insight-3"] },
+        { "id": "insight-title", "component": "Text", "variant": "h5", "text": "What stands out" },
+        { "id": "insight-1", "component": "Text", "text": "Revenue almost doubled: **$42k in January to $80k in December** (+90%)." },
+        { "id": "insight-2", "component": "Text", "text": "The second half brought in **$389k against $294k** in the first, 32% more." },
+        { "id": "insight-3", "component": "Text", "text": "The only sharp dip was **August (−$9k)**, followed by the biggest jump of the year in September (+$14k)." }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "monthly-revenue",
+      "path": "/",
+      "value": {
+        "totalK": 683,
+        "averageK": 56.9,
+        "months": [
+          { "month": "Jan", "revenue": 42, "bar": "███████████", "flag": "" },
+          { "month": "Feb", "revenue": 38, "bar": "██████████", "flag": "▼" },
+          { "month": "Mar", "revenue": 51, "bar": "█████████████", "flag": "" },
+          { "month": "Apr", "revenue": 47, "bar": "████████████", "flag": "" },
+          { "month": "May", "revenue": 55, "bar": "██████████████", "flag": "" },
+          { "month": "Jun", "revenue": 61, "bar": "███████████████", "flag": "" },
+          { "month": "Jul", "revenue": 58, "bar": "███████████████", "flag": "" },
+          { "month": "Aug", "revenue": 49, "bar": "████████████", "flag": "" },
+          { "month": "Sep", "revenue": 63, "bar": "████████████████", "flag": "" },
+          { "month": "Oct", "revenue": 67, "bar": "█████████████████", "flag": "" },
+          { "month": "Nov", "revenue": 72, "bar": "██████████████████", "flag": "" },
+          { "month": "Dec", "revenue": 80, "bar": "████████████████████", "flag": "▲" }
+        ]
+      }
+    }
+  }
+]

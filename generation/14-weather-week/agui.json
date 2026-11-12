@@ -1,0 +1,117 @@
+{
+  "toolCall": {
+    "id": "call_weather_week_14",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show Lisbon's 7-day forecast as a read-only table (day, weather, high, low in °C) and say that Tuesday is the best beach day (sunny, 26 °C). Then let the user confirm which day they will go, pick a backup day, and choose whether to get a reminder and in which units.",
+      "data": {
+        "city": "Lisbon",
+        "bestBeachDay": "Tue",
+        "forecast": [
+          { "day": "Mon", "weather": "Sunny", "high": 24, "low": 16 },
+          { "day": "Tue", "weather": "Sunny", "high": 26, "low": 17 },
+          { "day": "Wed", "weather": "Partly cloudy", "high": 23, "low": 16 },
+          { "day": "Thu", "weather": "Rain", "high": 19, "low": 14 },
+          { "day": "Fri", "weather": "Rain", "high": 18, "low": 13 },
+          { "day": "Sat", "weather": "Cloudy", "high": 20, "low": 14 },
+          { "day": "Sun", "weather": "Sunny", "high": 23, "low": 15 }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "beachDay": { "type": "string", "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+          "backupDay": { "type": "string", "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+          "remind": { "type": "boolean" },
+          "units": { "type": "string", "enum": ["celsius", "fahrenheit"] }
+        },
+        "required": ["beachDay", "remind", "units"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "forecast": {
+          "type": "array",
+          "title": "Lisbon, next 7 days (°C)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "day": { "type": "string", "title": "Day" },
+              "weather": { "type": "string", "title": "Weather" },
+              "high": { "type": "integer", "title": "High" },
+              "low": { "type": "integer", "title": "Low" }
+            }
+          }
+        },
+        "beachDay": {
+          "type": "string",
+          "title": "Beach day",
+          "oneOf": [
+            { "const": "Mon", "title": "Monday: sunny, 24 °C" },
+            { "const": "Tue", "title": "Tuesday: sunny, 26 °C (best)" },
+            { "const": "Wed", "title": "Wednesday: partly cloudy, 23 °C" },
+            { "const": "Thu", "title": "Thursday: rain, 19 °C" },
+            { "const": "Fri", "title": "Friday: rain, 18 °C" },
+            { "const": "Sat", "title": "Saturday: cloudy, 20 °C" },
+            { "const": "Sun", "title": "Sunday: sunny, 23 °C" }
+          ]
+        },
+        "backupDay": {
+          "type": "string",
+          "title": "Backup day (optional)",
+          "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        },
+        "remind": { "type": "boolean", "title": "Remind me that morning" },
+        "units": {
+          "type": "string",
+          "title": "Units",
+          "oneOf": [
+            { "const": "celsius", "title": "°C" },
+            { "const": "fahrenheit", "title": "°F" }
+          ]
+        }
+      },
+      "required": ["beachDay", "remind", "units"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Best beach day: Tuesday, sunny and 26 °C" },
+        { "type": "Control", "scope": "#/properties/forecast", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Plan the beach trip",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/beachDay" },
+            { "type": "Control", "scope": "#/properties/backupDay" },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/remind", "options": { "toggle": true } },
+                { "type": "Control", "scope": "#/properties/units", "options": { "format": "radio" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "forecast": [
+        { "day": "Mon", "weather": "Sunny", "high": 24, "low": 16 },
+        { "day": "Tue", "weather": "Sunny", "high": 26, "low": 17 },
+        { "day": "Wed", "weather": "Partly cloudy", "high": 23, "low": 16 },
+        { "day": "Thu", "weather": "Rain", "high": 19, "low": 14 },
+        { "day": "Fri", "weather": "Rain", "high": 18, "low": 13 },
+        { "day": "Sat", "weather": "Cloudy", "high": 20, "low": 14 },
+        { "day": "Sun", "weather": "Sunny", "high": 23, "low": 15 }
+      ],
+      "beachDay": "Tue",
+      "backupDay": "Mon",
+      "remind": true,
+      "units": "celsius"
+    }
+  }
+}

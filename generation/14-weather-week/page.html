@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisbon 7-day forecast</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: linear-gradient(160deg, #1e88e5, #6ab7ff 55%, #ffd89b); min-height: 100vh; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  h1 { font-size: 22px; margin: 0; }
+  header small { opacity: .85; }
+  .units { display: flex; background: rgba(255,255,255,.25); border-radius: 999px; padding: 2px; }
+  .units button { border: 0; background: transparent; color: #fff; font: inherit; font-weight: 700; padding: 3px 10px; border-radius: 999px; cursor: pointer; }
+  .units button.on { background: #fff; color: #1e88e5; }
+  .hero { background: rgba(255,255,255,.2); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.35); border-radius: 14px; padding: 12px; display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .hero svg { width: 64px; height: 64px; }
+  .hero h2 { margin: 0; font-size: 16px; }
+  .hero p { margin: 2px 0 0; font-size: 13px; opacity: .95; }
+  .hero .big { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .tag { display: inline-block; background: #fff; color: #c2410c; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; border-radius: 999px; padding: 1px 8px; margin-top: 4px; }
+  .list { background: rgba(255,255,255,.92); color: #1f2937; border-radius: 14px; padding: 4px 10px; }
+  .day { display: grid; grid-template-columns: 38px 30px 1fr 26px 26px; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid #e5e7eb; cursor: pointer; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; font: inherit; color: inherit; text-align: left; }
+  .day:first-child { border-top: 0; }
+  .day b { font-size: 13px; }
+  .day svg { width: 26px; height: 26px; }
+  .day .t { font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+  .day .lo { color: #6b7280; }
+  .range { position: relative; height: 6px; background: #e5e7eb; border-radius: 3px; }
+  .range i { position: absolute; top: 0; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #60a5fa, #f59e0b); }
+  .day.sel b { color: #1e88e5; }
+  .day.best b::after { content: " ★"; color: #f59e0b; }
+  .beach { margin-top: 12px; background: rgba(255,255,255,.92); color: #1f2937; border-radius: 14px; padding: 10px 12px; }
+  .beach h3 { margin: 0 0 6px; font-size: 13px; }
+  .score { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 3px; }
+  .score .m { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+  .score .m i { display: block; height: 100%; background: #f59e0b; }
+</style>
+</head>
+<body>
+  <header>
+    <div><h1>Lisbon</h1><small>7-day forecast</small></div>
+    <div class="units" id="units"><button data-u="C" class="on">°C</button><button data-u="F">°F</button></div>
+  </header>
+
+  <div class="hero">
+    <div id="heroIcon"></div>
+    <div>
+      <h2 id="heroDay"></h2>
+      <div class="big" id="heroTemp"></div>
+      <p id="heroText"></p>
+      <span class="tag" id="heroTag"></span>
+    </div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="beach">
+    <h3>Beach score by day (sun + warmth)</h3>
+    <div id="scores"></div>
+  </div>
+
+<script>
+(function () {
+  var days = [
+    { d: 'Mon', full: 'Monday', c: 'sunny', label: 'Sunny', hi: 24, lo: 16 },
+    { d: 'Tue', full: 'Tuesday', c: 'sunny', label: 'Sunny', hi: 26, lo: 17 },
+    { d: 'Wed', full: 'Wednesday', c: 'partly', label: 'Partly cloudy', hi: 23, lo: 16 },
+    { d: 'Thu', full: 'Thursday', c: 'rain', label: 'Rain', hi: 19, lo: 14 },
+    { d: 'Fri', full: 'Friday', c: 'rain', label: 'Rain', hi: 18, lo: 13 },
+    { d: 'Sat', full: 'Saturday', c: 'cloudy', label: 'Cloudy', hi: 20, lo: 14 },
+    { d: 'Sun', full: 'Sunday', c: 'sunny', label: 'Sunny', hi: 23, lo: 15 }
+  ];
+  var sunPoints = { sunny: 3, partly: 2, cloudy: 1, rain: 0 };
+  var advice = {
+    sunny: 'Clear skies. Sunscreen and a hat.',
+    partly: 'Sun with passing clouds. Still pleasant outdoors.',
+    cloudy: 'Grey but dry. Fine for walking the city.',
+    rain: 'Wet day. Plan something indoors.'
+  };
+  var unit = 'C';
+  var selected = 1;
+  var $ = function (id) { return document.getElementById(id); };
+
+  var sun = '<circle cx="16" cy="16" r="6" fill="#f59e0b"/><g stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8"/></g>';
+  var cloud = '<path d="M9 24h14a5 5 0 0 0 .6-9.96A7 7 0 0 0 10 12.5 5.8 5.8 0 0 0 9 24z" fill="#9ca3af"/>';
+  var icons = {
+    sunny: sun,
+    cloudy: cloud,
+    partly: '<circle cx="12" cy="11" r="5" fill="#f59e0b"/><path d="M11 26h13a4.5 4.5 0 0 0 .5-8.97A6.3 6.3 0 0 0 12 15.6 5.2 5.2 0 0 0 11 26z" fill="#9ca3af"/>',
+    rain: '<path d="M9 20h14a5 5 0 0 0 .6-9.96A7 7 0 0 0 10 8.5 5.8 5.8 0 0 0 9 20z" fill="#6b7280"/><g stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><path d="M11 23l-1.5 4M16 23l-1.5 4M21 23l-1.5 4"/></g>'
+  };
+  function icon(kind) {
+    return '<svg viewBox="0 0 32 32" aria-hidden="true">' + icons[kind] + '</svg>';
+  }
+  function show(c) { return unit === 'C' ? c : Math.round(c * 9 / 5 + 32); }
+
+  days.forEach(function (x) { x.score = sunPoints[x.c] + (x.hi - 18) / 2; });
+  var best = 0;
+  days.forEach(function (x, i) { if (x.score > days[best].score) { best = i; } });
+  var minLo = Math.min.apply(null, days.map(function (x) { return x.lo; }));
+  var maxHi = Math.max.apply(null, days.map(function (x) { return x.hi; }));
+  var maxScore = days[best].score;
+
+  function render() {
+    var list = $('list');
+    list.textContent = '';
+    days.forEach(function (x, i) {
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'day' + (i === selected ? ' sel' : '') + (i === best ? ' best' : '');
+      row.setAttribute('data-i', String(i));
+      var name = document.createElement('b'); name.textContent = x.d;
+      var ic = document.createElement('span'); ic.innerHTML = icon(x.c);
+      var range = document.createElement('span'); range.className = 'range';
+      var fill = document.createElement('i');
+      fill.style.left = ((x.lo - minLo) / (maxHi - minLo) * 100) + '%';
+      fill.style.width = ((x.hi - x.lo) / (maxHi - minLo) * 100) + '%';
+      range.appendChild(fill);
+      var lo = document.createElement('span'); lo.className = 't lo'; lo.textContent = show(x.lo) + '°';
+      var hi = document.createElement('span'); hi.className = 't'; hi.textContent = show(x.hi) + '°';
+      row.appendChild(name); row.appendChild(ic); row.appendChild(range); row.appendChild(lo); row.appendChild(hi);
+      list.appendChild(row);
+    });
+
+    var s = days[selected];
+    $('heroIcon').innerHTML = icon(s.c).replace('viewBox', 'width="64" height="64" viewBox');
+    $('heroDay').textContent = s.full + ' · ' + s.label;
+    $('heroTemp').textContent = show(s.hi) + '° / ' + show(s.lo) + '°' + unit;
+    $('heroText').textContent = advice[s.c];
+    $('heroTag').textContent = selected === best ? 'Best beach day' : 'Beach score ' + Math.max(0, s.score).toFixed(1) + ' of ' + maxScore.toFixed(1);
+
+    var scores = $('scores');
+    scores.textContent = '';
+    days.forEach(function (x) {
+      var row = document.createElement('div'); row.className = 'score';
+      var label = document.createElement('span'); label.textContent = x.d;
+      var m = document.createElement('span'); m.className = 'm';
+      var f = document.createElement('i'); f.style.width = (Math.max(0, x.score) / maxScore * 100) + '%';
+      m.appendChild(f);
+      row.appendChild(label); row.appendChild(m);
+      scores.appendChild(row);
+    });
+  }
+
+  $('list').addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== $('list') && !(t.getAttribute && t.getAttribute('data-i'))) { t = t.parentNode; }
+    if (!t || t === $('list')) { return; }
+    selected = parseInt(t.getAttribute('data-i'), 10);
+    render();
+  });
+  $('units').addEventListener('click', function (e) {
+    var u = e.target.getAttribute('data-u');
+    if (!u) { return; }
+    unit = u;
+    var b = $('units').children;
+    for (var i = 0; i < b.length; i++) { b[i].className = b[i].getAttribute('data-u') === u ? 'on' : ''; }
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+{
+  "toolCall": {
+    "id": "call_service_health_17",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the five services with p95 latency, error rate, uptime and SLO status as a read-only table (payments is breaching both targets; the rest are within SLO). Then ask the operator what to do about it: which service to act on, which action to take, who to notify and an optional note.",
+      "data": {
+        "slo": { "p95MsUnder": 300, "errorRatePercentUnder": 1 },
+        "services": [
+          { "service": "payments", "p95Ms": 340, "errorPct": 1.8, "uptimePct": 99.71, "status": "BREACH (latency, errors)" },
+          { "service": "search", "p95Ms": 210, "errorPct": 0.6, "uptimePct": 99.9, "status": "OK, least headroom" },
+          { "service": "api-gateway", "p95Ms": 120, "errorPct": 0.2, "uptimePct": 99.98, "status": "OK" },
+          { "service": "notifications", "p95Ms": 95, "errorPct": 0.3, "uptimePct": 99.95, "status": "OK" },
+          { "service": "auth", "p95Ms": 85, "errorPct": 0.1, "uptimePct": 99.99, "status": "OK" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string", "enum": ["payments", "search", "api-gateway", "notifications", "auth"] },
+          "action": { "type": "string", "enum": ["open-incident", "page-on-call", "acknowledge", "ignore"] },
+          "severity": { "type": "string", "enum": ["sev1", "sev2", "sev3"] },
+          "notify": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["on-call", "team-channel", "status-page"] },
+            "uniqueItems": true
+          },
+          "note": { "type": "string", "maxLength": 500 }
+        },
+        "required": ["service", "action"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "services": {
+          "type": "array",
+          "title": "SLO: p95 under 300 ms, errors under 1%",
+          "items": {
+            "type": "object",
+            "properties": {
+              "service": { "type": "string", "title": "Service" },
+              "p95Ms": { "type": "number", "title": "p95 (ms)" },
+              "errorPct": { "type": "number", "title": "Errors (%)" },
+              "uptimePct": { "type": "number", "title": "Uptime (%)" },
+              "status": { "type": "string", "title": "Status" }
+            }
+          }
+        },
+        "service": {
+          "type": "string",
+          "title": "Service",
+          "enum": ["payments", "search", "api-gateway", "notifications", "auth"]
+        },
+        "action": {
+          "type": "string",
+          "title": "Action",
+          "oneOf": [
+            { "const": "open-incident", "title": "Open an incident" },
+            { "const": "page-on-call", "title": "Page the on-call engineer" },
+            { "const": "acknowledge", "title": "Acknowledge and keep watching" },
+            { "const": "ignore", "title": "Ignore for now" }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "title": "Severity",
+          "oneOf": [
+            { "const": "sev1", "title": "SEV1: customers cannot pay" },
+            { "const": "sev2", "title": "SEV2: degraded" },
+            { "const": "sev3", "title": "SEV3: minor" }
+          ]
+        },
+        "notify": {
+          "type": "array",
+          "title": "Notify",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "const": "on-call", "title": "On-call engineer" },
+              { "const": "team-channel", "title": "Team channel" },
+              { "const": "status-page", "title": "Public status page" }
+            ]
+          }
+        },
+        "note": { "type": "string", "title": "Note", "maxLength": 500 }
+      },
+      "required": ["service", "action"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "1 of 5 services is breaching the SLO: payments (340 ms p95, 1.8% errors)" },
+        { "type": "Control", "scope": "#/properties/services", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "What do you want to do?",
+          "elements": [
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/service" },
+                { "type": "Control", "scope": "#/properties/action" }
+              ]
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/severity",
+              "options": { "format": "radio" },
+              "rule": {
+                "effect": "SHOW",
+                "condition": { "scope": "#/properties/action", "schema": { "enum": ["open-incident", "page-on-call"] } }
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/notify",
+              "rule": {
+                "effect": "SHOW",
+                "condition": { "scope": "#/properties/action", "schema": { "enum": ["open-incident", "page-on-call"] } }
+              }
+            },
+            { "type": "Control", "scope": "#/properties/note", "options": { "multi": true } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "services": [
+        { "service": "payments", "p95Ms": 340, "errorPct": 1.8, "uptimePct": 99.71, "status": "BREACH (latency, errors)" },
+        { "service": "search", "p95Ms": 210, "errorPct": 0.6, "uptimePct": 99.9, "status": "OK, least headroom" },
+        { "service": "api-gateway", "p95Ms": 120, "errorPct": 0.2, "uptimePct": 99.98, "status": "OK" },
+        { "service": "notifications", "p95Ms": 95, "errorPct": 0.3, "uptimePct": 99.95, "status": "OK" },
+        { "service": "auth", "p95Ms": 85, "errorPct": 0.1, "uptimePct": 99.99, "status": "OK" }
+      ],
+      "service": "payments",
+      "action": "open-incident",
+      "severity": "sev2",
+      "notify": ["on-call"]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "text": "A four-column table approximates the board and grouped lists repeat it by status and by person; cells cannot hold cards, so each task is one line of text.",
+  "a2ui": "A Row of four weighted Columns, each with a bound list of cards, is a recognisable board; in a narrow surface the columns are cramped and cards cannot be moved.",
+  "html": "A working kanban: drag cards between columns or use the arrows, filter by person, and watch per-column points and the done bar recalculate.",
+  "agui": "An editable table with a status dropdown per task is the form version of moving cards and returns a clean typed task list, but it is grouped by nothing and totals are static."
+}

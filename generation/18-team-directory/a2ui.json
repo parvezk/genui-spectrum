@@ -1,0 +1,103 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "team-directory",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "team-directory",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "count", "controls-card", "people-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Team directory" },
+        { "id": "count", "component": "Text", "variant": "caption", "text": { "path": "/resultLabel" } },
+
+        { "id": "controls-card", "component": "Card", "child": "controls-col" },
+        { "id": "controls-col", "component": "Column", "children": ["search-field", "department-picker", "sort-picker", "apply-button"] },
+        { "id": "search-field", "component": "TextField", "label": "Search by name or city", "value": { "path": "/query/text" } },
+        {
+          "id": "department-picker",
+          "component": "ChoicePicker",
+          "label": "Departments",
+          "variant": "multipleSelection",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Engineering", "value": "engineering" },
+            { "label": "Design", "value": "design" },
+            { "label": "Product", "value": "product" },
+            { "label": "Marketing", "value": "marketing" },
+            { "label": "Sales", "value": "sales" }
+          ],
+          "value": { "path": "/query/departments" }
+        },
+        {
+          "id": "sort-picker",
+          "component": "ChoicePicker",
+          "label": "Sort by",
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Name", "value": "name" },
+            { "label": "Department", "value": "department" },
+            { "label": "City", "value": "city" }
+          ],
+          "value": { "path": "/query/sortBy" }
+        },
+        {
+          "id": "apply-button",
+          "component": "Button",
+          "variant": "primary",
+          "child": "apply-row",
+          "action": {
+            "event": {
+              "name": "filter_directory",
+              "context": {
+                "text": { "path": "/query/text" },
+                "departments": { "path": "/query/departments" },
+                "sortBy": { "path": "/query/sortBy" }
+              }
+            }
+          }
+        },
+        { "id": "apply-row", "component": "Row", "align": "center", "children": ["apply-icon", "apply-label"] },
+        { "id": "apply-icon", "component": "Icon", "name": "search" },
+        { "id": "apply-label", "component": "Text", "text": "Search and sort" },
+
+        { "id": "people-card", "component": "Card", "child": "people-list" },
+        { "id": "people-list", "component": "List", "children": { "componentId": "person-row", "path": "/people" } },
+        { "id": "person-row", "component": "Row", "align": "center", "children": ["person-icon", "person-col", "person-city-row"] },
+        { "id": "person-icon", "component": "Icon", "name": "accountCircle" },
+        { "id": "person-col", "component": "Column", "weight": 3, "children": ["person-name", "person-department"] },
+        { "id": "person-name", "component": "Text", "variant": "h5", "text": { "path": "name" } },
+        { "id": "person-department", "component": "Text", "variant": "caption", "text": { "path": "department" } },
+        { "id": "person-city-row", "component": "Row", "weight": 2, "align": "center", "children": ["person-city-icon", "person-city"] },
+        { "id": "person-city-icon", "component": "Icon", "name": "locationOn" },
+        { "id": "person-city", "component": "Text", "text": { "path": "city" } }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "team-directory",
+      "path": "/",
+      "value": {
+        "resultLabel": "8 people · sorted by name",
+        "query": { "text": "", "departments": [], "sortBy": ["name"] },
+        "people": [
+          { "name": "Ana Ruiz", "department": "Engineering", "city": "Lisbon" },
+          { "name": "Ben Okafor", "department": "Design", "city": "London" },
+          { "name": "Chloe Tan", "department": "Engineering", "city": "Singapore" },
+          { "name": "Dev Patel", "department": "Product", "city": "London" },
+          { "name": "Elena Rossi", "department": "Marketing", "city": "Milan" },
+          { "name": "Farid Haddad", "department": "Engineering", "city": "Berlin" },
+          { "name": "Grace Kim", "department": "Design", "city": "Seoul" },
+          { "name": "Hugo Martin", "department": "Sales", "city": "Paris" }
+        ]
+      }
+    }
+  }
+]

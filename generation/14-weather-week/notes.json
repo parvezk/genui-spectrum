@@ -1,0 +1,6 @@
+{
+  "text": "A seven-row table with emoji and a bolded best day is quick to scan; it has no sense of a forecast strip or temperature range.",
+  "a2ui": "A bound list makes clean forecast rows, but the icon set has no weather glyphs, so sun, cloud and rain are emoji inside Text, and there are no range bars.",
+  "html": "Looks like a weather app: custom SVG icons, low-to-high range bars on a shared scale, a Celsius/Fahrenheit toggle, tap-to-focus days and a beach score chart.",
+  "agui": "The forecast is a disabled table of text and number inputs; choosing a beach day and a reminder is a tidy typed result, but nothing here looks like weather."
+}

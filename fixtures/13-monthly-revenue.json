@@ -1,0 +1,761 @@
+{
+  "id": "13-monthly-revenue",
+  "index": 13,
+  "title": "Monthly revenue chart",
+  "category": "data",
+  "prompt": "Show monthly revenue for 2024 as a chart and call out the best and worst months. In $k: Jan 42, Feb 38, Mar 51, Apr 47, May 55, Jun 61, Jul 58, Aug 49, Sep 63, Oct 67, Nov 72, Dec 80.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Monthly revenue, 2024\n\n**Best month: December, $80k.** **Worst month: February, $38k.** Revenue almost doubled across the year, from $42k in January to $80k in December (+90%).\n\n```\nJan  42 █████████████████\nFeb  38 ███████████████            ← worst\nMar  51 ████████████████████\nApr  47 ███████████████████\nMay  55 ██████████████████████\nJun  61 ████████████████████████\nJul  58 ███████████████████████\nAug  49 ████████████████████\nSep  63 █████████████████████████\nOct  67 ███████████████████████████\nNov  72 █████████████████████████████\nDec  80 ████████████████████████████████  ← best\n        each █ = $2.5k\n```\n\n| Month | Revenue | Change vs previous month |\n| --- | ---: | ---: |\n| Jan | $42k | — |\n| Feb | $38k | −$4k |\n| Mar | $51k | +$13k |\n| Apr | $47k | −$4k |\n| May | $55k | +$8k |\n| Jun | $61k | +$6k |\n| Jul | $58k | −$3k |\n| Aug | $49k | −$9k |\n| Sep | $63k | +$14k |\n| Oct | $67k | +$4k |\n| Nov | $72k | +$5k |\n| Dec | $80k | +$8k |\n\n### What stands out\n\n- **Total for the year: $683k**, an average of about **$56.9k** a month.\n- **The second half was much stronger:** $389k in July–December against $294k in January–June, 32% more.\n- **Four months fell:** February (−$4k), April (−$4k), July (−$3k) and, most sharply, August (−$9k). The February and August dips were each followed by one of the two biggest jumps of the year: +$13k in March and +$14k in September.\n- **Strong finish:** four straight months of growth from September, with every month from September onward above the yearly average.\n- **By quarter:** Q1 $131k, Q2 $163k, Q3 $170k, Q4 $219k. Q4 alone brought in 32% of the year's revenue.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "monthly-revenue",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "monthly-revenue",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "stats-top",
+                "stats-bottom",
+                "chart-card",
+                "insight-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Monthly revenue, 2024"
+            },
+            {
+              "id": "stats-top",
+              "component": "Row",
+              "children": [
+                "best-card",
+                "worst-card"
+              ]
+            },
+            {
+              "id": "best-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "best-col"
+            },
+            {
+              "id": "best-col",
+              "component": "Column",
+              "children": [
+                "best-label",
+                "best-value",
+                "best-note"
+              ]
+            },
+            {
+              "id": "best-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Best month"
+            },
+            {
+              "id": "best-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Dec · $80k"
+            },
+            {
+              "id": "best-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "+$8k on November"
+            },
+            {
+              "id": "worst-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "worst-col"
+            },
+            {
+              "id": "worst-col",
+              "component": "Column",
+              "children": [
+                "worst-label",
+                "worst-value",
+                "worst-note"
+              ]
+            },
+            {
+              "id": "worst-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Worst month"
+            },
+            {
+              "id": "worst-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Feb · $38k"
+            },
+            {
+              "id": "worst-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "−$4k on January"
+            },
+            {
+              "id": "stats-bottom",
+              "component": "Row",
+              "children": [
+                "total-card",
+                "avg-card"
+              ]
+            },
+            {
+              "id": "total-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "total-col"
+            },
+            {
+              "id": "total-col",
+              "component": "Column",
+              "children": [
+                "total-label",
+                "total-value"
+              ]
+            },
+            {
+              "id": "total-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Total for the year"
+            },
+            {
+              "id": "total-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "$${/totalK}k"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "avg-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "avg-col"
+            },
+            {
+              "id": "avg-col",
+              "component": "Column",
+              "children": [
+                "avg-label",
+                "avg-value"
+              ]
+            },
+            {
+              "id": "avg-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Monthly average"
+            },
+            {
+              "id": "avg-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "$${/averageK}k"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "chart-card",
+              "component": "Card",
+              "child": "chart-col"
+            },
+            {
+              "id": "chart-col",
+              "component": "Column",
+              "children": [
+                "chart-caption",
+                "chart-rows"
+              ]
+            },
+            {
+              "id": "chart-caption",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Revenue by month. Each block is $4k."
+            },
+            {
+              "id": "chart-rows",
+              "component": "List",
+              "children": {
+                "componentId": "month-row",
+                "path": "/months"
+              }
+            },
+            {
+              "id": "month-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "month-name",
+                "month-bar",
+                "month-value"
+              ]
+            },
+            {
+              "id": "month-name",
+              "component": "Text",
+              "weight": 1,
+              "text": {
+                "path": "month"
+              }
+            },
+            {
+              "id": "month-bar",
+              "component": "Text",
+              "weight": 6,
+              "text": {
+                "path": "bar"
+              }
+            },
+            {
+              "id": "month-value",
+              "component": "Text",
+              "weight": 2,
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "$${revenue}k ${flag}"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "insight-card",
+              "component": "Card",
+              "child": "insight-col"
+            },
+            {
+              "id": "insight-col",
+              "component": "Column",
+              "children": [
+                "insight-title",
+                "insight-1",
+                "insight-2",
+                "insight-3"
+              ]
+            },
+            {
+              "id": "insight-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "What stands out"
+            },
+            {
+              "id": "insight-1",
+              "component": "Text",
+              "text": "Revenue almost doubled: **$42k in January to $80k in December** (+90%)."
+            },
+            {
+              "id": "insight-2",
+              "component": "Text",
+              "text": "The second half brought in **$389k against $294k** in the first, 32% more."
+            },
+            {
+              "id": "insight-3",
+              "component": "Text",
+              "text": "The only sharp dip was **August (−$9k)**, followed by the biggest jump of the year in September (+$14k)."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "monthly-revenue",
+          "path": "/",
+          "value": {
+            "totalK": 683,
+            "averageK": 56.9,
+            "months": [
+              {
+                "month": "Jan",
+                "revenue": 42,
+                "bar": "███████████",
+                "flag": ""
+              },
+              {
+                "month": "Feb",
+                "revenue": 38,
+                "bar": "██████████",
+                "flag": "▼"
+              },
+              {
+                "month": "Mar",
+                "revenue": 51,
+                "bar": "█████████████",
+                "flag": ""
+              },
+              {
+                "month": "Apr",
+                "revenue": 47,
+                "bar": "████████████",
+                "flag": ""
+              },
+              {
+                "month": "May",
+                "revenue": 55,
+                "bar": "██████████████",
+                "flag": ""
+              },
+              {
+                "month": "Jun",
+                "revenue": 61,
+                "bar": "███████████████",
+                "flag": ""
+              },
+              {
+                "month": "Jul",
+                "revenue": 58,
+                "bar": "███████████████",
+                "flag": ""
+              },
+              {
+                "month": "Aug",
+                "revenue": 49,
+                "bar": "████████████",
+                "flag": ""
+              },
+              {
+                "month": "Sep",
+                "revenue": 63,
+                "bar": "████████████████",
+                "flag": ""
+              },
+              {
+                "month": "Oct",
+                "revenue": 67,
+                "bar": "█████████████████",
+                "flag": ""
+              },
+              {
+                "month": "Nov",
+                "revenue": 72,
+                "bar": "██████████████████",
+                "flag": ""
+              },
+              {
+                "month": "Dec",
+                "revenue": 80,
+                "bar": "████████████████████",
+                "flag": "▲"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Monthly revenue 2024</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #111827; background: #f9fafb; }\n  h1 { font-size: 18px; margin: 0 0 10px; }\n  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\n  .stat { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 10px; }\n  .stat small { display: block; font-size: 11px; color: #6b7280; }\n  .stat b { font-size: 17px; }\n  .stat.best b { color: #047857; } .stat.worst b { color: #b91c1c; }\n  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; margin-bottom: 12px; }\n  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }\n  .seg { display: flex; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; }\n  .seg button { border: 0; background: #fff; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }\n  .seg button.on { background: #111827; color: #fff; }\n  label.tog { font-size: 12px; display: flex; gap: 4px; align-items: center; cursor: pointer; }\n  svg { width: 100%; height: auto; display: block; }\n  .axis { font-size: 9px; fill: #6b7280; }\n  .val { font-size: 9px; fill: #374151; text-anchor: middle; font-weight: 600; }\n  .b { fill: #93c5fd; cursor: pointer; transition: opacity .15s; }\n  .b.best { fill: #059669; } .b.worst { fill: #dc2626; }\n  .b.dim { opacity: .45; }\n  .b.sel { stroke: #111827; stroke-width: 1.5; }\n  .detail { min-height: 62px; }\n  .detail h2 { margin: 0 0 2px; font-size: 15px; }\n  .detail p { margin: 0; color: #4b5563; font-size: 13px; }\n  .up { color: #047857; font-weight: 600; } .down { color: #b91c1c; font-weight: 600; }\n  .legend { display: flex; gap: 12px; font-size: 11px; color: #6b7280; margin-top: 4px; flex-wrap: wrap; }\n  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 3px; }\n</style>\n</head>\n<body>\n  <h1>Monthly revenue, 2024</h1>\n\n  <div class=\"stats\">\n    <div class=\"stat best\"><small>Best month</small><b>Dec · $80k</b></div>\n    <div class=\"stat worst\"><small>Worst month</small><b>Feb · $38k</b></div>\n    <div class=\"stat\"><small>Total</small><b>$683k</b></div>\n    <div class=\"stat\"><small>Monthly average</small><b>$56.9k</b></div>\n  </div>\n\n  <div class=\"card\">\n    <div class=\"bar\">\n      <div class=\"seg\" id=\"view\"><button data-view=\"month\" class=\"on\">Months</button><button data-view=\"quarter\">Quarters</button></div>\n      <label class=\"tog\"><input type=\"checkbox\" id=\"avg\" checked> Average line</label>\n    </div>\n    <svg id=\"chart\" viewBox=\"0 0 340 200\" role=\"img\" aria-label=\"Bar chart of revenue\">\n      <line x1=\"30\" y1=\"170\" x2=\"334\" y2=\"170\" stroke=\"#d1d5db\"/>\n      <g id=\"grid\"></g>\n      <g id=\"bars\"></g>\n      <line id=\"avgLine\" x1=\"30\" x2=\"334\" stroke=\"#111827\" stroke-dasharray=\"4 3\"/>\n      <text id=\"avgText\" class=\"axis\" x=\"334\" text-anchor=\"end\"></text>\n    </svg>\n    <div class=\"legend\"><span><i style=\"background:#059669\"></i>Best</span><span><i style=\"background:#dc2626\"></i>Worst</span><span><i style=\"background:#93c5fd\"></i>Other</span><span>Hover or tap a bar</span></div>\n  </div>\n\n  <div class=\"card detail\" id=\"detail\"></div>\n\n<script>\n(function () {\n  var months = [['Jan', 42], ['Feb', 38], ['Mar', 51], ['Apr', 47], ['May', 55], ['Jun', 61], ['Jul', 58], ['Aug', 49], ['Sep', 63], ['Oct', 67], ['Nov', 72], ['Dec', 80]];\n  var SVG = 'http://www.w3.org/2000/svg';\n  var $ = function (id) { return document.getElementById(id); };\n  var view = 'month';\n  var selected = 11;\n  var hover = -1;\n  var total = months.reduce(function (s, m) { return s + m[1]; }, 0);\n\n  function series() {\n    if (view === 'month') { return months.map(function (m) { return { label: m[0], value: m[1] }; }); }\n    var out = [];\n    for (var q = 0; q < 4; q++) {\n      out.push({ label: 'Q' + (q + 1), value: months[q * 3][1] + months[q * 3 + 1][1] + months[q * 3 + 2][1] });\n    }\n    return out;\n  }\n\n  function node(tag, attrs, text) {\n    var n = document.createElementNS(SVG, tag);\n    for (var k in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, k)) { n.setAttribute(k, attrs[k]); } }\n    if (text !== undefined) { n.textContent = text; }\n    return n;\n  }\n\n  function render() {\n    var s = series();\n    var values = s.map(function (d) { return d.value; });\n    var max = Math.max.apply(null, values);\n    var min = Math.min.apply(null, values);\n    var mean = total / s.length;\n    var top = 16, bottom = 170, left = 30, right = 334;\n    var yMax = Math.ceil(max * 1.1 / 10) * 10;\n    var py = function (v) { return bottom - (bottom - top) * (v / yMax); };\n    var slot = (right - left) / s.length;\n    var active = hover !== -1 ? hover : selected;\n\n    var grid = $('grid');\n    while (grid.firstChild) { grid.removeChild(grid.firstChild); }\n    [0, yMax / 2, yMax].forEach(function (v) {\n      grid.appendChild(node('text', { 'class': 'axis', x: 26, y: py(v) + 3, 'text-anchor': 'end' }, '$' + Math.round(v) + 'k'));\n      if (v > 0) { grid.appendChild(node('line', { x1: left, x2: right, y1: py(v), y2: py(v), stroke: '#f3f4f6' })); }\n    });\n\n    var bars = $('bars');\n    while (bars.firstChild) { bars.removeChild(bars.firstChild); }\n    s.forEach(function (d, i) {\n      var cls = 'b' + (d.value === max ? ' best' : (d.value === min ? ' worst' : ''));\n      if (active !== -1 && i !== active) { cls += ' dim'; }\n      if (i === selected) { cls += ' sel'; }\n      var x = left + i * slot + slot * 0.14;\n      var w = slot * 0.72;\n      bars.appendChild(node('rect', { 'class': cls, 'data-i': i, x: x.toFixed(1), y: py(d.value).toFixed(1), width: w.toFixed(1), height: (bottom - py(d.value)).toFixed(1), rx: 2 }));\n      bars.appendChild(node('text', { 'class': 'val', x: (x + w / 2).toFixed(1), y: (py(d.value) - 3).toFixed(1) }, String(d.value)));\n      bars.appendChild(node('text', { 'class': 'axis', x: (x + w / 2).toFixed(1), y: 183, 'text-anchor': 'middle' }, d.label));\n    });\n\n    var showAvg = $('avg').checked;\n    $('avgLine').style.display = showAvg ? '' : 'none';\n    $('avgText').style.display = showAvg ? '' : 'none';\n    $('avgLine').setAttribute('y1', py(mean).toFixed(1));\n    $('avgLine').setAttribute('y2', py(mean).toFixed(1));\n    $('avgText').setAttribute('y', (py(mean) - 3).toFixed(1));\n    $('avgText').textContent = 'avg $' + mean.toFixed(1) + 'k';\n\n    var box = $('detail');\n    box.textContent = '';\n    var d = s[active];\n    var h = document.createElement('h2');\n    h.textContent = d.label + ': $' + d.value + 'k' + (d.value === max ? ' (best)' : (d.value === min ? ' (worst)' : ''));\n    box.appendChild(h);\n    var p1 = document.createElement('p');\n    if (active === 0) { p1.textContent = 'First ' + view + ' of the year.'; }\n    else {\n      var prev = s[active - 1];\n      var diff = d.value - prev.value;\n      var span = document.createElement('span');\n      span.className = diff >= 0 ? 'up' : 'down';\n      span.textContent = (diff >= 0 ? '+' : '−') + '$' + Math.abs(diff) + 'k (' + (diff >= 0 ? '+' : '−') + Math.abs(diff / prev.value * 100).toFixed(1) + '%)';\n      p1.appendChild(span);\n      p1.appendChild(document.createTextNode(' vs ' + prev.label));\n    }\n    box.appendChild(p1);\n    var p2 = document.createElement('p');\n    var vsAvg = d.value - mean;\n    p2.textContent = (d.value / total * 100).toFixed(1) + '% of the year · ' + (vsAvg >= 0 ? '$' + vsAvg.toFixed(1) + 'k above' : '$' + Math.abs(vsAvg).toFixed(1) + 'k below') + ' average';\n    box.appendChild(p2);\n  }\n\n  $('view').addEventListener('click', function (e) {\n    var v = e.target.getAttribute('data-view');\n    if (!v || v === view) { return; }\n    view = v;\n    selected = v === 'month' ? 11 : 3;\n    hover = -1;\n    var buttons = $('view').children;\n    for (var i = 0; i < buttons.length; i++) { buttons[i].className = buttons[i].getAttribute('data-view') === v ? 'on' : ''; }\n    render();\n  });\n  $('avg').addEventListener('change', render);\n  $('bars').addEventListener('click', function (e) {\n    var i = e.target.getAttribute('data-i');\n    if (i === null) { return; }\n    selected = parseInt(i, 10);\n    render();\n  });\n  $('bars').addEventListener('mouseover', function (e) {\n    var i = e.target.getAttribute('data-i');\n    if (i === null) { return; }\n    var n = parseInt(i, 10);\n    if (n !== hover) { hover = n; render(); }\n  });\n  $('chart').addEventListener('mouseleave', function () {\n    if (hover !== -1) { hover = -1; render(); }\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_monthly_revenue_13",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show 2024 monthly revenue as a read-only table (month, revenue in $k, change vs previous month) with the best month (Dec, $80k) and worst month (Feb, $38k) called out. Then let the user choose a month to drill into, what to compare it with and how they want the follow-up delivered.",
+        "data": {
+          "unit": "USD thousands",
+          "best": {
+            "month": "Dec",
+            "revenue": 80
+          },
+          "worst": {
+            "month": "Feb",
+            "revenue": 38
+          },
+          "total": 683,
+          "months": [
+            {
+              "month": "Jan",
+              "revenue": 42,
+              "change": "—"
+            },
+            {
+              "month": "Feb",
+              "revenue": 38,
+              "change": "−4 (worst)"
+            },
+            {
+              "month": "Mar",
+              "revenue": 51,
+              "change": "+13"
+            },
+            {
+              "month": "Apr",
+              "revenue": 47,
+              "change": "−4"
+            },
+            {
+              "month": "May",
+              "revenue": 55,
+              "change": "+8"
+            },
+            {
+              "month": "Jun",
+              "revenue": 61,
+              "change": "+6"
+            },
+            {
+              "month": "Jul",
+              "revenue": 58,
+              "change": "−3"
+            },
+            {
+              "month": "Aug",
+              "revenue": 49,
+              "change": "−9"
+            },
+            {
+              "month": "Sep",
+              "revenue": 63,
+              "change": "+14"
+            },
+            {
+              "month": "Oct",
+              "revenue": 67,
+              "change": "+4"
+            },
+            {
+              "month": "Nov",
+              "revenue": 72,
+              "change": "+5"
+            },
+            {
+              "month": "Dec",
+              "revenue": 80,
+              "change": "+8 (best)"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "focusMonth": {
+              "type": "string",
+              "enum": [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec"
+              ]
+            },
+            "compareWith": {
+              "type": "string",
+              "enum": [
+                "previous-month",
+                "yearly-average",
+                "best-month"
+              ]
+            },
+            "deliverAs": {
+              "type": "string",
+              "enum": [
+                "summary",
+                "csv",
+                "slide"
+              ]
+            }
+          },
+          "required": [
+            "focusMonth",
+            "compareWith",
+            "deliverAs"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "months": {
+            "type": "array",
+            "title": "Revenue by month ($k)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "month": {
+                  "type": "string",
+                  "title": "Month"
+                },
+                "revenue": {
+                  "type": "number",
+                  "title": "Revenue"
+                },
+                "change": {
+                  "type": "string",
+                  "title": "Change"
+                }
+              }
+            }
+          },
+          "focusMonth": {
+            "type": "string",
+            "title": "Drill into",
+            "enum": [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Oct",
+              "Nov",
+              "Dec"
+            ]
+          },
+          "compareWith": {
+            "type": "string",
+            "title": "Compare with",
+            "oneOf": [
+              {
+                "const": "previous-month",
+                "title": "The previous month"
+              },
+              {
+                "const": "yearly-average",
+                "title": "The yearly average ($56.9k)"
+              },
+              {
+                "const": "best-month",
+                "title": "The best month (Dec)"
+              }
+            ]
+          },
+          "deliverAs": {
+            "type": "string",
+            "title": "Send it as",
+            "oneOf": [
+              {
+                "const": "summary",
+                "title": "A short written summary"
+              },
+              {
+                "const": "csv",
+                "title": "A CSV file"
+              },
+              {
+                "const": "slide",
+                "title": "A slide"
+              }
+            ]
+          }
+        },
+        "required": [
+          "focusMonth",
+          "compareWith",
+          "deliverAs"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Best: December, $80k. Worst: February, $38k. Total: $683k."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/months",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Look closer",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/focusMonth"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/compareWith"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/deliverAs",
+                "options": {
+                  "format": "radio"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "months": [
+          {
+            "month": "Jan",
+            "revenue": 42,
+            "change": "—"
+          },
+          {
+            "month": "Feb",
+            "revenue": 38,
+            "change": "−4 (worst)"
+          },
+          {
+            "month": "Mar",
+            "revenue": 51,
+            "change": "+13"
+          },
+          {
+            "month": "Apr",
+            "revenue": 47,
+            "change": "−4"
+          },
+          {
+            "month": "May",
+            "revenue": 55,
+            "change": "+8"
+          },
+          {
+            "month": "Jun",
+            "revenue": 61,
+            "change": "+6"
+          },
+          {
+            "month": "Jul",
+            "revenue": 58,
+            "change": "−3"
+          },
+          {
+            "month": "Aug",
+            "revenue": 49,
+            "change": "−9"
+          },
+          {
+            "month": "Sep",
+            "revenue": 63,
+            "change": "+14"
+          },
+          {
+            "month": "Oct",
+            "revenue": 67,
+            "change": "+4"
+          },
+          {
+            "month": "Nov",
+            "revenue": 72,
+            "change": "+5"
+          },
+          {
+            "month": "Dec",
+            "revenue": 80,
+            "change": "+8 (best)"
+          }
+        ],
+        "focusMonth": "Dec",
+        "compareWith": "previous-month",
+        "deliverAs": "summary"
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Asked for a chart, it can only offer block characters in a code fence plus a table; the numbers and call-outs are right, the chart is a workaround.",
+    "a2ui": "The basic catalog has no chart component, so the bars are strings of block characters in a Text cell; stat cards carry the best and worst months well.",
+    "html": "A real SVG bar chart with best and worst coloured, an average line, month and quarter views and hover or tap details with month-over-month change.",
+    "agui": "JSON Forms has no chart either: the data is a twelve-row disabled table and the only thing the form adds is a typed request for a follow-up."
+  }
+}

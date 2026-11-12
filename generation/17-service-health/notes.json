@@ -1,0 +1,6 @@
+{
+  "text": "A status table with coloured emoji and a written diagnosis flags the breach clearly; it is a report, not a dashboard, and cannot be sorted or re-thresholded.",
+  "a2ui": "Summary cards, bound service cards with status icons and an Investigate button per service work well; there is no colour for severity and no gauges or sorting.",
+  "html": "A dark ops dashboard: stat tiles, sortable columns, gauges with an SLO tick and threshold sliders that re-evaluate which services breach as you drag.",
+  "agui": "This is the approach's best case: a human-in-the-loop decision (service, action, severity, who to notify) with rules that reveal fields, returned as a typed tool result."
+}

@@ -1,0 +1,91 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "service-health",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "service-health",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "slo", "summary-row", "services"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Service health" },
+        { "id": "slo", "component": "Text", "variant": "caption", "text": "SLO: p95 latency under 300 ms and error rate under 1%" },
+
+        { "id": "summary-row", "component": "Row", "children": ["breach-card", "ok-card"] },
+        { "id": "breach-card", "component": "Card", "weight": 1, "child": "breach-row" },
+        { "id": "breach-row", "component": "Row", "align": "center", "children": ["breach-icon", "breach-col"] },
+        { "id": "breach-icon", "component": "Icon", "name": "error" },
+        { "id": "breach-col", "component": "Column", "weight": 1, "children": ["breach-count", "breach-label"] },
+        { "id": "breach-count", "component": "Text", "variant": "h3", "text": "1" },
+        { "id": "breach-label", "component": "Text", "variant": "caption", "text": "breaching: payments" },
+        { "id": "ok-card", "component": "Card", "weight": 1, "child": "ok-row" },
+        { "id": "ok-row", "component": "Row", "align": "center", "children": ["ok-icon", "ok-col"] },
+        { "id": "ok-icon", "component": "Icon", "name": "check" },
+        { "id": "ok-col", "component": "Column", "weight": 1, "children": ["ok-count", "ok-label"] },
+        { "id": "ok-count", "component": "Text", "variant": "h3", "text": "4" },
+        { "id": "ok-label", "component": "Text", "variant": "caption", "text": "within SLO" },
+
+        { "id": "services", "component": "List", "children": { "componentId": "service-card", "path": "/services" } },
+        { "id": "service-card", "component": "Card", "child": "service-col" },
+        { "id": "service-col", "component": "Column", "children": ["service-head", "service-status", "service-metrics", "service-button"] },
+        { "id": "service-head", "component": "Row", "align": "center", "children": ["service-icon", "service-name"] },
+        { "id": "service-icon", "component": "Icon", "name": { "path": "icon" } },
+        { "id": "service-name", "component": "Text", "variant": "h4", "weight": 1, "text": { "path": "name" } },
+        { "id": "service-status", "component": "Text", "text": { "path": "status" } },
+        { "id": "service-metrics", "component": "Row", "justify": "spaceBetween", "children": ["metric-p95", "metric-errors", "metric-uptime"] },
+        { "id": "metric-p95", "component": "Column", "weight": 1, "children": ["metric-p95-label", "metric-p95-value"] },
+        { "id": "metric-p95-label", "component": "Text", "variant": "caption", "text": "p95" },
+        {
+          "id": "metric-p95-value",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "${p95} ms" }, "returnType": "string" }
+        },
+        { "id": "metric-errors", "component": "Column", "weight": 1, "children": ["metric-errors-label", "metric-errors-value"] },
+        { "id": "metric-errors-label", "component": "Text", "variant": "caption", "text": "Errors" },
+        {
+          "id": "metric-errors-value",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "${errors}%" }, "returnType": "string" }
+        },
+        { "id": "metric-uptime", "component": "Column", "weight": 1, "children": ["metric-uptime-label", "metric-uptime-value"] },
+        { "id": "metric-uptime-label", "component": "Text", "variant": "caption", "text": "Uptime" },
+        {
+          "id": "metric-uptime-value",
+          "component": "Text",
+          "variant": "h5",
+          "text": { "call": "formatString", "args": { "value": "${uptime}%" }, "returnType": "string" }
+        },
+        {
+          "id": "service-button",
+          "component": "Button",
+          "variant": "borderless",
+          "child": "service-button-label",
+          "action": { "event": { "name": "investigate_service", "context": { "service": { "path": "name" } } } }
+        },
+        { "id": "service-button-label", "component": "Text", "text": "Investigate" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "service-health",
+      "path": "/",
+      "value": {
+        "services": [
+          { "name": "payments", "icon": "error", "status": "**Breaching both targets:** 40 ms over on latency, 0.8 points over on errors.", "p95": 340, "errors": "1.8", "uptime": "99.71" },
+          { "name": "search", "icon": "warning", "status": "Within SLO, but the least headroom: 70% of the latency limit.", "p95": 210, "errors": "0.6", "uptime": "99.90" },
+          { "name": "api-gateway", "icon": "check", "status": "Healthy.", "p95": 120, "errors": "0.2", "uptime": "99.98" },
+          { "name": "notifications", "icon": "check", "status": "Healthy.", "p95": 95, "errors": "0.3", "uptime": "99.95" },
+          { "name": "auth", "icon": "check", "status": "Healthy.", "p95": 85, "errors": "0.1", "uptime": "99.99" }
+        ]
+      }
+    }
+  }
+]

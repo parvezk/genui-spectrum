@@ -1,0 +1,113 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "task-board",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "task-board",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "summary", "board"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Sprint board" },
+        { "id": "summary", "component": "Text", "variant": "caption", "text": "8 tasks · 34 points · 8 points done (24%)" },
+
+        { "id": "board", "component": "Row", "align": "start", "children": ["todo-col", "doing-col", "review-col", "done-col"] },
+
+        { "id": "todo-col", "component": "Column", "weight": 1, "children": ["todo-title", "todo-points", "todo-list"] },
+        { "id": "todo-title", "component": "Text", "variant": "h5", "text": "To do" },
+        { "id": "todo-points", "component": "Text", "variant": "caption", "text": { "path": "/todo/points" } },
+        { "id": "todo-list", "component": "List", "children": { "componentId": "todo-card", "path": "/todo/tasks" } },
+        { "id": "todo-card", "component": "Card", "child": "todo-card-col" },
+        { "id": "todo-card-col", "component": "Column", "children": ["todo-task", "todo-meta"] },
+        { "id": "todo-task", "component": "Text", "text": { "path": "title" } },
+        {
+          "id": "todo-meta",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${owner} · ${points} pts" }, "returnType": "string" }
+        },
+
+        { "id": "doing-col", "component": "Column", "weight": 1, "children": ["doing-title", "doing-points", "doing-list"] },
+        { "id": "doing-title", "component": "Text", "variant": "h5", "text": "In progress" },
+        { "id": "doing-points", "component": "Text", "variant": "caption", "text": { "path": "/doing/points" } },
+        { "id": "doing-list", "component": "List", "children": { "componentId": "doing-card", "path": "/doing/tasks" } },
+        { "id": "doing-card", "component": "Card", "child": "doing-card-col" },
+        { "id": "doing-card-col", "component": "Column", "children": ["doing-task", "doing-meta"] },
+        { "id": "doing-task", "component": "Text", "text": { "path": "title" } },
+        {
+          "id": "doing-meta",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${owner} · ${points} pts" }, "returnType": "string" }
+        },
+
+        { "id": "review-col", "component": "Column", "weight": 1, "children": ["review-title", "review-points", "review-list"] },
+        { "id": "review-title", "component": "Text", "variant": "h5", "text": "Review" },
+        { "id": "review-points", "component": "Text", "variant": "caption", "text": { "path": "/review/points" } },
+        { "id": "review-list", "component": "List", "children": { "componentId": "review-card", "path": "/review/tasks" } },
+        { "id": "review-card", "component": "Card", "child": "review-card-col" },
+        { "id": "review-card-col", "component": "Column", "children": ["review-task", "review-meta"] },
+        { "id": "review-task", "component": "Text", "text": { "path": "title" } },
+        {
+          "id": "review-meta",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${owner} · ${points} pts" }, "returnType": "string" }
+        },
+
+        { "id": "done-col", "component": "Column", "weight": 1, "children": ["done-title", "done-points", "done-list"] },
+        { "id": "done-title", "component": "Text", "variant": "h5", "text": "Done" },
+        { "id": "done-points", "component": "Text", "variant": "caption", "text": { "path": "/done/points" } },
+        { "id": "done-list", "component": "List", "children": { "componentId": "done-card", "path": "/done/tasks" } },
+        { "id": "done-card", "component": "Card", "child": "done-card-col" },
+        { "id": "done-card-col", "component": "Column", "children": ["done-task", "done-meta"] },
+        { "id": "done-task", "component": "Text", "text": { "path": "title" } },
+        {
+          "id": "done-meta",
+          "component": "Text",
+          "variant": "caption",
+          "text": { "call": "formatString", "args": { "value": "${owner} · ${points} pts" }, "returnType": "string" }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "task-board",
+      "path": "/",
+      "value": {
+        "todo": {
+          "points": "2 tasks · 5 pts",
+          "tasks": [
+            { "title": "Add password reset", "owner": "Maya", "points": 3 },
+            { "title": "Write API docs", "owner": "Tom", "points": 2 }
+          ]
+        },
+        "doing": {
+          "points": "3 tasks · 16 pts",
+          "tasks": [
+            { "title": "Checkout redesign", "owner": "Priya", "points": 8 },
+            { "title": "Fix login timeout", "owner": "Maya", "points": 3 },
+            { "title": "Upgrade Postgres", "owner": "Tom", "points": 5 }
+          ]
+        },
+        "review": {
+          "points": "1 task · 5 pts",
+          "tasks": [{ "title": "Search filters", "owner": "Leo", "points": 5 }]
+        },
+        "done": {
+          "points": "2 tasks · 8 pts",
+          "tasks": [
+            { "title": "Dark mode", "owner": "Priya", "points": 5 },
+            { "title": "Rate limiting", "owner": "Leo", "points": 3 }
+          ]
+        }
+      }
+    }
+  }
+]

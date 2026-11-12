@@ -163,6 +163,84 @@
         "html": true,
         "agui": true
       }
+    },
+    {
+      "id": "13-monthly-revenue",
+      "index": 13,
+      "title": "Monthly revenue chart",
+      "category": "data",
+      "prompt": "Show monthly revenue for 2024 as a chart and call out the best and worst months. In $k: Jan 42, Feb 38, Mar 51, Apr 47, May 55, Jun 61, Jul 58, Aug 49, Sep 63, Oct 67, Nov 72, Dec 80.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "14-weather-week",
+      "index": 14,
+      "title": "7-day forecast",
+      "category": "data",
+      "prompt": "Show the 7-day forecast for Lisbon (high/low in °C) and tell me the best day for the beach. Mon sunny 24/16, Tue sunny 26/17, Wed partly cloudy 23/16, Thu rain 19/14, Fri rain 18/13, Sat cloudy 20/14, Sun sunny 23/15.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "15-task-board",
+      "index": 15,
+      "title": "Sprint task board",
+      "category": "data",
+      "prompt": "Show these sprint tasks as a board grouped by status, with points per column. To do: Add password reset (Maya, 3), Write API docs (Tom, 2). In progress: Checkout redesign (Priya, 8), Fix login timeout (Maya, 3), Upgrade Postgres (Tom, 5). Review: Search filters (Leo, 5). Done: Dark mode (Priya, 5), Rate limiting (Leo, 3).",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "16-expense-breakdown",
+      "index": 16,
+      "title": "Expense breakdown",
+      "category": "data",
+      "prompt": "Break down my monthly spending by category and show each one's share of the total. Rent $1,800, Groceries $520, Dining out $340, Transport $210, Other $195, Utilities $160, Subscriptions $75.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "17-service-health",
+      "index": 17,
+      "title": "Service health dashboard",
+      "category": "data",
+      "prompt": "Show a health dashboard for these services and flag anything breaching the SLO (p95 latency under 300 ms, error rate under 1%). api-gateway: p95 120 ms, errors 0.2%, uptime 99.98%. auth: 85 ms, 0.1%, 99.99%. payments: 340 ms, 1.8%, 99.71%. search: 210 ms, 0.6%, 99.90%. notifications: 95 ms, 0.3%, 99.95%.",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
+    },
+    {
+      "id": "18-team-directory",
+      "index": 18,
+      "title": "Team directory",
+      "category": "data",
+      "prompt": "Show the team directory so I can search and sort it. Ana Ruiz (Engineering, Lisbon), Ben Okafor (Design, London), Chloe Tan (Engineering, Singapore), Dev Patel (Product, London), Elena Rossi (Marketing, Milan), Farid Haddad (Engineering, Berlin), Grace Kim (Design, Seoul), Hugo Martin (Sales, Paris).",
+      "valid": {
+        "text": true,
+        "a2ui": true,
+        "html": true,
+        "agui": true
+      }
     }
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "text": "The share table is precise and the block bars in a fourth column hint at proportion; there is no pie or donut, only numbers and commentary.",
+  "a2ui": "Currency formatting nested in a format string and bound rows work nicely, but shares are again block characters in a Text because the catalog cannot draw a part-of-whole chart.",
+  "html": "An SVG donut with tap-to-focus slices and checkboxes that drop a category and recompute every share, so hiding rent shows how the other $1,500 divides.",
+  "agui": "The breakdown is a disabled table, but picking categories with checkboxes and a reduction slider yields a well-typed savings goal for the agent to act on."
+}

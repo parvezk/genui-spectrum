@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint board</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px; font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: #172b4d; background: #0079bf; }
+  h1 { font-size: 18px; margin: 0; color: #fff; }
+  .top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .top small { color: #dbeeff; }
+  .progress { height: 8px; background: rgba(255,255,255,.3); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .progress i { display: block; height: 100%; width: 0; background: #61bd4f; transition: width .25s; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .chip { border: 0; border-radius: 999px; padding: 3px 10px; font: inherit; font-weight: 600; background: rgba(255,255,255,.25); color: #fff; cursor: pointer; }
+  .chip.on { background: #fff; color: #0079bf; }
+  .board { display: grid; grid-template-columns: repeat(4, minmax(132px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .col { background: #ebecf0; border-radius: 8px; padding: 6px; min-height: 150px; }
+  .col.over { outline: 3px solid #fff; background: #dfe1e6; }
+  .col header { display: flex; justify-content: space-between; padding: 2px 4px 6px; font-weight: 700; }
+  .col header span { font-weight: 500; color: #5e6c84; font-size: 11px; }
+  .card { background: #fff; border-radius: 6px; padding: 7px 8px; margin-bottom: 6px; box-shadow: 0 1px 0 rgba(9,30,66,.25); cursor: grab; }
+  .card.dragging { opacity: .4; }
+  .card.hide { display: none; }
+  .card b { display: block; font-weight: 600; }
+  .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; color: #5e6c84; font-size: 11px; }
+  .who { display: inline-flex; align-items: center; gap: 4px; }
+  .who i { width: 16px; height: 16px; border-radius: 50%; display: inline-block; color: #fff; font-style: normal; font-size: 9px; font-weight: 700; text-align: center; line-height: 16px; }
+  .pts { background: #dfe1e6; border-radius: 999px; padding: 0 6px; font-weight: 700; color: #172b4d; }
+  .moves { display: flex; gap: 4px; margin-top: 6px; }
+  .moves button { flex: 1; border: 1px solid #dfe1e6; background: #f4f5f7; border-radius: 4px; font: inherit; font-size: 11px; cursor: pointer; padding: 1px 0; color: #172b4d; }
+  .moves button:disabled { opacity: .3; cursor: default; }
+  .hint { color: #dbeeff; font-size: 11px; margin: 4px 0 0; }
+</style>
+</head>
+<body>
+  <div class="top"><h1>Sprint board</h1><small id="summary"></small></div>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="chips" id="chips"></div>
+  <div class="board" id="board"></div>
+  <p class="hint">Drag a card to another column, or use the arrows. Points update as you go.</p>
+
+<script>
+(function () {
+  var columns = [
+    { id: 'todo', name: 'To do' },
+    { id: 'doing', name: 'In progress' },
+    { id: 'review', name: 'Review' },
+    { id: 'done', name: 'Done' }
+  ];
+  var tasks = [
+    { id: 't1', title: 'Add password reset', who: 'Maya', pts: 3, col: 0 },
+    { id: 't2', title: 'Write API docs', who: 'Tom', pts: 2, col: 0 },
+    { id: 't3', title: 'Checkout redesign', who: 'Priya', pts: 8, col: 1 },
+    { id: 't4', title: 'Fix login timeout', who: 'Maya', pts: 3, col: 1 },
+    { id: 't5', title: 'Upgrade Postgres', who: 'Tom', pts: 5, col: 1 },
+    { id: 't6', title: 'Search filters', who: 'Leo', pts: 5, col: 2 },
+    { id: 't7', title: 'Dark mode', who: 'Priya', pts: 5, col: 3 },
+    { id: 't8', title: 'Rate limiting', who: 'Leo', pts: 3, col: 3 }
+  ];
+  var colors = { Maya: '#eb5a46', Tom: '#0079bf', Priya: '#c377e0', Leo: '#ff9f1a' };
+  var filter = 'All';
+  var dragId = null;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined) { n.textContent = text; }
+    return n;
+  }
+  function find(id) {
+    for (var i = 0; i < tasks.length; i++) { if (tasks[i].id === id) { return tasks[i]; } }
+    return null;
+  }
+
+  ['All', 'Maya', 'Tom', 'Priya', 'Leo'].forEach(function (name) {
+    var c = el('button', 'chip' + (name === 'All' ? ' on' : ''), name);
+    c.type = 'button';
+    c.setAttribute('data-who', name);
+    $('chips').appendChild(c);
+  });
+
+  function render() {
+    var board = $('board');
+    board.textContent = '';
+    var total = 0, done = 0;
+    columns.forEach(function (col, ci) {
+      var mine = tasks.filter(function (t) { return t.col === ci; });
+      var pts = mine.reduce(function (s, t) { return s + t.pts; }, 0);
+      total += pts;
+      if (ci === columns.length - 1) { done = pts; }
+      var box = el('div', 'col');
+      box.setAttribute('data-col', String(ci));
+      var head = el('header', '', col.name);
+      head.appendChild(el('span', '', mine.length + ' · ' + pts + ' pts'));
+      box.appendChild(head);
+      mine.forEach(function (t) {
+        var card = el('div', 'card' + (filter !== 'All' && t.who !== filter ? ' hide' : ''));
+        card.draggable = true;
+        card.setAttribute('data-id', t.id);
+        card.appendChild(el('b', '', t.title));
+        var meta = el('div', 'meta');
+        var who = el('span', 'who');
+        var dot = el('i', '', t.who.charAt(0));
+        dot.style.background = colors[t.who];
+        who.appendChild(dot);
+        who.appendChild(document.createTextNode(t.who));
+        meta.appendChild(who);
+        meta.appendChild(el('span', 'pts', String(t.pts)));
+        card.appendChild(meta);
+        var moves = el('div', 'moves');
+        var back = el('button', '', '←');
+        back.type = 'button'; back.disabled = ci === 0;
+        back.setAttribute('data-move', '-1'); back.setAttribute('aria-label', 'Move ' + t.title + ' back');
+        var fwd = el('button', '', '→');
+        fwd.type = 'button'; fwd.disabled = ci === columns.length - 1;
+        fwd.setAttribute('data-move', '1'); fwd.setAttribute('aria-label', 'Move ' + t.title + ' forward');
+        moves.appendChild(back); moves.appendChild(fwd);
+        card.appendChild(moves);
+        box.appendChild(card);
+      });
+      board.appendChild(box);
+    });
+    $('summary').textContent = tasks.length + ' tasks · ' + total + ' pts · ' + done + ' done (' + Math.round(done / total * 100) + '%)';
+    $('bar').style.width = (done / total * 100) + '%';
+  }
+
+  function closest(node, attr, stop) {
+    while (node && node !== stop) {
+      if (node.getAttribute && node.getAttribute(attr) !== null) { return node; }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  var board = $('board');
+  board.addEventListener('click', function (e) {
+    var move = e.target.getAttribute && e.target.getAttribute('data-move');
+    if (!move) { return; }
+    var card = closest(e.target, 'data-id', board);
+    var t = card ? find(card.getAttribute('data-id')) : null;
+    if (!t) { return; }
+    t.col = Math.max(0, Math.min(columns.length - 1, t.col + parseInt(move, 10)));
+    render();
+  });
+  board.addEventListener('dragstart', function (e) {
+    var card = closest(e.target, 'data-id', board);
+    if (!card) { return; }
+    dragId = card.getAttribute('data-id');
+    card.classList.add('dragging');
+    if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId); }
+  });
+  board.addEventListener('dragover', function (e) {
+    var col = closest(e.target, 'data-col', board);
+    if (!col || !dragId) { return; }
+    e.preventDefault();
+    var cols = board.children;
+    for (var i = 0; i < cols.length; i++) { cols[i].classList.toggle('over', cols[i] === col); }
+  });
+  board.addEventListener('drop', function (e) {
+    var col = closest(e.target, 'data-col', board);
+    if (!col || !dragId) { return; }
+    e.preventDefault();
+    var t = find(dragId);
+    if (t) { t.col = parseInt(col.getAttribute('data-col'), 10); }
+    dragId = null;
+    render();
+  });
+  board.addEventListener('dragend', function () { dragId = null; render(); });
+
+  $('chips').addEventListener('click', function (e) {
+    var who = e.target.getAttribute('data-who');
+    if (!who) { return; }
+    filter = who;
+    var chips = $('chips').children;
+    for (var i = 0; i < chips.length; i++) { chips[i].className = 'chip' + (chips[i].getAttribute('data-who') === who ? ' on' : ''); }
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

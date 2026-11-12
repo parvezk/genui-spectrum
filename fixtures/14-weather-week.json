@@ -1,0 +1,655 @@
+{
+  "id": "14-weather-week",
+  "index": 14,
+  "title": "7-day forecast",
+  "category": "data",
+  "prompt": "Show the 7-day forecast for Lisbon (high/low in °C) and tell me the best day for the beach. Mon sunny 24/16, Tue sunny 26/17, Wed partly cloudy 23/16, Thu rain 19/14, Fri rain 18/13, Sat cloudy 20/14, Sun sunny 23/15.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Lisbon: 7-day forecast\n\n**Best beach day: Tuesday.** It is the warmest day of the week at 26 °C and sunny. Monday (24 °C, sunny) is a good second choice, and Sunday (23 °C, sunny) works if you want to go at the weekend.\n\n| Day | Weather | High | Low |\n| --- | --- | ---: | ---: |\n| Mon | ☀️ Sunny | 24 °C | 16 °C |\n| **Tue** | ☀️ **Sunny** | **26 °C** | **17 °C** |\n| Wed | ⛅ Partly cloudy | 23 °C | 16 °C |\n| Thu | 🌧️ Rain | 19 °C | 14 °C |\n| Fri | 🌧️ Rain | 18 °C | 13 °C |\n| Sat | ☁️ Cloudy | 20 °C | 14 °C |\n| Sun | ☀️ Sunny | 23 °C | 15 °C |\n\n### The week at a glance\n\n- **Start of the week is the best of it:** sunny and warming up to Tuesday's peak.\n- **Wednesday** is still pleasant at 23 °C, but clouds move in ahead of the rain.\n- **Thursday and Friday are wet** and the coolest days, with highs of 19 °C and 18 °C. Plan indoor things: museums, the Oceanário, a long lunch.\n- **The weekend recovers:** cloudy but dry on Saturday, then sunny again on Sunday.\n\n### For the beach\n\n- **Go Tuesday.** Bring sunscreen: a clear day in Lisbon means a high UV index even when the air feels mild.\n- The Atlantic is cool here, so the water will feel cold whatever the air temperature.\n- Evenings drop to 16–17 °C, so pack a light layer if you stay for sunset.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "weather-week",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "weather-week",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "header",
+                "beach-card",
+                "forecast-card",
+                "tips-card"
+              ]
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "header-icon",
+                "header-col"
+              ]
+            },
+            {
+              "id": "header-icon",
+              "component": "Icon",
+              "name": "locationOn"
+            },
+            {
+              "id": "header-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "title",
+                "subtitle"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Lisbon"
+            },
+            {
+              "id": "subtitle",
+              "component": "Text",
+              "variant": "caption",
+              "text": "7-day forecast · high / low in °C"
+            },
+            {
+              "id": "beach-card",
+              "component": "Card",
+              "child": "beach-row"
+            },
+            {
+              "id": "beach-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "beach-emoji",
+                "beach-col"
+              ]
+            },
+            {
+              "id": "beach-emoji",
+              "component": "Text",
+              "variant": "h1",
+              "text": "🏖️"
+            },
+            {
+              "id": "beach-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "beach-title",
+                "beach-text"
+              ]
+            },
+            {
+              "id": "beach-title",
+              "component": "Text",
+              "variant": "h4",
+              "text": "Best beach day: Tuesday"
+            },
+            {
+              "id": "beach-text",
+              "component": "Text",
+              "text": "Sunny and the warmest day of the week at 26 °C. Monday (24 °C) is the backup; Sunday (23 °C) if it has to be the weekend."
+            },
+            {
+              "id": "forecast-card",
+              "component": "Card",
+              "child": "forecast-list"
+            },
+            {
+              "id": "forecast-list",
+              "component": "List",
+              "children": {
+                "componentId": "day-row",
+                "path": "/days"
+              }
+            },
+            {
+              "id": "day-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "day-name",
+                "day-emoji",
+                "day-condition",
+                "day-temps"
+              ]
+            },
+            {
+              "id": "day-name",
+              "component": "Text",
+              "variant": "h5",
+              "weight": 2,
+              "text": {
+                "path": "day"
+              }
+            },
+            {
+              "id": "day-emoji",
+              "component": "Text",
+              "variant": "h4",
+              "weight": 1,
+              "text": {
+                "path": "emoji"
+              }
+            },
+            {
+              "id": "day-condition",
+              "component": "Text",
+              "weight": 4,
+              "text": {
+                "path": "condition"
+              }
+            },
+            {
+              "id": "day-temps",
+              "component": "Text",
+              "weight": 3,
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${high}° / ${low}°"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "tips-card",
+              "component": "Card",
+              "child": "tips-col"
+            },
+            {
+              "id": "tips-col",
+              "component": "Column",
+              "children": [
+                "tips-title",
+                "tip-1",
+                "tip-2",
+                "tip-3",
+                "remind-button"
+              ]
+            },
+            {
+              "id": "tips-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Planning the week"
+            },
+            {
+              "id": "tip-1",
+              "component": "Text",
+              "text": "**Thursday and Friday are wet** and the coolest days. Keep them for museums or a long lunch."
+            },
+            {
+              "id": "tip-2",
+              "component": "Text",
+              "text": "The weekend recovers: cloudy but dry on Saturday, sunny again on Sunday."
+            },
+            {
+              "id": "tip-3",
+              "component": "Text",
+              "text": "Evenings drop to 16–17 °C early in the week. Bring a light layer for sunset."
+            },
+            {
+              "id": "remind-button",
+              "component": "Button",
+              "child": "remind-label",
+              "action": {
+                "event": {
+                  "name": "set_beach_reminder",
+                  "context": {
+                    "day": "Tuesday",
+                    "city": "Lisbon"
+                  }
+                }
+              }
+            },
+            {
+              "id": "remind-label",
+              "component": "Text",
+              "text": "Remind me on Tuesday morning"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "weather-week",
+          "path": "/",
+          "value": {
+            "days": [
+              {
+                "day": "Mon",
+                "emoji": "☀️",
+                "condition": "Sunny",
+                "high": 24,
+                "low": 16
+              },
+              {
+                "day": "Tue",
+                "emoji": "☀️",
+                "condition": "Sunny · best for the beach",
+                "high": 26,
+                "low": 17
+              },
+              {
+                "day": "Wed",
+                "emoji": "⛅",
+                "condition": "Partly cloudy",
+                "high": 23,
+                "low": 16
+              },
+              {
+                "day": "Thu",
+                "emoji": "🌧️",
+                "condition": "Rain",
+                "high": 19,
+                "low": 14
+              },
+              {
+                "day": "Fri",
+                "emoji": "🌧️",
+                "condition": "Rain",
+                "high": 18,
+                "low": 13
+              },
+              {
+                "day": "Sat",
+                "emoji": "☁️",
+                "condition": "Cloudy",
+                "high": 20,
+                "low": 14
+              },
+              {
+                "day": "Sun",
+                "emoji": "☀️",
+                "condition": "Sunny",
+                "high": 23,
+                "low": 15
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Lisbon 7-day forecast</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #fff; background: linear-gradient(160deg, #1e88e5, #6ab7ff 55%, #ffd89b); min-height: 100vh; }\n  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }\n  h1 { font-size: 22px; margin: 0; }\n  header small { opacity: .85; }\n  .units { display: flex; background: rgba(255,255,255,.25); border-radius: 999px; padding: 2px; }\n  .units button { border: 0; background: transparent; color: #fff; font: inherit; font-weight: 700; padding: 3px 10px; border-radius: 999px; cursor: pointer; }\n  .units button.on { background: #fff; color: #1e88e5; }\n  .hero { background: rgba(255,255,255,.2); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.35); border-radius: 14px; padding: 12px; display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; margin-bottom: 12px; }\n  .hero svg { width: 64px; height: 64px; }\n  .hero h2 { margin: 0; font-size: 16px; }\n  .hero p { margin: 2px 0 0; font-size: 13px; opacity: .95; }\n  .hero .big { font-size: 26px; font-weight: 700; line-height: 1.1; }\n  .tag { display: inline-block; background: #fff; color: #c2410c; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; border-radius: 999px; padding: 1px 8px; margin-top: 4px; }\n  .list { background: rgba(255,255,255,.92); color: #1f2937; border-radius: 14px; padding: 4px 10px; }\n  .day { display: grid; grid-template-columns: 38px 30px 1fr 26px 26px; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid #e5e7eb; cursor: pointer; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; font: inherit; color: inherit; text-align: left; }\n  .day:first-child { border-top: 0; }\n  .day b { font-size: 13px; }\n  .day svg { width: 26px; height: 26px; }\n  .day .t { font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }\n  .day .lo { color: #6b7280; }\n  .range { position: relative; height: 6px; background: #e5e7eb; border-radius: 3px; }\n  .range i { position: absolute; top: 0; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #60a5fa, #f59e0b); }\n  .day.sel b { color: #1e88e5; }\n  .day.best b::after { content: \" ★\"; color: #f59e0b; }\n  .beach { margin-top: 12px; background: rgba(255,255,255,.92); color: #1f2937; border-radius: 14px; padding: 10px 12px; }\n  .beach h3 { margin: 0 0 6px; font-size: 13px; }\n  .score { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 3px; }\n  .score .m { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }\n  .score .m i { display: block; height: 100%; background: #f59e0b; }\n</style>\n</head>\n<body>\n  <header>\n    <div><h1>Lisbon</h1><small>7-day forecast</small></div>\n    <div class=\"units\" id=\"units\"><button data-u=\"C\" class=\"on\">°C</button><button data-u=\"F\">°F</button></div>\n  </header>\n\n  <div class=\"hero\">\n    <div id=\"heroIcon\"></div>\n    <div>\n      <h2 id=\"heroDay\"></h2>\n      <div class=\"big\" id=\"heroTemp\"></div>\n      <p id=\"heroText\"></p>\n      <span class=\"tag\" id=\"heroTag\"></span>\n    </div>\n  </div>\n\n  <div class=\"list\" id=\"list\"></div>\n\n  <div class=\"beach\">\n    <h3>Beach score by day (sun + warmth)</h3>\n    <div id=\"scores\"></div>\n  </div>\n\n<script>\n(function () {\n  var days = [\n    { d: 'Mon', full: 'Monday', c: 'sunny', label: 'Sunny', hi: 24, lo: 16 },\n    { d: 'Tue', full: 'Tuesday', c: 'sunny', label: 'Sunny', hi: 26, lo: 17 },\n    { d: 'Wed', full: 'Wednesday', c: 'partly', label: 'Partly cloudy', hi: 23, lo: 16 },\n    { d: 'Thu', full: 'Thursday', c: 'rain', label: 'Rain', hi: 19, lo: 14 },\n    { d: 'Fri', full: 'Friday', c: 'rain', label: 'Rain', hi: 18, lo: 13 },\n    { d: 'Sat', full: 'Saturday', c: 'cloudy', label: 'Cloudy', hi: 20, lo: 14 },\n    { d: 'Sun', full: 'Sunday', c: 'sunny', label: 'Sunny', hi: 23, lo: 15 }\n  ];\n  var sunPoints = { sunny: 3, partly: 2, cloudy: 1, rain: 0 };\n  var advice = {\n    sunny: 'Clear skies. Sunscreen and a hat.',\n    partly: 'Sun with passing clouds. Still pleasant outdoors.',\n    cloudy: 'Grey but dry. Fine for walking the city.',\n    rain: 'Wet day. Plan something indoors.'\n  };\n  var unit = 'C';\n  var selected = 1;\n  var $ = function (id) { return document.getElementById(id); };\n\n  var sun = '<circle cx=\"16\" cy=\"16\" r=\"6\" fill=\"#f59e0b\"/><g stroke=\"#f59e0b\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8\"/></g>';\n  var cloud = '<path d=\"M9 24h14a5 5 0 0 0 .6-9.96A7 7 0 0 0 10 12.5 5.8 5.8 0 0 0 9 24z\" fill=\"#9ca3af\"/>';\n  var icons = {\n    sunny: sun,\n    cloudy: cloud,\n    partly: '<circle cx=\"12\" cy=\"11\" r=\"5\" fill=\"#f59e0b\"/><path d=\"M11 26h13a4.5 4.5 0 0 0 .5-8.97A6.3 6.3 0 0 0 12 15.6 5.2 5.2 0 0 0 11 26z\" fill=\"#9ca3af\"/>',\n    rain: '<path d=\"M9 20h14a5 5 0 0 0 .6-9.96A7 7 0 0 0 10 8.5 5.8 5.8 0 0 0 9 20z\" fill=\"#6b7280\"/><g stroke=\"#3b82f6\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M11 23l-1.5 4M16 23l-1.5 4M21 23l-1.5 4\"/></g>'\n  };\n  function icon(kind) {\n    return '<svg viewBox=\"0 0 32 32\" aria-hidden=\"true\">' + icons[kind] + '</svg>';\n  }\n  function show(c) { return unit === 'C' ? c : Math.round(c * 9 / 5 + 32); }\n\n  days.forEach(function (x) { x.score = sunPoints[x.c] + (x.hi - 18) / 2; });\n  var best = 0;\n  days.forEach(function (x, i) { if (x.score > days[best].score) { best = i; } });\n  var minLo = Math.min.apply(null, days.map(function (x) { return x.lo; }));\n  var maxHi = Math.max.apply(null, days.map(function (x) { return x.hi; }));\n  var maxScore = days[best].score;\n\n  function render() {\n    var list = $('list');\n    list.textContent = '';\n    days.forEach(function (x, i) {\n      var row = document.createElement('button');\n      row.type = 'button';\n      row.className = 'day' + (i === selected ? ' sel' : '') + (i === best ? ' best' : '');\n      row.setAttribute('data-i', String(i));\n      var name = document.createElement('b'); name.textContent = x.d;\n      var ic = document.createElement('span'); ic.innerHTML = icon(x.c);\n      var range = document.createElement('span'); range.className = 'range';\n      var fill = document.createElement('i');\n      fill.style.left = ((x.lo - minLo) / (maxHi - minLo) * 100) + '%';\n      fill.style.width = ((x.hi - x.lo) / (maxHi - minLo) * 100) + '%';\n      range.appendChild(fill);\n      var lo = document.createElement('span'); lo.className = 't lo'; lo.textContent = show(x.lo) + '°';\n      var hi = document.createElement('span'); hi.className = 't'; hi.textContent = show(x.hi) + '°';\n      row.appendChild(name); row.appendChild(ic); row.appendChild(range); row.appendChild(lo); row.appendChild(hi);\n      list.appendChild(row);\n    });\n\n    var s = days[selected];\n    $('heroIcon').innerHTML = icon(s.c).replace('viewBox', 'width=\"64\" height=\"64\" viewBox');\n    $('heroDay').textContent = s.full + ' · ' + s.label;\n    $('heroTemp').textContent = show(s.hi) + '° / ' + show(s.lo) + '°' + unit;\n    $('heroText').textContent = advice[s.c];\n    $('heroTag').textContent = selected === best ? 'Best beach day' : 'Beach score ' + Math.max(0, s.score).toFixed(1) + ' of ' + maxScore.toFixed(1);\n\n    var scores = $('scores');\n    scores.textContent = '';\n    days.forEach(function (x) {\n      var row = document.createElement('div'); row.className = 'score';\n      var label = document.createElement('span'); label.textContent = x.d;\n      var m = document.createElement('span'); m.className = 'm';\n      var f = document.createElement('i'); f.style.width = (Math.max(0, x.score) / maxScore * 100) + '%';\n      m.appendChild(f);\n      row.appendChild(label); row.appendChild(m);\n      scores.appendChild(row);\n    });\n  }\n\n  $('list').addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== $('list') && !(t.getAttribute && t.getAttribute('data-i'))) { t = t.parentNode; }\n    if (!t || t === $('list')) { return; }\n    selected = parseInt(t.getAttribute('data-i'), 10);\n    render();\n  });\n  $('units').addEventListener('click', function (e) {\n    var u = e.target.getAttribute('data-u');\n    if (!u) { return; }\n    unit = u;\n    var b = $('units').children;\n    for (var i = 0; i < b.length; i++) { b[i].className = b[i].getAttribute('data-u') === u ? 'on' : ''; }\n    render();\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_weather_week_14",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show Lisbon's 7-day forecast as a read-only table (day, weather, high, low in °C) and say that Tuesday is the best beach day (sunny, 26 °C). Then let the user confirm which day they will go, pick a backup day, and choose whether to get a reminder and in which units.",
+        "data": {
+          "city": "Lisbon",
+          "bestBeachDay": "Tue",
+          "forecast": [
+            {
+              "day": "Mon",
+              "weather": "Sunny",
+              "high": 24,
+              "low": 16
+            },
+            {
+              "day": "Tue",
+              "weather": "Sunny",
+              "high": 26,
+              "low": 17
+            },
+            {
+              "day": "Wed",
+              "weather": "Partly cloudy",
+              "high": 23,
+              "low": 16
+            },
+            {
+              "day": "Thu",
+              "weather": "Rain",
+              "high": 19,
+              "low": 14
+            },
+            {
+              "day": "Fri",
+              "weather": "Rain",
+              "high": 18,
+              "low": 13
+            },
+            {
+              "day": "Sat",
+              "weather": "Cloudy",
+              "high": 20,
+              "low": 14
+            },
+            {
+              "day": "Sun",
+              "weather": "Sunny",
+              "high": 23,
+              "low": 15
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "beachDay": {
+              "type": "string",
+              "enum": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+              ]
+            },
+            "backupDay": {
+              "type": "string",
+              "enum": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+              ]
+            },
+            "remind": {
+              "type": "boolean"
+            },
+            "units": {
+              "type": "string",
+              "enum": [
+                "celsius",
+                "fahrenheit"
+              ]
+            }
+          },
+          "required": [
+            "beachDay",
+            "remind",
+            "units"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "forecast": {
+            "type": "array",
+            "title": "Lisbon, next 7 days (°C)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "string",
+                  "title": "Day"
+                },
+                "weather": {
+                  "type": "string",
+                  "title": "Weather"
+                },
+                "high": {
+                  "type": "integer",
+                  "title": "High"
+                },
+                "low": {
+                  "type": "integer",
+                  "title": "Low"
+                }
+              }
+            }
+          },
+          "beachDay": {
+            "type": "string",
+            "title": "Beach day",
+            "oneOf": [
+              {
+                "const": "Mon",
+                "title": "Monday: sunny, 24 °C"
+              },
+              {
+                "const": "Tue",
+                "title": "Tuesday: sunny, 26 °C (best)"
+              },
+              {
+                "const": "Wed",
+                "title": "Wednesday: partly cloudy, 23 °C"
+              },
+              {
+                "const": "Thu",
+                "title": "Thursday: rain, 19 °C"
+              },
+              {
+                "const": "Fri",
+                "title": "Friday: rain, 18 °C"
+              },
+              {
+                "const": "Sat",
+                "title": "Saturday: cloudy, 20 °C"
+              },
+              {
+                "const": "Sun",
+                "title": "Sunday: sunny, 23 °C"
+              }
+            ]
+          },
+          "backupDay": {
+            "type": "string",
+            "title": "Backup day (optional)",
+            "enum": [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun"
+            ]
+          },
+          "remind": {
+            "type": "boolean",
+            "title": "Remind me that morning"
+          },
+          "units": {
+            "type": "string",
+            "title": "Units",
+            "oneOf": [
+              {
+                "const": "celsius",
+                "title": "°C"
+              },
+              {
+                "const": "fahrenheit",
+                "title": "°F"
+              }
+            ]
+          }
+        },
+        "required": [
+          "beachDay",
+          "remind",
+          "units"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Best beach day: Tuesday, sunny and 26 °C"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/forecast",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Plan the beach trip",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/beachDay"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/backupDay"
+              },
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/remind",
+                    "options": {
+                      "toggle": true
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/units",
+                    "options": {
+                      "format": "radio"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "forecast": [
+          {
+            "day": "Mon",
+            "weather": "Sunny",
+            "high": 24,
+            "low": 16
+          },
+          {
+            "day": "Tue",
+            "weather": "Sunny",
+            "high": 26,
+            "low": 17
+          },
+          {
+            "day": "Wed",
+            "weather": "Partly cloudy",
+            "high": 23,
+            "low": 16
+          },
+          {
+            "day": "Thu",
+            "weather": "Rain",
+            "high": 19,
+            "low": 14
+          },
+          {
+            "day": "Fri",
+            "weather": "Rain",
+            "high": 18,
+            "low": 13
+          },
+          {
+            "day": "Sat",
+            "weather": "Cloudy",
+            "high": 20,
+            "low": 14
+          },
+          {
+            "day": "Sun",
+            "weather": "Sunny",
+            "high": 23,
+            "low": 15
+          }
+        ],
+        "beachDay": "Tue",
+        "backupDay": "Mon",
+        "remind": true,
+        "units": "celsius"
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A seven-row table with emoji and a bolded best day is quick to scan; it has no sense of a forecast strip or temperature range.",
+    "a2ui": "A bound list makes clean forecast rows, but the icon set has no weather glyphs, so sun, cloud and rain are emoji inside Text, and there are no range bars.",
+    "html": "Looks like a weather app: custom SVG icons, low-to-high range bars on a shared scale, a Celsius/Fahrenheit toggle, tap-to-focus days and a beach score chart.",
+    "agui": "The forecast is a disabled table of text and number inputs; choosing a beach day and a reminder is a tidy typed result, but nothing here looks like weather."
+  }
+}

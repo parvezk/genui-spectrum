@@ -1,0 +1,109 @@
+{
+  "toolCall": {
+    "id": "call_team_directory_18",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show the eight people in the team directory as a read-only table (name, department, city), sorted by name. Provide controls for a search term, department filter and sort order; the submitted values are used to return a filtered, re-sorted directory.",
+      "data": {
+        "people": [
+          { "name": "Ana Ruiz", "department": "Engineering", "city": "Lisbon" },
+          { "name": "Ben Okafor", "department": "Design", "city": "London" },
+          { "name": "Chloe Tan", "department": "Engineering", "city": "Singapore" },
+          { "name": "Dev Patel", "department": "Product", "city": "London" },
+          { "name": "Elena Rossi", "department": "Marketing", "city": "Milan" },
+          { "name": "Farid Haddad", "department": "Engineering", "city": "Berlin" },
+          { "name": "Grace Kim", "department": "Design", "city": "Seoul" },
+          { "name": "Hugo Martin", "department": "Sales", "city": "Paris" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "search": { "type": "string" },
+          "departments": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["Engineering", "Design", "Product", "Marketing", "Sales"] },
+            "uniqueItems": true
+          },
+          "sortBy": { "type": "string", "enum": ["name", "department", "city"] },
+          "descending": { "type": "boolean" }
+        },
+        "required": ["sortBy"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "search": { "type": "string", "title": "Search name or city" },
+        "departments": {
+          "type": "array",
+          "title": "Departments",
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["Engineering", "Design", "Product", "Marketing", "Sales"] }
+        },
+        "sortBy": {
+          "type": "string",
+          "title": "Sort by",
+          "oneOf": [
+            { "const": "name", "title": "Name" },
+            { "const": "department", "title": "Department" },
+            { "const": "city", "title": "City" }
+          ]
+        },
+        "descending": { "type": "boolean", "title": "Z to A" },
+        "people": {
+          "type": "array",
+          "title": "8 people",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "title": "Name" },
+              "department": { "type": "string", "title": "Department" },
+              "city": { "type": "string", "title": "City" }
+            }
+          }
+        }
+      },
+      "required": ["sortBy"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        {
+          "type": "Group",
+          "label": "Find people",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/search" },
+            { "type": "Control", "scope": "#/properties/departments" },
+            {
+              "type": "HorizontalLayout",
+              "elements": [
+                { "type": "Control", "scope": "#/properties/sortBy" },
+                { "type": "Control", "scope": "#/properties/descending" }
+              ]
+            }
+          ]
+        },
+        { "type": "Label", "text": "Submit to apply. The table below shows everyone until then." },
+        { "type": "Control", "scope": "#/properties/people", "options": { "readonly": true } }
+      ]
+    },
+    "initialData": {
+      "departments": [],
+      "sortBy": "name",
+      "descending": false,
+      "people": [
+        { "name": "Ana Ruiz", "department": "Engineering", "city": "Lisbon" },
+        { "name": "Ben Okafor", "department": "Design", "city": "London" },
+        { "name": "Chloe Tan", "department": "Engineering", "city": "Singapore" },
+        { "name": "Dev Patel", "department": "Product", "city": "London" },
+        { "name": "Elena Rossi", "department": "Marketing", "city": "Milan" },
+        { "name": "Farid Haddad", "department": "Engineering", "city": "Berlin" },
+        { "name": "Grace Kim", "department": "Design", "city": "Seoul" },
+        { "name": "Hugo Martin", "department": "Sales", "city": "Paris" }
+      ]
+    }
+  }
+}

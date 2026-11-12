@@ -1,0 +1,608 @@
+{
+  "id": "16-expense-breakdown",
+  "index": 16,
+  "title": "Expense breakdown",
+  "category": "data",
+  "prompt": "Break down my monthly spending by category and show each one's share of the total. Rent $1,800, Groceries $520, Dining out $340, Transport $210, Other $195, Utilities $160, Subscriptions $75.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Monthly spending breakdown\n\n**Total: $3,300 a month.** Rent takes more than half of it.\n\n| Category | Amount | Share | |\n| --- | ---: | ---: | --- |\n| Rent | $1,800 | 54.5% | `██████████████████████` |\n| Groceries | $520 | 15.8% | `██████` |\n| Dining out | $340 | 10.3% | `████` |\n| Transport | $210 | 6.4% | `███` |\n| Other | $195 | 5.9% | `██` |\n| Utilities | $160 | 4.8% | `██` |\n| Subscriptions | $75 | 2.3% | `█` |\n| **Total** | **$3,300** | **100%** | |\n\nEach block is about 2.5% of the total.\n\n### What the numbers say\n\n- **Rent dominates:** $1,800 is 54.5% of spending, more than everything else combined ($1,500).\n- **Food is the second-biggest area:** groceries and dining out together come to $860, or 26.1%. Dining out alone ($340) is about two-thirds of what you spend on groceries.\n- **Essentials vs everything else:** rent, groceries, transport and utilities add up to $2,690 (81.5%). Dining out, subscriptions and \"other\" make up the flexible $610 (18.5%).\n- **Subscriptions are small:** $75 is 2.3%. Cancelling all of them would save less than cutting dining out by a quarter ($85).\n\n### If you want to cut back\n\nThe realistic levers are **dining out** ($340) and **other** ($195): together $535 a month. Trimming both by 30% frees up about $160 a month, or $1,926 a year, without touching the essentials. Rent is the only category where a change would move the total a lot, and it is the hardest to change.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "expense-breakdown",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "expense-breakdown",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "total-card",
+                "breakdown-card",
+                "split-row",
+                "insight-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Monthly spending"
+            },
+            {
+              "id": "total-card",
+              "component": "Card",
+              "child": "total-row"
+            },
+            {
+              "id": "total-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "total-icon",
+                "total-col"
+              ]
+            },
+            {
+              "id": "total-icon",
+              "component": "Icon",
+              "name": "payment"
+            },
+            {
+              "id": "total-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "total-label",
+                "total-value"
+              ]
+            },
+            {
+              "id": "total-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Total per month"
+            },
+            {
+              "id": "total-value",
+              "component": "Text",
+              "variant": "h3",
+              "text": {
+                "call": "formatCurrency",
+                "args": {
+                  "value": {
+                    "path": "/total"
+                  },
+                  "currency": "USD",
+                  "decimals": 0
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "breakdown-card",
+              "component": "Card",
+              "child": "breakdown-list"
+            },
+            {
+              "id": "breakdown-list",
+              "component": "List",
+              "children": {
+                "componentId": "category",
+                "path": "/categories"
+              }
+            },
+            {
+              "id": "category",
+              "component": "Column",
+              "children": [
+                "category-head",
+                "category-bar"
+              ]
+            },
+            {
+              "id": "category-head",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "align": "center",
+              "children": [
+                "category-name",
+                "category-figures"
+              ]
+            },
+            {
+              "id": "category-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "category-figures",
+              "component": "Text",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${formatCurrency(value: ${amount}, currency: 'USD', decimals: 0)} · ${share}%"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "category-bar",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "bar"
+              }
+            },
+            {
+              "id": "split-row",
+              "component": "Row",
+              "children": [
+                "needs-card",
+                "wants-card"
+              ]
+            },
+            {
+              "id": "needs-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "needs-col"
+            },
+            {
+              "id": "needs-col",
+              "component": "Column",
+              "children": [
+                "needs-label",
+                "needs-value",
+                "needs-note"
+              ]
+            },
+            {
+              "id": "needs-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Essentials"
+            },
+            {
+              "id": "needs-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": "$2,690 · 81.5%"
+            },
+            {
+              "id": "needs-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Rent, groceries, transport, utilities"
+            },
+            {
+              "id": "wants-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "wants-col"
+            },
+            {
+              "id": "wants-col",
+              "component": "Column",
+              "children": [
+                "wants-label",
+                "wants-value",
+                "wants-note"
+              ]
+            },
+            {
+              "id": "wants-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Flexible"
+            },
+            {
+              "id": "wants-value",
+              "component": "Text",
+              "variant": "h4",
+              "text": "$610 · 18.5%"
+            },
+            {
+              "id": "wants-note",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Dining out, subscriptions, other"
+            },
+            {
+              "id": "insight-card",
+              "component": "Card",
+              "child": "insight-col"
+            },
+            {
+              "id": "insight-col",
+              "component": "Column",
+              "children": [
+                "insight-title",
+                "insight-1",
+                "insight-2",
+                "insight-3"
+              ]
+            },
+            {
+              "id": "insight-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "What the numbers say"
+            },
+            {
+              "id": "insight-1",
+              "component": "Text",
+              "text": "**Rent is 54.5%**, more than everything else combined ($1,500)."
+            },
+            {
+              "id": "insight-2",
+              "component": "Text",
+              "text": "**Food is second:** groceries and dining out together are $860, or 26.1%."
+            },
+            {
+              "id": "insight-3",
+              "component": "Text",
+              "text": "**To cut back:** trimming dining out and other by 30% frees about $160 a month."
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "expense-breakdown",
+          "path": "/",
+          "value": {
+            "total": 3300,
+            "categories": [
+              {
+                "name": "Rent",
+                "amount": 1800,
+                "share": 54.5,
+                "bar": "██████████████████████"
+              },
+              {
+                "name": "Groceries",
+                "amount": 520,
+                "share": 15.8,
+                "bar": "██████"
+              },
+              {
+                "name": "Dining out",
+                "amount": 340,
+                "share": 10.3,
+                "bar": "████"
+              },
+              {
+                "name": "Transport",
+                "amount": 210,
+                "share": 6.4,
+                "bar": "███"
+              },
+              {
+                "name": "Other",
+                "amount": 195,
+                "share": 5.9,
+                "bar": "██"
+              },
+              {
+                "name": "Utilities",
+                "amount": 160,
+                "share": 4.8,
+                "bar": "██"
+              },
+              {
+                "name": "Subscriptions",
+                "amount": 75,
+                "share": 2.3,
+                "bar": "█"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Monthly spending</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1a1a2e; background: #f7f7fb; }\n  h1 { font-size: 18px; margin: 0 0 4px; }\n  .lead { margin: 0 0 12px; color: #6b6b85; }\n  .card { background: #fff; border: 1px solid #e6e6f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }\n  .donut { position: relative; width: 200px; max-width: 70%; margin: 0 auto 8px; }\n  .donut svg { width: 100%; height: auto; display: block; transform: rotate(0deg); }\n  .seg { fill: none; stroke-width: 6; cursor: pointer; transition: stroke-width .15s, opacity .15s; }\n  .seg.dim { opacity: .35; }\n  .seg.sel { stroke-width: 8; }\n  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }\n  .center small { font-size: 11px; color: #6b6b85; }\n  .center b { font-size: 20px; line-height: 1.2; }\n  .center span { font-size: 12px; color: #6b6b85; }\n  .row { display: grid; grid-template-columns: 18px 12px 1fr auto 46px; gap: 6px; align-items: center; padding: 5px 4px; border-radius: 6px; cursor: pointer; }\n  .row:hover, .row.sel { background: #f1f1f8; }\n  .row.off { opacity: .45; }\n  .row input { margin: 0; }\n  .dot { width: 10px; height: 10px; border-radius: 3px; }\n  .row .amt { font-variant-numeric: tabular-nums; }\n  .row .pct { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }\n  .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }\n  button { padding: 5px 10px; border-radius: 6px; border: 1px solid #d6d6e3; background: #fff; font: inherit; font-size: 12px; cursor: pointer; }\n  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }\n  .split div { background: #f7f7fb; border-radius: 8px; padding: 8px; }\n  .split small { display: block; color: #6b6b85; font-size: 11px; }\n  .split b { font-size: 16px; }\n</style>\n</head>\n<body>\n  <h1>Monthly spending</h1>\n  <p class=\"lead\">Tap a slice or a row to focus it. Untick a category to see how the rest divides up without it.</p>\n\n  <div class=\"card\">\n    <div class=\"donut\">\n      <svg viewBox=\"0 0 42 42\" role=\"img\" aria-label=\"Donut chart of spending by category\"><g id=\"segs\"></g></svg>\n      <div class=\"center\"><small id=\"cLabel\"></small><b id=\"cValue\"></b><span id=\"cShare\"></span></div>\n    </div>\n    <div id=\"rows\"></div>\n    <div class=\"actions\"><button id=\"noRent\">Hide rent</button><button id=\"all\">Show everything</button></div>\n  </div>\n\n  <div class=\"card\">\n    <div class=\"split\">\n      <div><small>Essentials (rent, groceries, transport, utilities)</small><b id=\"needs\"></b></div>\n      <div><small>Flexible (dining out, subscriptions, other)</small><b id=\"wants\"></b></div>\n    </div>\n  </div>\n\n<script>\n(function () {\n  var cats = [\n    { name: 'Rent', amt: 1800, color: '#4f46e5', need: true },\n    { name: 'Groceries', amt: 520, color: '#0ea5e9', need: true },\n    { name: 'Dining out', amt: 340, color: '#f97316', need: false },\n    { name: 'Transport', amt: 210, color: '#10b981', need: true },\n    { name: 'Other', amt: 195, color: '#a855f7', need: false },\n    { name: 'Utilities', amt: 160, color: '#eab308', need: true },\n    { name: 'Subscriptions', amt: 75, color: '#ef4444', need: false }\n  ];\n  var on = cats.map(function () { return true; });\n  var selected = -1;\n  var SVG = 'http://www.w3.org/2000/svg';\n  var $ = function (id) { return document.getElementById(id); };\n  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };\n  var pct = function (n) { return n.toFixed(1) + '%'; };\n\n  function render() {\n    var total = 0, needs = 0, wants = 0;\n    cats.forEach(function (c, i) {\n      if (!on[i]) { return; }\n      total += c.amt;\n      if (c.need) { needs += c.amt; } else { wants += c.amt; }\n    });\n    if (selected !== -1 && !on[selected]) { selected = -1; }\n\n    var g = $('segs');\n    while (g.firstChild) { g.removeChild(g.firstChild); }\n    var ring = document.createElementNS(SVG, 'circle');\n    ring.setAttribute('cx', '21'); ring.setAttribute('cy', '21'); ring.setAttribute('r', '15.915');\n    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#eeeef5'); ring.setAttribute('stroke-width', '6');\n    g.appendChild(ring);\n    var offset = 0;\n    cats.forEach(function (c, i) {\n      if (!on[i] || total === 0) { return; }\n      var share = c.amt / total * 100;\n      var seg = document.createElementNS(SVG, 'circle');\n      seg.setAttribute('cx', '21'); seg.setAttribute('cy', '21'); seg.setAttribute('r', '15.915');\n      seg.setAttribute('stroke', c.color);\n      seg.setAttribute('stroke-dasharray', share.toFixed(3) + ' ' + (100 - share).toFixed(3));\n      seg.setAttribute('stroke-dashoffset', (25 - offset).toFixed(3));\n      seg.setAttribute('data-i', String(i));\n      seg.setAttribute('class', 'seg' + (selected === i ? ' sel' : (selected !== -1 ? ' dim' : '')));\n      g.appendChild(seg);\n      offset += share;\n    });\n\n    if (selected === -1) {\n      $('cLabel').textContent = 'Total';\n      $('cValue').textContent = usd(total);\n      $('cShare').textContent = 'per month';\n    } else {\n      $('cLabel').textContent = cats[selected].name;\n      $('cValue').textContent = usd(cats[selected].amt);\n      $('cShare').textContent = pct(cats[selected].amt / total * 100) + ' of ' + usd(total);\n    }\n\n    var rows = $('rows');\n    rows.textContent = '';\n    cats.forEach(function (c, i) {\n      var row = document.createElement('label');\n      row.className = 'row' + (on[i] ? '' : ' off') + (selected === i ? ' sel' : '');\n      row.setAttribute('data-i', String(i));\n      var box = document.createElement('input');\n      box.type = 'checkbox'; box.checked = on[i];\n      box.setAttribute('data-toggle', String(i));\n      box.setAttribute('aria-label', 'Include ' + c.name);\n      var dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = c.color;\n      var name = document.createElement('span'); name.textContent = c.name;\n      var amt = document.createElement('span'); amt.className = 'amt'; amt.textContent = usd(c.amt);\n      var share = document.createElement('span'); share.className = 'pct';\n      share.textContent = on[i] && total > 0 ? pct(c.amt / total * 100) : '—';\n      row.appendChild(box); row.appendChild(dot); row.appendChild(name); row.appendChild(amt); row.appendChild(share);\n      rows.appendChild(row);\n    });\n\n    $('needs').textContent = total > 0 ? usd(needs) + ' · ' + pct(needs / total * 100) : '—';\n    $('wants').textContent = total > 0 ? usd(wants) + ' · ' + pct(wants / total * 100) : '—';\n  }\n\n  $('segs').addEventListener('click', function (e) {\n    var i = e.target.getAttribute('data-i');\n    if (i === null) { return; }\n    var n = parseInt(i, 10);\n    selected = selected === n ? -1 : n;\n    render();\n  });\n  $('rows').addEventListener('change', function (e) {\n    var t = e.target.getAttribute('data-toggle');\n    if (t === null) { return; }\n    on[parseInt(t, 10)] = e.target.checked;\n    render();\n  });\n  $('rows').addEventListener('click', function (e) {\n    // Clicking the row (not its checkbox) focuses the slice.\n    if (e.target.getAttribute('data-toggle') !== null) { return; }\n    var node = e.target;\n    while (node && node !== $('rows') && node.getAttribute('data-i') === null) { node = node.parentNode; }\n    if (!node || node === $('rows')) { return; }\n    e.preventDefault();\n    var n = parseInt(node.getAttribute('data-i'), 10);\n    if (!on[n]) { return; }\n    selected = selected === n ? -1 : n;\n    render();\n  });\n  $('noRent').addEventListener('click', function () { on[0] = false; render(); });\n  $('all').addEventListener('click', function () { on = cats.map(function () { return true; }); render(); });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_expense_breakdown_16",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show monthly spending by category as a read-only table (category, amount, share of the $3,300 total), sorted from largest to smallest. Then let the user pick the categories they want to cut back on, a target reduction and whether they want a monthly alert when a category goes over.",
+        "data": {
+          "total": 3300,
+          "categories": [
+            {
+              "category": "Rent",
+              "amount": 1800,
+              "share": "54.5%"
+            },
+            {
+              "category": "Groceries",
+              "amount": 520,
+              "share": "15.8%"
+            },
+            {
+              "category": "Dining out",
+              "amount": 340,
+              "share": "10.3%"
+            },
+            {
+              "category": "Transport",
+              "amount": 210,
+              "share": "6.4%"
+            },
+            {
+              "category": "Other",
+              "amount": 195,
+              "share": "5.9%"
+            },
+            {
+              "category": "Utilities",
+              "amount": 160,
+              "share": "4.8%"
+            },
+            {
+              "category": "Subscriptions",
+              "amount": 75,
+              "share": "2.3%"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "cutBack": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Rent",
+                  "Groceries",
+                  "Dining out",
+                  "Transport",
+                  "Other",
+                  "Utilities",
+                  "Subscriptions"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "targetReductionPercent": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 50
+            },
+            "alertWhenOver": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "cutBack",
+            "targetReductionPercent",
+            "alertWhenOver"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "title": "Where $3,300 a month goes",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "title": "Category"
+                },
+                "amount": {
+                  "type": "number",
+                  "title": "Amount ($)"
+                },
+                "share": {
+                  "type": "string",
+                  "title": "Share"
+                }
+              }
+            }
+          },
+          "cutBack": {
+            "type": "array",
+            "title": "Categories to cut back on",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Rent",
+                "Groceries",
+                "Dining out",
+                "Transport",
+                "Other",
+                "Utilities",
+                "Subscriptions"
+              ]
+            }
+          },
+          "targetReductionPercent": {
+            "type": "integer",
+            "title": "Reduce those by (%)",
+            "minimum": 5,
+            "maximum": 50,
+            "default": 30
+          },
+          "alertWhenOver": {
+            "type": "boolean",
+            "title": "Alert me when a category goes over its new budget"
+          }
+        },
+        "required": [
+          "cutBack",
+          "targetReductionPercent",
+          "alertWhenOver"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "Rent is 54.5% of spending. Essentials are 81.5%; the flexible part is $610."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/categories",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "Set a savings goal",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/cutBack"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/targetReductionPercent",
+                "options": {
+                  "slider": true
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/alertWhenOver",
+                "options": {
+                  "toggle": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "categories": [
+          {
+            "category": "Rent",
+            "amount": 1800,
+            "share": "54.5%"
+          },
+          {
+            "category": "Groceries",
+            "amount": 520,
+            "share": "15.8%"
+          },
+          {
+            "category": "Dining out",
+            "amount": 340,
+            "share": "10.3%"
+          },
+          {
+            "category": "Transport",
+            "amount": 210,
+            "share": "6.4%"
+          },
+          {
+            "category": "Other",
+            "amount": 195,
+            "share": "5.9%"
+          },
+          {
+            "category": "Utilities",
+            "amount": 160,
+            "share": "4.8%"
+          },
+          {
+            "category": "Subscriptions",
+            "amount": 75,
+            "share": "2.3%"
+          }
+        ],
+        "cutBack": [
+          "Dining out",
+          "Other"
+        ],
+        "targetReductionPercent": 30,
+        "alertWhenOver": true
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "The share table is precise and the block bars in a fourth column hint at proportion; there is no pie or donut, only numbers and commentary.",
+    "a2ui": "Currency formatting nested in a format string and bound rows work nicely, but shares are again block characters in a Text because the catalog cannot draw a part-of-whole chart.",
+    "html": "An SVG donut with tap-to-focus slices and checkboxes that drop a category and recompute every share, so hiding rent shows how the other $1,500 divides.",
+    "agui": "The breakdown is a disabled table, but picking categories with checkboxes and a reduction slider yields a well-typed savings goal for the agent to act on."
+  }
+}

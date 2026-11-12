@@ -1,0 +1,699 @@
+{
+  "id": "15-task-board",
+  "index": 15,
+  "title": "Sprint task board",
+  "category": "data",
+  "prompt": "Show these sprint tasks as a board grouped by status, with points per column. To do: Add password reset (Maya, 3), Write API docs (Tom, 2). In progress: Checkout redesign (Priya, 8), Fix login timeout (Maya, 3), Upgrade Postgres (Tom, 5). Review: Search filters (Leo, 5). Done: Dark mode (Priya, 5), Rate limiting (Leo, 3).",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Sprint board\n\n**8 tasks, 34 points.** 8 points are done (24%), 16 are in progress, 5 are waiting for review and 5 have not been started.\n\n| To do · 5 pts | In progress · 16 pts | Review · 5 pts | Done · 8 pts |\n| --- | --- | --- | --- |\n| Add password reset (Maya, 3) | Checkout redesign (Priya, 8) | Search filters (Leo, 5) | Dark mode (Priya, 5) |\n| Write API docs (Tom, 2) | Fix login timeout (Maya, 3) | | Rate limiting (Leo, 3) |\n| | Upgrade Postgres (Tom, 5) | | |\n\n### By status\n\n**To do (2 tasks, 5 points)**\n- Add password reset — Maya, 3 pts\n- Write API docs — Tom, 2 pts\n\n**In progress (3 tasks, 16 points)**\n- Checkout redesign — Priya, 8 pts\n- Fix login timeout — Maya, 3 pts\n- Upgrade Postgres — Tom, 5 pts\n\n**Review (1 task, 5 points)**\n- Search filters — Leo, 5 pts\n\n**Done (2 tasks, 8 points)**\n- Dark mode — Priya, 5 pts\n- Rate limiting — Leo, 3 pts\n\n### By person\n\n| Person | Tasks | Points | Working on now |\n| --- | ---: | ---: | --- |\n| Priya | 2 | 13 | Checkout redesign |\n| Tom | 2 | 7 | Upgrade Postgres |\n| Maya | 2 | 6 | Fix login timeout |\n| Leo | 2 | 8 | Nothing in progress (Search filters is in review) |\n\n**Worth noticing:** almost half of the sprint's points (16 of 34) are in progress at once, and the 8-point Checkout redesign is the single largest item. Leo has nothing in progress and could pick up a to-do item or help with reviews.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "task-board",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "task-board",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "summary",
+                "board"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Sprint board"
+            },
+            {
+              "id": "summary",
+              "component": "Text",
+              "variant": "caption",
+              "text": "8 tasks · 34 points · 8 points done (24%)"
+            },
+            {
+              "id": "board",
+              "component": "Row",
+              "align": "start",
+              "children": [
+                "todo-col",
+                "doing-col",
+                "review-col",
+                "done-col"
+              ]
+            },
+            {
+              "id": "todo-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "todo-title",
+                "todo-points",
+                "todo-list"
+              ]
+            },
+            {
+              "id": "todo-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "To do"
+            },
+            {
+              "id": "todo-points",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/todo/points"
+              }
+            },
+            {
+              "id": "todo-list",
+              "component": "List",
+              "children": {
+                "componentId": "todo-card",
+                "path": "/todo/tasks"
+              }
+            },
+            {
+              "id": "todo-card",
+              "component": "Card",
+              "child": "todo-card-col"
+            },
+            {
+              "id": "todo-card-col",
+              "component": "Column",
+              "children": [
+                "todo-task",
+                "todo-meta"
+              ]
+            },
+            {
+              "id": "todo-task",
+              "component": "Text",
+              "text": {
+                "path": "title"
+              }
+            },
+            {
+              "id": "todo-meta",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${owner} · ${points} pts"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "doing-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "doing-title",
+                "doing-points",
+                "doing-list"
+              ]
+            },
+            {
+              "id": "doing-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "In progress"
+            },
+            {
+              "id": "doing-points",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/doing/points"
+              }
+            },
+            {
+              "id": "doing-list",
+              "component": "List",
+              "children": {
+                "componentId": "doing-card",
+                "path": "/doing/tasks"
+              }
+            },
+            {
+              "id": "doing-card",
+              "component": "Card",
+              "child": "doing-card-col"
+            },
+            {
+              "id": "doing-card-col",
+              "component": "Column",
+              "children": [
+                "doing-task",
+                "doing-meta"
+              ]
+            },
+            {
+              "id": "doing-task",
+              "component": "Text",
+              "text": {
+                "path": "title"
+              }
+            },
+            {
+              "id": "doing-meta",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${owner} · ${points} pts"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "review-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "review-title",
+                "review-points",
+                "review-list"
+              ]
+            },
+            {
+              "id": "review-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Review"
+            },
+            {
+              "id": "review-points",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/review/points"
+              }
+            },
+            {
+              "id": "review-list",
+              "component": "List",
+              "children": {
+                "componentId": "review-card",
+                "path": "/review/tasks"
+              }
+            },
+            {
+              "id": "review-card",
+              "component": "Card",
+              "child": "review-card-col"
+            },
+            {
+              "id": "review-card-col",
+              "component": "Column",
+              "children": [
+                "review-task",
+                "review-meta"
+              ]
+            },
+            {
+              "id": "review-task",
+              "component": "Text",
+              "text": {
+                "path": "title"
+              }
+            },
+            {
+              "id": "review-meta",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${owner} · ${points} pts"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "done-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "done-title",
+                "done-points",
+                "done-list"
+              ]
+            },
+            {
+              "id": "done-title",
+              "component": "Text",
+              "variant": "h5",
+              "text": "Done"
+            },
+            {
+              "id": "done-points",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/done/points"
+              }
+            },
+            {
+              "id": "done-list",
+              "component": "List",
+              "children": {
+                "componentId": "done-card",
+                "path": "/done/tasks"
+              }
+            },
+            {
+              "id": "done-card",
+              "component": "Card",
+              "child": "done-card-col"
+            },
+            {
+              "id": "done-card-col",
+              "component": "Column",
+              "children": [
+                "done-task",
+                "done-meta"
+              ]
+            },
+            {
+              "id": "done-task",
+              "component": "Text",
+              "text": {
+                "path": "title"
+              }
+            },
+            {
+              "id": "done-meta",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${owner} · ${points} pts"
+                },
+                "returnType": "string"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "task-board",
+          "path": "/",
+          "value": {
+            "todo": {
+              "points": "2 tasks · 5 pts",
+              "tasks": [
+                {
+                  "title": "Add password reset",
+                  "owner": "Maya",
+                  "points": 3
+                },
+                {
+                  "title": "Write API docs",
+                  "owner": "Tom",
+                  "points": 2
+                }
+              ]
+            },
+            "doing": {
+              "points": "3 tasks · 16 pts",
+              "tasks": [
+                {
+                  "title": "Checkout redesign",
+                  "owner": "Priya",
+                  "points": 8
+                },
+                {
+                  "title": "Fix login timeout",
+                  "owner": "Maya",
+                  "points": 3
+                },
+                {
+                  "title": "Upgrade Postgres",
+                  "owner": "Tom",
+                  "points": 5
+                }
+              ]
+            },
+            "review": {
+              "points": "1 task · 5 pts",
+              "tasks": [
+                {
+                  "title": "Search filters",
+                  "owner": "Leo",
+                  "points": 5
+                }
+              ]
+            },
+            "done": {
+              "points": "2 tasks · 8 pts",
+              "tasks": [
+                {
+                  "title": "Dark mode",
+                  "owner": "Priya",
+                  "points": 5
+                },
+                {
+                  "title": "Rate limiting",
+                  "owner": "Leo",
+                  "points": 3
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Sprint board</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 14px; font: 13px/1.4 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #172b4d; background: #0079bf; }\n  h1 { font-size: 18px; margin: 0; color: #fff; }\n  .top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 8px; }\n  .top small { color: #dbeeff; }\n  .progress { height: 8px; background: rgba(255,255,255,.3); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }\n  .progress i { display: block; height: 100%; width: 0; background: #61bd4f; transition: width .25s; }\n  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }\n  .chip { border: 0; border-radius: 999px; padding: 3px 10px; font: inherit; font-weight: 600; background: rgba(255,255,255,.25); color: #fff; cursor: pointer; }\n  .chip.on { background: #fff; color: #0079bf; }\n  .board { display: grid; grid-template-columns: repeat(4, minmax(132px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 6px; }\n  .col { background: #ebecf0; border-radius: 8px; padding: 6px; min-height: 150px; }\n  .col.over { outline: 3px solid #fff; background: #dfe1e6; }\n  .col header { display: flex; justify-content: space-between; padding: 2px 4px 6px; font-weight: 700; }\n  .col header span { font-weight: 500; color: #5e6c84; font-size: 11px; }\n  .card { background: #fff; border-radius: 6px; padding: 7px 8px; margin-bottom: 6px; box-shadow: 0 1px 0 rgba(9,30,66,.25); cursor: grab; }\n  .card.dragging { opacity: .4; }\n  .card.hide { display: none; }\n  .card b { display: block; font-weight: 600; }\n  .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; color: #5e6c84; font-size: 11px; }\n  .who { display: inline-flex; align-items: center; gap: 4px; }\n  .who i { width: 16px; height: 16px; border-radius: 50%; display: inline-block; color: #fff; font-style: normal; font-size: 9px; font-weight: 700; text-align: center; line-height: 16px; }\n  .pts { background: #dfe1e6; border-radius: 999px; padding: 0 6px; font-weight: 700; color: #172b4d; }\n  .moves { display: flex; gap: 4px; margin-top: 6px; }\n  .moves button { flex: 1; border: 1px solid #dfe1e6; background: #f4f5f7; border-radius: 4px; font: inherit; font-size: 11px; cursor: pointer; padding: 1px 0; color: #172b4d; }\n  .moves button:disabled { opacity: .3; cursor: default; }\n  .hint { color: #dbeeff; font-size: 11px; margin: 4px 0 0; }\n</style>\n</head>\n<body>\n  <div class=\"top\"><h1>Sprint board</h1><small id=\"summary\"></small></div>\n  <div class=\"progress\"><i id=\"bar\"></i></div>\n  <div class=\"chips\" id=\"chips\"></div>\n  <div class=\"board\" id=\"board\"></div>\n  <p class=\"hint\">Drag a card to another column, or use the arrows. Points update as you go.</p>\n\n<script>\n(function () {\n  var columns = [\n    { id: 'todo', name: 'To do' },\n    { id: 'doing', name: 'In progress' },\n    { id: 'review', name: 'Review' },\n    { id: 'done', name: 'Done' }\n  ];\n  var tasks = [\n    { id: 't1', title: 'Add password reset', who: 'Maya', pts: 3, col: 0 },\n    { id: 't2', title: 'Write API docs', who: 'Tom', pts: 2, col: 0 },\n    { id: 't3', title: 'Checkout redesign', who: 'Priya', pts: 8, col: 1 },\n    { id: 't4', title: 'Fix login timeout', who: 'Maya', pts: 3, col: 1 },\n    { id: 't5', title: 'Upgrade Postgres', who: 'Tom', pts: 5, col: 1 },\n    { id: 't6', title: 'Search filters', who: 'Leo', pts: 5, col: 2 },\n    { id: 't7', title: 'Dark mode', who: 'Priya', pts: 5, col: 3 },\n    { id: 't8', title: 'Rate limiting', who: 'Leo', pts: 3, col: 3 }\n  ];\n  var colors = { Maya: '#eb5a46', Tom: '#0079bf', Priya: '#c377e0', Leo: '#ff9f1a' };\n  var filter = 'All';\n  var dragId = null;\n  var $ = function (id) { return document.getElementById(id); };\n\n  function el(tag, cls, text) {\n    var n = document.createElement(tag);\n    if (cls) { n.className = cls; }\n    if (text !== undefined) { n.textContent = text; }\n    return n;\n  }\n  function find(id) {\n    for (var i = 0; i < tasks.length; i++) { if (tasks[i].id === id) { return tasks[i]; } }\n    return null;\n  }\n\n  ['All', 'Maya', 'Tom', 'Priya', 'Leo'].forEach(function (name) {\n    var c = el('button', 'chip' + (name === 'All' ? ' on' : ''), name);\n    c.type = 'button';\n    c.setAttribute('data-who', name);\n    $('chips').appendChild(c);\n  });\n\n  function render() {\n    var board = $('board');\n    board.textContent = '';\n    var total = 0, done = 0;\n    columns.forEach(function (col, ci) {\n      var mine = tasks.filter(function (t) { return t.col === ci; });\n      var pts = mine.reduce(function (s, t) { return s + t.pts; }, 0);\n      total += pts;\n      if (ci === columns.length - 1) { done = pts; }\n      var box = el('div', 'col');\n      box.setAttribute('data-col', String(ci));\n      var head = el('header', '', col.name);\n      head.appendChild(el('span', '', mine.length + ' · ' + pts + ' pts'));\n      box.appendChild(head);\n      mine.forEach(function (t) {\n        var card = el('div', 'card' + (filter !== 'All' && t.who !== filter ? ' hide' : ''));\n        card.draggable = true;\n        card.setAttribute('data-id', t.id);\n        card.appendChild(el('b', '', t.title));\n        var meta = el('div', 'meta');\n        var who = el('span', 'who');\n        var dot = el('i', '', t.who.charAt(0));\n        dot.style.background = colors[t.who];\n        who.appendChild(dot);\n        who.appendChild(document.createTextNode(t.who));\n        meta.appendChild(who);\n        meta.appendChild(el('span', 'pts', String(t.pts)));\n        card.appendChild(meta);\n        var moves = el('div', 'moves');\n        var back = el('button', '', '←');\n        back.type = 'button'; back.disabled = ci === 0;\n        back.setAttribute('data-move', '-1'); back.setAttribute('aria-label', 'Move ' + t.title + ' back');\n        var fwd = el('button', '', '→');\n        fwd.type = 'button'; fwd.disabled = ci === columns.length - 1;\n        fwd.setAttribute('data-move', '1'); fwd.setAttribute('aria-label', 'Move ' + t.title + ' forward');\n        moves.appendChild(back); moves.appendChild(fwd);\n        card.appendChild(moves);\n        box.appendChild(card);\n      });\n      board.appendChild(box);\n    });\n    $('summary').textContent = tasks.length + ' tasks · ' + total + ' pts · ' + done + ' done (' + Math.round(done / total * 100) + '%)';\n    $('bar').style.width = (done / total * 100) + '%';\n  }\n\n  function closest(node, attr, stop) {\n    while (node && node !== stop) {\n      if (node.getAttribute && node.getAttribute(attr) !== null) { return node; }\n      node = node.parentNode;\n    }\n    return null;\n  }\n\n  var board = $('board');\n  board.addEventListener('click', function (e) {\n    var move = e.target.getAttribute && e.target.getAttribute('data-move');\n    if (!move) { return; }\n    var card = closest(e.target, 'data-id', board);\n    var t = card ? find(card.getAttribute('data-id')) : null;\n    if (!t) { return; }\n    t.col = Math.max(0, Math.min(columns.length - 1, t.col + parseInt(move, 10)));\n    render();\n  });\n  board.addEventListener('dragstart', function (e) {\n    var card = closest(e.target, 'data-id', board);\n    if (!card) { return; }\n    dragId = card.getAttribute('data-id');\n    card.classList.add('dragging');\n    if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId); }\n  });\n  board.addEventListener('dragover', function (e) {\n    var col = closest(e.target, 'data-col', board);\n    if (!col || !dragId) { return; }\n    e.preventDefault();\n    var cols = board.children;\n    for (var i = 0; i < cols.length; i++) { cols[i].classList.toggle('over', cols[i] === col); }\n  });\n  board.addEventListener('drop', function (e) {\n    var col = closest(e.target, 'data-col', board);\n    if (!col || !dragId) { return; }\n    e.preventDefault();\n    var t = find(dragId);\n    if (t) { t.col = parseInt(col.getAttribute('data-col'), 10); }\n    dragId = null;\n    render();\n  });\n  board.addEventListener('dragend', function () { dragId = null; render(); });\n\n  $('chips').addEventListener('click', function (e) {\n    var who = e.target.getAttribute('data-who');\n    if (!who) { return; }\n    filter = who;\n    var chips = $('chips').children;\n    for (var i = 0; i < chips.length; i++) { chips[i].className = 'chip' + (chips[i].getAttribute('data-who') === who ? ' on' : ''); }\n    render();\n  });\n\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_task_board_15",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the eight sprint tasks grouped by status with points per column (To do 5, In progress 16, Review 5, Done 8; 34 in total). Let the user update each task's status, owner or points and return the updated list.",
+        "data": {
+          "pointsByStatus": {
+            "todo": 5,
+            "in-progress": 16,
+            "review": 5,
+            "done": 8
+          },
+          "tasks": [
+            {
+              "title": "Add password reset",
+              "owner": "Maya",
+              "points": 3,
+              "status": "todo"
+            },
+            {
+              "title": "Write API docs",
+              "owner": "Tom",
+              "points": 2,
+              "status": "todo"
+            },
+            {
+              "title": "Checkout redesign",
+              "owner": "Priya",
+              "points": 8,
+              "status": "in-progress"
+            },
+            {
+              "title": "Fix login timeout",
+              "owner": "Maya",
+              "points": 3,
+              "status": "in-progress"
+            },
+            {
+              "title": "Upgrade Postgres",
+              "owner": "Tom",
+              "points": 5,
+              "status": "in-progress"
+            },
+            {
+              "title": "Search filters",
+              "owner": "Leo",
+              "points": 5,
+              "status": "review"
+            },
+            {
+              "title": "Dark mode",
+              "owner": "Priya",
+              "points": 5,
+              "status": "done"
+            },
+            {
+              "title": "Rate limiting",
+              "owner": "Leo",
+              "points": 3,
+              "status": "done"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "owner": {
+                    "type": "string",
+                    "enum": [
+                      "Maya",
+                      "Tom",
+                      "Priya",
+                      "Leo"
+                    ]
+                  },
+                  "points": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 13
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "todo",
+                      "in-progress",
+                      "review",
+                      "done"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "owner",
+                  "points",
+                  "status"
+                ]
+              }
+            }
+          },
+          "required": [
+            "tasks"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "title": "Sprint tasks",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "title": "Task",
+                  "minLength": 1
+                },
+                "owner": {
+                  "type": "string",
+                  "title": "Owner",
+                  "enum": [
+                    "Maya",
+                    "Tom",
+                    "Priya",
+                    "Leo"
+                  ]
+                },
+                "points": {
+                  "type": "integer",
+                  "title": "Pts",
+                  "minimum": 1,
+                  "maximum": 13
+                },
+                "status": {
+                  "type": "string",
+                  "title": "Status",
+                  "oneOf": [
+                    {
+                      "const": "todo",
+                      "title": "To do"
+                    },
+                    {
+                      "const": "in-progress",
+                      "title": "In progress"
+                    },
+                    {
+                      "const": "review",
+                      "title": "Review"
+                    },
+                    {
+                      "const": "done",
+                      "title": "Done"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "title",
+                "owner",
+                "points",
+                "status"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "34 points this sprint: To do 5 · In progress 16 · Review 5 · Done 8"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/tasks",
+            "options": {
+              "showSortButtons": true
+            }
+          }
+        ]
+      },
+      "initialData": {
+        "tasks": [
+          {
+            "title": "Add password reset",
+            "owner": "Maya",
+            "points": 3,
+            "status": "todo"
+          },
+          {
+            "title": "Write API docs",
+            "owner": "Tom",
+            "points": 2,
+            "status": "todo"
+          },
+          {
+            "title": "Checkout redesign",
+            "owner": "Priya",
+            "points": 8,
+            "status": "in-progress"
+          },
+          {
+            "title": "Fix login timeout",
+            "owner": "Maya",
+            "points": 3,
+            "status": "in-progress"
+          },
+          {
+            "title": "Upgrade Postgres",
+            "owner": "Tom",
+            "points": 5,
+            "status": "in-progress"
+          },
+          {
+            "title": "Search filters",
+            "owner": "Leo",
+            "points": 5,
+            "status": "review"
+          },
+          {
+            "title": "Dark mode",
+            "owner": "Priya",
+            "points": 5,
+            "status": "done"
+          },
+          {
+            "title": "Rate limiting",
+            "owner": "Leo",
+            "points": 3,
+            "status": "done"
+          }
+        ]
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A four-column table approximates the board and grouped lists repeat it by status and by person; cells cannot hold cards, so each task is one line of text.",
+    "a2ui": "A Row of four weighted Columns, each with a bound list of cards, is a recognisable board; in a narrow surface the columns are cramped and cards cannot be moved.",
+    "html": "A working kanban: drag cards between columns or use the arrows, filter by person, and watch per-column points and the done bar recalculate.",
+    "agui": "An editable table with a status dropdown per task is the form version of moving cards and returns a clean typed task list, but it is grouped by nothing and totals are static."
+  }
+}

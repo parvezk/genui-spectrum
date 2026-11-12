@@ -1,0 +1,101 @@
+{
+  "toolCall": {
+    "id": "call_expense_breakdown_16",
+    "name": "generateUserInterface",
+    "arguments": {
+      "description": "Show monthly spending by category as a read-only table (category, amount, share of the $3,300 total), sorted from largest to smallest. Then let the user pick the categories they want to cut back on, a target reduction and whether they want a monthly alert when a category goes over.",
+      "data": {
+        "total": 3300,
+        "categories": [
+          { "category": "Rent", "amount": 1800, "share": "54.5%" },
+          { "category": "Groceries", "amount": 520, "share": "15.8%" },
+          { "category": "Dining out", "amount": 340, "share": "10.3%" },
+          { "category": "Transport", "amount": 210, "share": "6.4%" },
+          { "category": "Other", "amount": 195, "share": "5.9%" },
+          { "category": "Utilities", "amount": 160, "share": "4.8%" },
+          { "category": "Subscriptions", "amount": 75, "share": "2.3%" }
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "cutBack": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["Rent", "Groceries", "Dining out", "Transport", "Other", "Utilities", "Subscriptions"] },
+            "uniqueItems": true
+          },
+          "targetReductionPercent": { "type": "integer", "minimum": 5, "maximum": 50 },
+          "alertWhenOver": { "type": "boolean" }
+        },
+        "required": ["cutBack", "targetReductionPercent", "alertWhenOver"]
+      }
+    }
+  },
+  "ui": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "title": "Where $3,300 a month goes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": { "type": "string", "title": "Category" },
+              "amount": { "type": "number", "title": "Amount ($)" },
+              "share": { "type": "string", "title": "Share" }
+            }
+          }
+        },
+        "cutBack": {
+          "type": "array",
+          "title": "Categories to cut back on",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Rent", "Groceries", "Dining out", "Transport", "Other", "Utilities", "Subscriptions"]
+          }
+        },
+        "targetReductionPercent": {
+          "type": "integer",
+          "title": "Reduce those by (%)",
+          "minimum": 5,
+          "maximum": 50,
+          "default": 30
+        },
+        "alertWhenOver": { "type": "boolean", "title": "Alert me when a category goes over its new budget" }
+      },
+      "required": ["cutBack", "targetReductionPercent", "alertWhenOver"]
+    },
+    "uiSchema": {
+      "type": "VerticalLayout",
+      "elements": [
+        { "type": "Label", "text": "Rent is 54.5% of spending. Essentials are 81.5%; the flexible part is $610." },
+        { "type": "Control", "scope": "#/properties/categories", "options": { "readonly": true } },
+        {
+          "type": "Group",
+          "label": "Set a savings goal",
+          "elements": [
+            { "type": "Control", "scope": "#/properties/cutBack" },
+            { "type": "Control", "scope": "#/properties/targetReductionPercent", "options": { "slider": true } },
+            { "type": "Control", "scope": "#/properties/alertWhenOver", "options": { "toggle": true } }
+          ]
+        }
+      ]
+    },
+    "initialData": {
+      "categories": [
+        { "category": "Rent", "amount": 1800, "share": "54.5%" },
+        { "category": "Groceries", "amount": 520, "share": "15.8%" },
+        { "category": "Dining out", "amount": 340, "share": "10.3%" },
+        { "category": "Transport", "amount": 210, "share": "6.4%" },
+        { "category": "Other", "amount": 195, "share": "5.9%" },
+        { "category": "Utilities", "amount": 160, "share": "4.8%" },
+        { "category": "Subscriptions", "amount": 75, "share": "2.3%" }
+      ],
+      "cutBack": ["Dining out", "Other"],
+      "targetReductionPercent": 30,
+      "alertWhenOver": true
+    }
+  }
+}

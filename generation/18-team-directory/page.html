@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team directory</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2328; background: #fff; }
+  h1 { font-size: 18px; margin: 0 0 10px; }
+  input[type=search] { width: 100%; padding: 8px 10px; border: 1px solid #d0d7de; border-radius: 8px; font: inherit; }
+  input[type=search]:focus { outline: 2px solid #0969da; border-color: transparent; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .chip { border: 1px solid #d0d7de; background: #f6f8fa; border-radius: 999px; padding: 3px 10px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }
+  .chip.on { background: #0969da; border-color: #0969da; color: #fff; }
+  .chip span { opacity: .7; margin-left: 3px; }
+  .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #656d76; margin-bottom: 6px; }
+  .meta button { border: 0; background: none; color: #0969da; font: inherit; cursor: pointer; padding: 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #656d76; padding: 6px 4px; border-bottom: 2px solid #d0d7de; cursor: pointer; user-select: none; white-space: nowrap; }
+  th.sorted { color: #1f2328; }
+  td { padding: 8px 4px; border-bottom: 1px solid #eaeef2; vertical-align: middle; }
+  .who { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .dept { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; color: #fff; }
+  mark { background: #fff8c5; padding: 0; }
+  .empty { text-align: center; color: #656d76; padding: 24px 0; }
+</style>
+</head>
+<body>
+  <h1>Team directory</h1>
+  <input id="q" type="search" placeholder="Search name, department or city" aria-label="Search the directory">
+  <div class="chips" id="chips"></div>
+  <div class="meta"><span id="count"></span><button id="clear" type="button">Clear filters</button></div>
+  <table>
+    <thead><tr><th data-key="name">Name</th><th data-key="dept">Department</th><th data-key="city">City</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="empty" id="empty" hidden>Nobody matches. Try a shorter search or clear the filters.</div>
+
+<script>
+(function () {
+  var people = [
+    { name: 'Ana Ruiz', dept: 'Engineering', city: 'Lisbon' },
+    { name: 'Ben Okafor', dept: 'Design', city: 'London' },
+    { name: 'Chloe Tan', dept: 'Engineering', city: 'Singapore' },
+    { name: 'Dev Patel', dept: 'Product', city: 'London' },
+    { name: 'Elena Rossi', dept: 'Marketing', city: 'Milan' },
+    { name: 'Farid Haddad', dept: 'Engineering', city: 'Berlin' },
+    { name: 'Grace Kim', dept: 'Design', city: 'Seoul' },
+    { name: 'Hugo Martin', dept: 'Sales', city: 'Paris' }
+  ];
+  var colors = { Engineering: '#0969da', Design: '#8250df', Product: '#1a7f37', Marketing: '#bf3989', Sales: '#bc4c00' };
+  var depts = ['Engineering', 'Design', 'Product', 'Marketing', 'Sales'];
+  var activeDept = null;
+  var sortKey = 'name';
+  var sortDir = 1;
+  var $ = function (id) { return document.getElementById(id); };
+
+  depts.forEach(function (d) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.setAttribute('data-dept', d);
+    chip.appendChild(document.createTextNode(d));
+    var n = document.createElement('span');
+    n.textContent = String(people.filter(function (p) { return p.dept === d; }).length);
+    chip.appendChild(n);
+    $('chips').appendChild(chip);
+  });
+
+  // Append text to a node, wrapping the part that matches the search term in <mark>.
+  function highlight(node, text, term) {
+    var at = term ? text.toLowerCase().indexOf(term) : -1;
+    if (at === -1) { node.appendChild(document.createTextNode(text)); return; }
+    node.appendChild(document.createTextNode(text.slice(0, at)));
+    var m = document.createElement('mark');
+    m.textContent = text.slice(at, at + term.length);
+    node.appendChild(m);
+    node.appendChild(document.createTextNode(text.slice(at + term.length)));
+  }
+
+  function render() {
+    var term = $('q').value.trim().toLowerCase();
+    var list = people.filter(function (p) {
+      if (activeDept && p.dept !== activeDept) { return false; }
+      if (!term) { return true; }
+      return (p.name + ' ' + p.dept + ' ' + p.city).toLowerCase().indexOf(term) !== -1;
+    }).sort(function (a, b) {
+      var x = a[sortKey].toLowerCase(), y = b[sortKey].toLowerCase();
+      if (x === y) { return a.name < b.name ? -1 : 1; }
+      return (x < y ? -1 : 1) * sortDir;
+    });
+
+    var body = $('rows');
+    body.textContent = '';
+    list.forEach(function (p) {
+      var tr = document.createElement('tr');
+      var c1 = document.createElement('td');
+      var who = document.createElement('div'); who.className = 'who';
+      var av = document.createElement('span'); av.className = 'avatar';
+      av.style.background = colors[p.dept];
+      av.textContent = p.name.split(' ').map(function (w) { return w.charAt(0); }).join('');
+      var nm = document.createElement('span');
+      highlight(nm, p.name, term);
+      who.appendChild(av); who.appendChild(nm);
+      c1.appendChild(who);
+      var c2 = document.createElement('td');
+      var badge = document.createElement('span'); badge.className = 'dept';
+      badge.style.background = colors[p.dept];
+      badge.textContent = p.dept;
+      c2.appendChild(badge);
+      var c3 = document.createElement('td');
+      highlight(c3, p.city, term);
+      tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(c3);
+      body.appendChild(tr);
+    });
+
+    $('empty').hidden = list.length > 0;
+    $('count').textContent = list.length + ' of ' + people.length + ' people' + (activeDept ? ' in ' + activeDept : '') + (term ? ' matching "' + term + '"' : '');
+    $('clear').hidden = !activeDept && !term;
+
+    var chips = $('chips').children;
+    for (var i = 0; i < chips.length; i++) {
+      var on = chips[i].getAttribute('data-dept') === activeDept;
+      chips[i].className = 'chip' + (on ? ' on' : '');
+      chips[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    var heads = document.querySelectorAll('th');
+    var labels = { name: 'Name', dept: 'Department', city: 'City' };
+    for (var h = 0; h < heads.length; h++) {
+      var key = heads[h].getAttribute('data-key');
+      heads[h].textContent = labels[key] + (key === sortKey ? (sortDir === 1 ? ' ▲' : ' ▼') : '');
+      heads[h].className = key === sortKey ? 'sorted' : '';
+    }
+  }
+
+  $('q').addEventListener('input', render);
+  $('chips').addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== $('chips') && !(t.getAttribute && t.getAttribute('data-dept'))) { t = t.parentNode; }
+    if (!t || t === $('chips')) { return; }
+    var d = t.getAttribute('data-dept');
+    activeDept = activeDept === d ? null : d;
+    render();
+  });
+  document.querySelector('thead').addEventListener('click', function (e) {
+    var key = e.target.getAttribute('data-key');
+    if (!key) { return; }
+    if (key === sortKey) { sortDir = -sortDir; } else { sortKey = key; sortDir = 1; }
+    render();
+  });
+  $('clear').addEventListener('click', function () {
+    activeDept = null;
+    $('q').value = '';
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

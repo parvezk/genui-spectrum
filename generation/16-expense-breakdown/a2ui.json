@@ -1,0 +1,85 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "expense-breakdown",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "expense-breakdown",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["title", "total-card", "breakdown-card", "split-row", "insight-card"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Monthly spending" },
+
+        { "id": "total-card", "component": "Card", "child": "total-row" },
+        { "id": "total-row", "component": "Row", "align": "center", "children": ["total-icon", "total-col"] },
+        { "id": "total-icon", "component": "Icon", "name": "payment" },
+        { "id": "total-col", "component": "Column", "weight": 1, "children": ["total-label", "total-value"] },
+        { "id": "total-label", "component": "Text", "variant": "caption", "text": "Total per month" },
+        {
+          "id": "total-value",
+          "component": "Text",
+          "variant": "h3",
+          "text": { "call": "formatCurrency", "args": { "value": { "path": "/total" }, "currency": "USD", "decimals": 0 }, "returnType": "string" }
+        },
+
+        { "id": "breakdown-card", "component": "Card", "child": "breakdown-list" },
+        { "id": "breakdown-list", "component": "List", "children": { "componentId": "category", "path": "/categories" } },
+        { "id": "category", "component": "Column", "children": ["category-head", "category-bar"] },
+        { "id": "category-head", "component": "Row", "justify": "spaceBetween", "align": "center", "children": ["category-name", "category-figures"] },
+        { "id": "category-name", "component": "Text", "variant": "h5", "text": { "path": "name" } },
+        {
+          "id": "category-figures",
+          "component": "Text",
+          "text": {
+            "call": "formatString",
+            "args": { "value": "${formatCurrency(value: ${amount}, currency: 'USD', decimals: 0)} · ${share}%" },
+            "returnType": "string"
+          }
+        },
+        { "id": "category-bar", "component": "Text", "variant": "caption", "text": { "path": "bar" } },
+
+        { "id": "split-row", "component": "Row", "children": ["needs-card", "wants-card"] },
+        { "id": "needs-card", "component": "Card", "weight": 1, "child": "needs-col" },
+        { "id": "needs-col", "component": "Column", "children": ["needs-label", "needs-value", "needs-note"] },
+        { "id": "needs-label", "component": "Text", "variant": "caption", "text": "Essentials" },
+        { "id": "needs-value", "component": "Text", "variant": "h4", "text": "$2,690 · 81.5%" },
+        { "id": "needs-note", "component": "Text", "variant": "caption", "text": "Rent, groceries, transport, utilities" },
+        { "id": "wants-card", "component": "Card", "weight": 1, "child": "wants-col" },
+        { "id": "wants-col", "component": "Column", "children": ["wants-label", "wants-value", "wants-note"] },
+        { "id": "wants-label", "component": "Text", "variant": "caption", "text": "Flexible" },
+        { "id": "wants-value", "component": "Text", "variant": "h4", "text": "$610 · 18.5%" },
+        { "id": "wants-note", "component": "Text", "variant": "caption", "text": "Dining out, subscriptions, other" },
+
+        { "id": "insight-card", "component": "Card", "child": "insight-col" },
+        { "id": "insight-col", "component": "Column", "children": ["insight-title", "insight-1", "insight-2", "insight-3"] },
+        { "id": "insight-title", "component": "Text", "variant": "h5", "text": "What the numbers say" },
+        { "id": "insight-1", "component": "Text", "text": "**Rent is 54.5%**, more than everything else combined ($1,500)." },
+        { "id": "insight-2", "component": "Text", "text": "**Food is second:** groceries and dining out together are $860, or 26.1%." },
+        { "id": "insight-3", "component": "Text", "text": "**To cut back:** trimming dining out and other by 30% frees about $160 a month." }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "expense-breakdown",
+      "path": "/",
+      "value": {
+        "total": 3300,
+        "categories": [
+          { "name": "Rent", "amount": 1800, "share": 54.5, "bar": "██████████████████████" },
+          { "name": "Groceries", "amount": 520, "share": 15.8, "bar": "██████" },
+          { "name": "Dining out", "amount": 340, "share": 10.3, "bar": "████" },
+          { "name": "Transport", "amount": 210, "share": 6.4, "bar": "███" },
+          { "name": "Other", "amount": 195, "share": 5.9, "bar": "██" },
+          { "name": "Utilities", "amount": 160, "share": 4.8, "bar": "██" },
+          { "name": "Subscriptions", "amount": 75, "share": 2.3, "bar": "█" }
+        ]
+      }
+    }
+  }
+]

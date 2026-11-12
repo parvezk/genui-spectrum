@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monthly spending</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a2e; background: #f7f7fb; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #6b6b85; }
+  .card { background: #fff; border: 1px solid #e6e6f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  .donut { position: relative; width: 200px; max-width: 70%; margin: 0 auto 8px; }
+  .donut svg { width: 100%; height: auto; display: block; transform: rotate(0deg); }
+  .seg { fill: none; stroke-width: 6; cursor: pointer; transition: stroke-width .15s, opacity .15s; }
+  .seg.dim { opacity: .35; }
+  .seg.sel { stroke-width: 8; }
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+  .center small { font-size: 11px; color: #6b6b85; }
+  .center b { font-size: 20px; line-height: 1.2; }
+  .center span { font-size: 12px; color: #6b6b85; }
+  .row { display: grid; grid-template-columns: 18px 12px 1fr auto 46px; gap: 6px; align-items: center; padding: 5px 4px; border-radius: 6px; cursor: pointer; }
+  .row:hover, .row.sel { background: #f1f1f8; }
+  .row.off { opacity: .45; }
+  .row input { margin: 0; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; }
+  .row .amt { font-variant-numeric: tabular-nums; }
+  .row .pct { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  button { padding: 5px 10px; border-radius: 6px; border: 1px solid #d6d6e3; background: #fff; font: inherit; font-size: 12px; cursor: pointer; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .split div { background: #f7f7fb; border-radius: 8px; padding: 8px; }
+  .split small { display: block; color: #6b6b85; font-size: 11px; }
+  .split b { font-size: 16px; }
+</style>
+</head>
+<body>
+  <h1>Monthly spending</h1>
+  <p class="lead">Tap a slice or a row to focus it. Untick a category to see how the rest divides up without it.</p>
+
+  <div class="card">
+    <div class="donut">
+      <svg viewBox="0 0 42 42" role="img" aria-label="Donut chart of spending by category"><g id="segs"></g></svg>
+      <div class="center"><small id="cLabel"></small><b id="cValue"></b><span id="cShare"></span></div>
+    </div>
+    <div id="rows"></div>
+    <div class="actions"><button id="noRent">Hide rent</button><button id="all">Show everything</button></div>
+  </div>
+
+  <div class="card">
+    <div class="split">
+      <div><small>Essentials (rent, groceries, transport, utilities)</small><b id="needs"></b></div>
+      <div><small>Flexible (dining out, subscriptions, other)</small><b id="wants"></b></div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var cats = [
+    { name: 'Rent', amt: 1800, color: '#4f46e5', need: true },
+    { name: 'Groceries', amt: 520, color: '#0ea5e9', need: true },
+    { name: 'Dining out', amt: 340, color: '#f97316', need: false },
+    { name: 'Transport', amt: 210, color: '#10b981', need: true },
+    { name: 'Other', amt: 195, color: '#a855f7', need: false },
+    { name: 'Utilities', amt: 160, color: '#eab308', need: true },
+    { name: 'Subscriptions', amt: 75, color: '#ef4444', need: false }
+  ];
+  var on = cats.map(function () { return true; });
+  var selected = -1;
+  var SVG = 'http://www.w3.org/2000/svg';
+  var $ = function (id) { return document.getElementById(id); };
+  var usd = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pct = function (n) { return n.toFixed(1) + '%'; };
+
+  function render() {
+    var total = 0, needs = 0, wants = 0;
+    cats.forEach(function (c, i) {
+      if (!on[i]) { return; }
+      total += c.amt;
+      if (c.need) { needs += c.amt; } else { wants += c.amt; }
+    });
+    if (selected !== -1 && !on[selected]) { selected = -1; }
+
+    var g = $('segs');
+    while (g.firstChild) { g.removeChild(g.firstChild); }
+    var ring = document.createElementNS(SVG, 'circle');
+    ring.setAttribute('cx', '21'); ring.setAttribute('cy', '21'); ring.setAttribute('r', '15.915');
+    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#eeeef5'); ring.setAttribute('stroke-width', '6');
+    g.appendChild(ring);
+    var offset = 0;
+    cats.forEach(function (c, i) {
+      if (!on[i] || total === 0) { return; }
+      var share = c.amt / total * 100;
+      var seg = document.createElementNS(SVG, 'circle');
+      seg.setAttribute('cx', '21'); seg.setAttribute('cy', '21'); seg.setAttribute('r', '15.915');
+      seg.setAttribute('stroke', c.color);
+      seg.setAttribute('stroke-dasharray', share.toFixed(3) + ' ' + (100 - share).toFixed(3));
+      seg.setAttribute('stroke-dashoffset', (25 - offset).toFixed(3));
+      seg.setAttribute('data-i', String(i));
+      seg.setAttribute('class', 'seg' + (selected === i ? ' sel' : (selected !== -1 ? ' dim' : '')));
+      g.appendChild(seg);
+      offset += share;
+    });
+
+    if (selected === -1) {
+      $('cLabel').textContent = 'Total';
+      $('cValue').textContent = usd(total);
+      $('cShare').textContent = 'per month';
+    } else {
+      $('cLabel').textContent = cats[selected].name;
+      $('cValue').textContent = usd(cats[selected].amt);
+      $('cShare').textContent = pct(cats[selected].amt / total * 100) + ' of ' + usd(total);
+    }
+
+    var rows = $('rows');
+    rows.textContent = '';
+    cats.forEach(function (c, i) {
+      var row = document.createElement('label');
+      row.className = 'row' + (on[i] ? '' : ' off') + (selected === i ? ' sel' : '');
+      row.setAttribute('data-i', String(i));
+      var box = document.createElement('input');
+      box.type = 'checkbox'; box.checked = on[i];
+      box.setAttribute('data-toggle', String(i));
+      box.setAttribute('aria-label', 'Include ' + c.name);
+      var dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = c.color;
+      var name = document.createElement('span'); name.textContent = c.name;
+      var amt = document.createElement('span'); amt.className = 'amt'; amt.textContent = usd(c.amt);
+      var share = document.createElement('span'); share.className = 'pct';
+      share.textContent = on[i] && total > 0 ? pct(c.amt / total * 100) : '—';
+      row.appendChild(box); row.appendChild(dot); row.appendChild(name); row.appendChild(amt); row.appendChild(share);
+      rows.appendChild(row);
+    });
+
+    $('needs').textContent = total > 0 ? usd(needs) + ' · ' + pct(needs / total * 100) : '—';
+    $('wants').textContent = total > 0 ? usd(wants) + ' · ' + pct(wants / total * 100) : '—';
+  }
+
+  $('segs').addEventListener('click', function (e) {
+    var i = e.target.getAttribute('data-i');
+    if (i === null) { return; }
+    var n = parseInt(i, 10);
+    selected = selected === n ? -1 : n;
+    render();
+  });
+  $('rows').addEventListener('change', function (e) {
+    var t = e.target.getAttribute('data-toggle');
+    if (t === null) { return; }
+    on[parseInt(t, 10)] = e.target.checked;
+    render();
+  });
+  $('rows').addEventListener('click', function (e) {
+    // Clicking the row (not its checkbox) focuses the slice.
+    if (e.target.getAttribute('data-toggle') !== null) { return; }
+    var node = e.target;
+    while (node && node !== $('rows') && node.getAttribute('data-i') === null) { node = node.parentNode; }
+    if (!node || node === $('rows')) { return; }
+    e.preventDefault();
+    var n = parseInt(node.getAttribute('data-i'), 10);
+    if (!on[n]) { return; }
+    selected = selected === n ? -1 : n;
+    render();
+  });
+  $('noRent').addEventListener('click', function () { on[0] = false; render(); });
+  $('all').addEventListener('click', function () { on = cats.map(function () { return true; }); render(); });
+  render();
+})();
+</script>
+</body>
+</html>

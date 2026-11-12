@@ -1,0 +1,619 @@
+{
+  "id": "18-team-directory",
+  "index": 18,
+  "title": "Team directory",
+  "category": "data",
+  "prompt": "Show the team directory so I can search and sort it. Ana Ruiz (Engineering, Lisbon), Ben Okafor (Design, London), Chloe Tan (Engineering, Singapore), Dev Patel (Product, London), Elena Rossi (Marketing, Milan), Farid Haddad (Engineering, Berlin), Grace Kim (Design, Seoul), Hugo Martin (Sales, Paris).",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Team directory\n\n8 people across 5 departments and 7 cities. Sorted by name:\n\n| Name | Department | City |\n| --- | --- | --- |\n| Ana Ruiz | Engineering | Lisbon |\n| Ben Okafor | Design | London |\n| Chloe Tan | Engineering | Singapore |\n| Dev Patel | Product | London |\n| Elena Rossi | Marketing | Milan |\n| Farid Haddad | Engineering | Berlin |\n| Grace Kim | Design | Seoul |\n| Hugo Martin | Sales | Paris |\n\n### By department\n\n- **Engineering (3):** Ana Ruiz (Lisbon), Chloe Tan (Singapore), Farid Haddad (Berlin)\n- **Design (2):** Ben Okafor (London), Grace Kim (Seoul)\n- **Product (1):** Dev Patel (London)\n- **Marketing (1):** Elena Rossi (Milan)\n- **Sales (1):** Hugo Martin (Paris)\n\n### By city\n\n- **London (2):** Ben Okafor (Design), Dev Patel (Product)\n- **Berlin:** Farid Haddad (Engineering)\n- **Lisbon:** Ana Ruiz (Engineering)\n- **Milan:** Elena Rossi (Marketing)\n- **Paris:** Hugo Martin (Sales)\n- **Seoul:** Grace Kim (Design)\n- **Singapore:** Chloe Tan (Engineering)\n\nI cannot make a table in a text reply searchable or sortable, so it is listed three ways above. Tell me a name, department or city and I will filter it for you, or ask for a different sort order.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "team-directory",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "team-directory",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "count",
+                "controls-card",
+                "people-card"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Team directory"
+            },
+            {
+              "id": "count",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "/resultLabel"
+              }
+            },
+            {
+              "id": "controls-card",
+              "component": "Card",
+              "child": "controls-col"
+            },
+            {
+              "id": "controls-col",
+              "component": "Column",
+              "children": [
+                "search-field",
+                "department-picker",
+                "sort-picker",
+                "apply-button"
+              ]
+            },
+            {
+              "id": "search-field",
+              "component": "TextField",
+              "label": "Search by name or city",
+              "value": {
+                "path": "/query/text"
+              }
+            },
+            {
+              "id": "department-picker",
+              "component": "ChoicePicker",
+              "label": "Departments",
+              "variant": "multipleSelection",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Engineering",
+                  "value": "engineering"
+                },
+                {
+                  "label": "Design",
+                  "value": "design"
+                },
+                {
+                  "label": "Product",
+                  "value": "product"
+                },
+                {
+                  "label": "Marketing",
+                  "value": "marketing"
+                },
+                {
+                  "label": "Sales",
+                  "value": "sales"
+                }
+              ],
+              "value": {
+                "path": "/query/departments"
+              }
+            },
+            {
+              "id": "sort-picker",
+              "component": "ChoicePicker",
+              "label": "Sort by",
+              "variant": "mutuallyExclusive",
+              "displayStyle": "chips",
+              "options": [
+                {
+                  "label": "Name",
+                  "value": "name"
+                },
+                {
+                  "label": "Department",
+                  "value": "department"
+                },
+                {
+                  "label": "City",
+                  "value": "city"
+                }
+              ],
+              "value": {
+                "path": "/query/sortBy"
+              }
+            },
+            {
+              "id": "apply-button",
+              "component": "Button",
+              "variant": "primary",
+              "child": "apply-row",
+              "action": {
+                "event": {
+                  "name": "filter_directory",
+                  "context": {
+                    "text": {
+                      "path": "/query/text"
+                    },
+                    "departments": {
+                      "path": "/query/departments"
+                    },
+                    "sortBy": {
+                      "path": "/query/sortBy"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "apply-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "apply-icon",
+                "apply-label"
+              ]
+            },
+            {
+              "id": "apply-icon",
+              "component": "Icon",
+              "name": "search"
+            },
+            {
+              "id": "apply-label",
+              "component": "Text",
+              "text": "Search and sort"
+            },
+            {
+              "id": "people-card",
+              "component": "Card",
+              "child": "people-list"
+            },
+            {
+              "id": "people-list",
+              "component": "List",
+              "children": {
+                "componentId": "person-row",
+                "path": "/people"
+              }
+            },
+            {
+              "id": "person-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "person-icon",
+                "person-col",
+                "person-city-row"
+              ]
+            },
+            {
+              "id": "person-icon",
+              "component": "Icon",
+              "name": "accountCircle"
+            },
+            {
+              "id": "person-col",
+              "component": "Column",
+              "weight": 3,
+              "children": [
+                "person-name",
+                "person-department"
+              ]
+            },
+            {
+              "id": "person-name",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "person-department",
+              "component": "Text",
+              "variant": "caption",
+              "text": {
+                "path": "department"
+              }
+            },
+            {
+              "id": "person-city-row",
+              "component": "Row",
+              "weight": 2,
+              "align": "center",
+              "children": [
+                "person-city-icon",
+                "person-city"
+              ]
+            },
+            {
+              "id": "person-city-icon",
+              "component": "Icon",
+              "name": "locationOn"
+            },
+            {
+              "id": "person-city",
+              "component": "Text",
+              "text": {
+                "path": "city"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "team-directory",
+          "path": "/",
+          "value": {
+            "resultLabel": "8 people · sorted by name",
+            "query": {
+              "text": "",
+              "departments": [],
+              "sortBy": [
+                "name"
+              ]
+            },
+            "people": [
+              {
+                "name": "Ana Ruiz",
+                "department": "Engineering",
+                "city": "Lisbon"
+              },
+              {
+                "name": "Ben Okafor",
+                "department": "Design",
+                "city": "London"
+              },
+              {
+                "name": "Chloe Tan",
+                "department": "Engineering",
+                "city": "Singapore"
+              },
+              {
+                "name": "Dev Patel",
+                "department": "Product",
+                "city": "London"
+              },
+              {
+                "name": "Elena Rossi",
+                "department": "Marketing",
+                "city": "Milan"
+              },
+              {
+                "name": "Farid Haddad",
+                "department": "Engineering",
+                "city": "Berlin"
+              },
+              {
+                "name": "Grace Kim",
+                "department": "Design",
+                "city": "Seoul"
+              },
+              {
+                "name": "Hugo Martin",
+                "department": "Sales",
+                "city": "Paris"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Team directory</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 16px; font: 14px/1.45 system-ui, -apple-system, \"Segoe UI\", sans-serif; color: #1f2328; background: #fff; }\n  h1 { font-size: 18px; margin: 0 0 10px; }\n  input[type=search] { width: 100%; padding: 8px 10px; border: 1px solid #d0d7de; border-radius: 8px; font: inherit; }\n  input[type=search]:focus { outline: 2px solid #0969da; border-color: transparent; }\n  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }\n  .chip { border: 1px solid #d0d7de; background: #f6f8fa; border-radius: 999px; padding: 3px 10px; font: inherit; font-size: 12px; cursor: pointer; color: inherit; }\n  .chip.on { background: #0969da; border-color: #0969da; color: #fff; }\n  .chip span { opacity: .7; margin-left: 3px; }\n  .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #656d76; margin-bottom: 6px; }\n  .meta button { border: 0; background: none; color: #0969da; font: inherit; cursor: pointer; padding: 0; }\n  table { width: 100%; border-collapse: collapse; }\n  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #656d76; padding: 6px 4px; border-bottom: 2px solid #d0d7de; cursor: pointer; user-select: none; white-space: nowrap; }\n  th.sorted { color: #1f2328; }\n  td { padding: 8px 4px; border-bottom: 1px solid #eaeef2; vertical-align: middle; }\n  .who { display: flex; align-items: center; gap: 8px; font-weight: 600; }\n  .avatar { width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }\n  .dept { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; color: #fff; }\n  mark { background: #fff8c5; padding: 0; }\n  .empty { text-align: center; color: #656d76; padding: 24px 0; }\n</style>\n</head>\n<body>\n  <h1>Team directory</h1>\n  <input id=\"q\" type=\"search\" placeholder=\"Search name, department or city\" aria-label=\"Search the directory\">\n  <div class=\"chips\" id=\"chips\"></div>\n  <div class=\"meta\"><span id=\"count\"></span><button id=\"clear\" type=\"button\">Clear filters</button></div>\n  <table>\n    <thead><tr><th data-key=\"name\">Name</th><th data-key=\"dept\">Department</th><th data-key=\"city\">City</th></tr></thead>\n    <tbody id=\"rows\"></tbody>\n  </table>\n  <div class=\"empty\" id=\"empty\" hidden>Nobody matches. Try a shorter search or clear the filters.</div>\n\n<script>\n(function () {\n  var people = [\n    { name: 'Ana Ruiz', dept: 'Engineering', city: 'Lisbon' },\n    { name: 'Ben Okafor', dept: 'Design', city: 'London' },\n    { name: 'Chloe Tan', dept: 'Engineering', city: 'Singapore' },\n    { name: 'Dev Patel', dept: 'Product', city: 'London' },\n    { name: 'Elena Rossi', dept: 'Marketing', city: 'Milan' },\n    { name: 'Farid Haddad', dept: 'Engineering', city: 'Berlin' },\n    { name: 'Grace Kim', dept: 'Design', city: 'Seoul' },\n    { name: 'Hugo Martin', dept: 'Sales', city: 'Paris' }\n  ];\n  var colors = { Engineering: '#0969da', Design: '#8250df', Product: '#1a7f37', Marketing: '#bf3989', Sales: '#bc4c00' };\n  var depts = ['Engineering', 'Design', 'Product', 'Marketing', 'Sales'];\n  var activeDept = null;\n  var sortKey = 'name';\n  var sortDir = 1;\n  var $ = function (id) { return document.getElementById(id); };\n\n  depts.forEach(function (d) {\n    var chip = document.createElement('button');\n    chip.type = 'button';\n    chip.className = 'chip';\n    chip.setAttribute('data-dept', d);\n    chip.appendChild(document.createTextNode(d));\n    var n = document.createElement('span');\n    n.textContent = String(people.filter(function (p) { return p.dept === d; }).length);\n    chip.appendChild(n);\n    $('chips').appendChild(chip);\n  });\n\n  // Append text to a node, wrapping the part that matches the search term in <mark>.\n  function highlight(node, text, term) {\n    var at = term ? text.toLowerCase().indexOf(term) : -1;\n    if (at === -1) { node.appendChild(document.createTextNode(text)); return; }\n    node.appendChild(document.createTextNode(text.slice(0, at)));\n    var m = document.createElement('mark');\n    m.textContent = text.slice(at, at + term.length);\n    node.appendChild(m);\n    node.appendChild(document.createTextNode(text.slice(at + term.length)));\n  }\n\n  function render() {\n    var term = $('q').value.trim().toLowerCase();\n    var list = people.filter(function (p) {\n      if (activeDept && p.dept !== activeDept) { return false; }\n      if (!term) { return true; }\n      return (p.name + ' ' + p.dept + ' ' + p.city).toLowerCase().indexOf(term) !== -1;\n    }).sort(function (a, b) {\n      var x = a[sortKey].toLowerCase(), y = b[sortKey].toLowerCase();\n      if (x === y) { return a.name < b.name ? -1 : 1; }\n      return (x < y ? -1 : 1) * sortDir;\n    });\n\n    var body = $('rows');\n    body.textContent = '';\n    list.forEach(function (p) {\n      var tr = document.createElement('tr');\n      var c1 = document.createElement('td');\n      var who = document.createElement('div'); who.className = 'who';\n      var av = document.createElement('span'); av.className = 'avatar';\n      av.style.background = colors[p.dept];\n      av.textContent = p.name.split(' ').map(function (w) { return w.charAt(0); }).join('');\n      var nm = document.createElement('span');\n      highlight(nm, p.name, term);\n      who.appendChild(av); who.appendChild(nm);\n      c1.appendChild(who);\n      var c2 = document.createElement('td');\n      var badge = document.createElement('span'); badge.className = 'dept';\n      badge.style.background = colors[p.dept];\n      badge.textContent = p.dept;\n      c2.appendChild(badge);\n      var c3 = document.createElement('td');\n      highlight(c3, p.city, term);\n      tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(c3);\n      body.appendChild(tr);\n    });\n\n    $('empty').hidden = list.length > 0;\n    $('count').textContent = list.length + ' of ' + people.length + ' people' + (activeDept ? ' in ' + activeDept : '') + (term ? ' matching \"' + term + '\"' : '');\n    $('clear').hidden = !activeDept && !term;\n\n    var chips = $('chips').children;\n    for (var i = 0; i < chips.length; i++) {\n      var on = chips[i].getAttribute('data-dept') === activeDept;\n      chips[i].className = 'chip' + (on ? ' on' : '');\n      chips[i].setAttribute('aria-pressed', on ? 'true' : 'false');\n    }\n    var heads = document.querySelectorAll('th');\n    var labels = { name: 'Name', dept: 'Department', city: 'City' };\n    for (var h = 0; h < heads.length; h++) {\n      var key = heads[h].getAttribute('data-key');\n      heads[h].textContent = labels[key] + (key === sortKey ? (sortDir === 1 ? ' ▲' : ' ▼') : '');\n      heads[h].className = key === sortKey ? 'sorted' : '';\n    }\n  }\n\n  $('q').addEventListener('input', render);\n  $('chips').addEventListener('click', function (e) {\n    var t = e.target;\n    while (t && t !== $('chips') && !(t.getAttribute && t.getAttribute('data-dept'))) { t = t.parentNode; }\n    if (!t || t === $('chips')) { return; }\n    var d = t.getAttribute('data-dept');\n    activeDept = activeDept === d ? null : d;\n    render();\n  });\n  document.querySelector('thead').addEventListener('click', function (e) {\n    var key = e.target.getAttribute('data-key');\n    if (!key) { return; }\n    if (key === sortKey) { sortDir = -sortDir; } else { sortKey = key; sortDir = 1; }\n    render();\n  });\n  $('clear').addEventListener('click', function () {\n    activeDept = null;\n    $('q').value = '';\n    render();\n  });\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_team_directory_18",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the eight people in the team directory as a read-only table (name, department, city), sorted by name. Provide controls for a search term, department filter and sort order; the submitted values are used to return a filtered, re-sorted directory.",
+        "data": {
+          "people": [
+            {
+              "name": "Ana Ruiz",
+              "department": "Engineering",
+              "city": "Lisbon"
+            },
+            {
+              "name": "Ben Okafor",
+              "department": "Design",
+              "city": "London"
+            },
+            {
+              "name": "Chloe Tan",
+              "department": "Engineering",
+              "city": "Singapore"
+            },
+            {
+              "name": "Dev Patel",
+              "department": "Product",
+              "city": "London"
+            },
+            {
+              "name": "Elena Rossi",
+              "department": "Marketing",
+              "city": "Milan"
+            },
+            {
+              "name": "Farid Haddad",
+              "department": "Engineering",
+              "city": "Berlin"
+            },
+            {
+              "name": "Grace Kim",
+              "department": "Design",
+              "city": "Seoul"
+            },
+            {
+              "name": "Hugo Martin",
+              "department": "Sales",
+              "city": "Paris"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "string"
+            },
+            "departments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Engineering",
+                  "Design",
+                  "Product",
+                  "Marketing",
+                  "Sales"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "sortBy": {
+              "type": "string",
+              "enum": [
+                "name",
+                "department",
+                "city"
+              ]
+            },
+            "descending": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "sortBy"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "title": "Search name or city"
+          },
+          "departments": {
+            "type": "array",
+            "title": "Departments",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Engineering",
+                "Design",
+                "Product",
+                "Marketing",
+                "Sales"
+              ]
+            }
+          },
+          "sortBy": {
+            "type": "string",
+            "title": "Sort by",
+            "oneOf": [
+              {
+                "const": "name",
+                "title": "Name"
+              },
+              {
+                "const": "department",
+                "title": "Department"
+              },
+              {
+                "const": "city",
+                "title": "City"
+              }
+            ]
+          },
+          "descending": {
+            "type": "boolean",
+            "title": "Z to A"
+          },
+          "people": {
+            "type": "array",
+            "title": "8 people",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "Name"
+                },
+                "department": {
+                  "type": "string",
+                  "title": "Department"
+                },
+                "city": {
+                  "type": "string",
+                  "title": "City"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "sortBy"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Group",
+            "label": "Find people",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/search"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/departments"
+              },
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/sortBy"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/descending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Label",
+            "text": "Submit to apply. The table below shows everyone until then."
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/people",
+            "options": {
+              "readonly": true
+            }
+          }
+        ]
+      },
+      "initialData": {
+        "departments": [],
+        "sortBy": "name",
+        "descending": false,
+        "people": [
+          {
+            "name": "Ana Ruiz",
+            "department": "Engineering",
+            "city": "Lisbon"
+          },
+          {
+            "name": "Ben Okafor",
+            "department": "Design",
+            "city": "London"
+          },
+          {
+            "name": "Chloe Tan",
+            "department": "Engineering",
+            "city": "Singapore"
+          },
+          {
+            "name": "Dev Patel",
+            "department": "Product",
+            "city": "London"
+          },
+          {
+            "name": "Elena Rossi",
+            "department": "Marketing",
+            "city": "Milan"
+          },
+          {
+            "name": "Farid Haddad",
+            "department": "Engineering",
+            "city": "Berlin"
+          },
+          {
+            "name": "Grace Kim",
+            "department": "Design",
+            "city": "Seoul"
+          },
+          {
+            "name": "Hugo Martin",
+            "department": "Sales",
+            "city": "Paris"
+          }
+        ]
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "Cannot be searched or sorted at all, so it lists the directory three ways (by name, department and city) and offers to filter on request.",
+    "a2ui": "Renders the people list and real filter controls, but the catalog cannot filter or sort a bound list on the client, so every search is a button press and an agent round trip.",
+    "html": "Instant search with match highlighting, department chips with counts and click-to-sort columns; exactly what was asked for, in about a hundred lines of script.",
+    "agui": "The filter form is well typed, yet JSON Forms cannot apply it to the table underneath, so the list stays unfiltered until the agent answers the submit."
+  }
+}

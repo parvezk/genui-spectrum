@@ -1,0 +1,6 @@
+{
+  "text": "Cannot be searched or sorted at all, so it lists the directory three ways (by name, department and city) and offers to filter on request.",
+  "a2ui": "Renders the people list and real filter controls, but the catalog cannot filter or sort a bound list on the client, so every search is a button press and an agent round trip.",
+  "html": "Instant search with match highlighting, department chips with counts and click-to-sort columns; exactly what was asked for, in about a hundred lines of script.",
+  "agui": "The filter form is well typed, yet JSON Forms cannot apply it to the table underneath, so the list stays unfiltered until the agent answers the submit."
+}

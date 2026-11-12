@@ -1,0 +1,763 @@
+{
+  "id": "17-service-health",
+  "index": 17,
+  "title": "Service health dashboard",
+  "category": "data",
+  "prompt": "Show a health dashboard for these services and flag anything breaching the SLO (p95 latency under 300 ms, error rate under 1%). api-gateway: p95 120 ms, errors 0.2%, uptime 99.98%. auth: 85 ms, 0.1%, 99.99%. payments: 340 ms, 1.8%, 99.71%. search: 210 ms, 0.6%, 99.90%. notifications: 95 ms, 0.3%, 99.95%.",
+  "generation": {
+    "generator": "Claude",
+    "method": "Written directly by Claude in an agent session, one pass per rendering. No model API is called from code, at build time or at runtime."
+  },
+  "text": {
+    "markdown": "## Service health\n\n**1 of 5 services is breaching the SLO: `payments`.** It fails both targets. The other four are healthy.\n\nSLO: p95 latency **under 300 ms** and error rate **under 1%**.\n\n| Service | Status | p95 latency | Error rate | Uptime |\n| --- | --- | ---: | ---: | ---: |\n| **payments** | 🔴 **Breaching** | **340 ms** (+40 over) | **1.8%** (+0.8 over) | 99.71% |\n| search | 🟡 Healthy, closest to the limits | 210 ms | 0.6% | 99.90% |\n| api-gateway | 🟢 Healthy | 120 ms | 0.2% | 99.98% |\n| notifications | 🟢 Healthy | 95 ms | 0.3% | 99.95% |\n| auth | 🟢 Healthy | 85 ms | 0.1% | 99.99% |\n\n### payments needs attention\n\n- **Latency:** 340 ms p95 is 13% over the 300 ms target.\n- **Errors:** 1.8% is nearly double the 1% target, and nine times the error rate of api-gateway.\n- **Uptime:** 99.71% is the lowest of the five. Over a 30-day month that is about 2 hours 5 minutes of downtime, against roughly 4 minutes for auth.\n\nSlow and failing at the same time usually points to a struggling dependency (database, payment provider) or resource exhaustion, not a code bug in one endpoint. Check recent deploys, upstream provider status and connection pool saturation first.\n\n### Keep an eye on search\n\n`search` is within the SLO, but it has the second-highest latency (210 ms, 70% of the limit) and error rate (0.6%, 60% of the limit). It has the least headroom of the healthy services.\n\n### Healthy\n\n`auth`, `notifications` and `api-gateway` are all at or below 120 ms p95 with error rates of 0.3% or less.\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is non-empty Markdown",
+        "contains no raw HTML outside code (react-markdown would print it literally)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "a2ui": {
+    "messages": [
+      {
+        "version": "v0.9.1",
+        "createSurface": {
+          "surfaceId": "service-health",
+          "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateComponents": {
+          "surfaceId": "service-health",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": [
+                "title",
+                "slo",
+                "summary-row",
+                "services"
+              ]
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h2",
+              "text": "Service health"
+            },
+            {
+              "id": "slo",
+              "component": "Text",
+              "variant": "caption",
+              "text": "SLO: p95 latency under 300 ms and error rate under 1%"
+            },
+            {
+              "id": "summary-row",
+              "component": "Row",
+              "children": [
+                "breach-card",
+                "ok-card"
+              ]
+            },
+            {
+              "id": "breach-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "breach-row"
+            },
+            {
+              "id": "breach-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "breach-icon",
+                "breach-col"
+              ]
+            },
+            {
+              "id": "breach-icon",
+              "component": "Icon",
+              "name": "error"
+            },
+            {
+              "id": "breach-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "breach-count",
+                "breach-label"
+              ]
+            },
+            {
+              "id": "breach-count",
+              "component": "Text",
+              "variant": "h3",
+              "text": "1"
+            },
+            {
+              "id": "breach-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "breaching: payments"
+            },
+            {
+              "id": "ok-card",
+              "component": "Card",
+              "weight": 1,
+              "child": "ok-row"
+            },
+            {
+              "id": "ok-row",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "ok-icon",
+                "ok-col"
+              ]
+            },
+            {
+              "id": "ok-icon",
+              "component": "Icon",
+              "name": "check"
+            },
+            {
+              "id": "ok-col",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "ok-count",
+                "ok-label"
+              ]
+            },
+            {
+              "id": "ok-count",
+              "component": "Text",
+              "variant": "h3",
+              "text": "4"
+            },
+            {
+              "id": "ok-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "within SLO"
+            },
+            {
+              "id": "services",
+              "component": "List",
+              "children": {
+                "componentId": "service-card",
+                "path": "/services"
+              }
+            },
+            {
+              "id": "service-card",
+              "component": "Card",
+              "child": "service-col"
+            },
+            {
+              "id": "service-col",
+              "component": "Column",
+              "children": [
+                "service-head",
+                "service-status",
+                "service-metrics",
+                "service-button"
+              ]
+            },
+            {
+              "id": "service-head",
+              "component": "Row",
+              "align": "center",
+              "children": [
+                "service-icon",
+                "service-name"
+              ]
+            },
+            {
+              "id": "service-icon",
+              "component": "Icon",
+              "name": {
+                "path": "icon"
+              }
+            },
+            {
+              "id": "service-name",
+              "component": "Text",
+              "variant": "h4",
+              "weight": 1,
+              "text": {
+                "path": "name"
+              }
+            },
+            {
+              "id": "service-status",
+              "component": "Text",
+              "text": {
+                "path": "status"
+              }
+            },
+            {
+              "id": "service-metrics",
+              "component": "Row",
+              "justify": "spaceBetween",
+              "children": [
+                "metric-p95",
+                "metric-errors",
+                "metric-uptime"
+              ]
+            },
+            {
+              "id": "metric-p95",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "metric-p95-label",
+                "metric-p95-value"
+              ]
+            },
+            {
+              "id": "metric-p95-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "p95"
+            },
+            {
+              "id": "metric-p95-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${p95} ms"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "metric-errors",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "metric-errors-label",
+                "metric-errors-value"
+              ]
+            },
+            {
+              "id": "metric-errors-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Errors"
+            },
+            {
+              "id": "metric-errors-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${errors}%"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "metric-uptime",
+              "component": "Column",
+              "weight": 1,
+              "children": [
+                "metric-uptime-label",
+                "metric-uptime-value"
+              ]
+            },
+            {
+              "id": "metric-uptime-label",
+              "component": "Text",
+              "variant": "caption",
+              "text": "Uptime"
+            },
+            {
+              "id": "metric-uptime-value",
+              "component": "Text",
+              "variant": "h5",
+              "text": {
+                "call": "formatString",
+                "args": {
+                  "value": "${uptime}%"
+                },
+                "returnType": "string"
+              }
+            },
+            {
+              "id": "service-button",
+              "component": "Button",
+              "variant": "borderless",
+              "child": "service-button-label",
+              "action": {
+                "event": {
+                  "name": "investigate_service",
+                  "context": {
+                    "service": {
+                      "path": "name"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "service-button-label",
+              "component": "Text",
+              "text": "Investigate"
+            }
+          ]
+        }
+      },
+      {
+        "version": "v0.9.1",
+        "updateDataModel": {
+          "surfaceId": "service-health",
+          "path": "/",
+          "value": {
+            "services": [
+              {
+                "name": "payments",
+                "icon": "error",
+                "status": "**Breaching both targets:** 40 ms over on latency, 0.8 points over on errors.",
+                "p95": 340,
+                "errors": "1.8",
+                "uptime": "99.71"
+              },
+              {
+                "name": "search",
+                "icon": "warning",
+                "status": "Within SLO, but the least headroom: 70% of the latency limit.",
+                "p95": 210,
+                "errors": "0.6",
+                "uptime": "99.90"
+              },
+              {
+                "name": "api-gateway",
+                "icon": "check",
+                "status": "Healthy.",
+                "p95": 120,
+                "errors": "0.2",
+                "uptime": "99.98"
+              },
+              {
+                "name": "notifications",
+                "icon": "check",
+                "status": "Healthy.",
+                "p95": 95,
+                "errors": "0.3",
+                "uptime": "99.95"
+              },
+              {
+                "name": "auth",
+                "icon": "check",
+                "status": "Healthy.",
+                "p95": 85,
+                "errors": "0.1",
+                "uptime": "99.99"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "validation": {
+      "valid": true,
+      "checks": [
+        "messages are a non-empty JSON array",
+        "every message declares version v0.9.1",
+        "every message matches the v0.9 server-to-client envelope schema",
+        "one surface, created first, on the basic catalog",
+        "every component matches its basic-catalog schema (strict, no unknown components or functions)",
+        "MessageProcessor accepts the surface under STRICT_VALIDATION (root present, no dangling or orphan components)",
+        "data bindings resolve in the data model (warning only)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "html": {
+    "document": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Service health</title>\n<style>\n  * { box-sizing: border-box; }\n  body { margin: 0; padding: 14px; font: 13px/1.45 ui-monospace, \"SF Mono\", Menlo, Consolas, monospace; color: #c9d1d9; background: #0b0f14; }\n  h1 { font: 700 17px system-ui, sans-serif; margin: 0 0 10px; color: #f0f6fc; }\n  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }\n  .tile { background: #11161d; border: 1px solid #222a35; border-radius: 8px; padding: 8px 10px; }\n  .tile small { display: block; color: #7d8590; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }\n  .tile b { font-size: 20px; color: #f0f6fc; }\n  .tile.bad b { color: #ff7b72; } .tile.good b { color: #3fb950; }\n  .panel { background: #11161d; border: 1px solid #222a35; border-radius: 8px; padding: 10px; margin-bottom: 10px; }\n  .panel h2 { font: 600 12px system-ui, sans-serif; margin: 0 0 8px; color: #7d8590; text-transform: uppercase; letter-spacing: .06em; }\n  .slo { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; margin-bottom: 6px; }\n  .slo input { grid-column: 1 / -1; width: 100%; accent-color: #58a6ff; }\n  .slo output { color: #58a6ff; font-weight: 700; }\n  table { width: 100%; border-collapse: collapse; }\n  th { text-align: right; font-weight: 500; color: #7d8590; font-size: 11px; padding: 4px; cursor: pointer; white-space: nowrap; user-select: none; }\n  th:first-child, td:first-child { text-align: left; }\n  th.sorted { color: #f0f6fc; }\n  td { padding: 7px 4px; border-top: 1px solid #222a35; text-align: right; vertical-align: middle; }\n  td .name { color: #f0f6fc; font-weight: 600; display: block; }\n  .pill { display: inline-block; font-size: 10px; padding: 0 6px; border-radius: 999px; font-weight: 700; }\n  .pill.ok { background: #12261e; color: #3fb950; } .pill.warn { background: #2e2a12; color: #d29922; } .pill.bad { background: #3a1616; color: #ff7b72; }\n  .over { color: #ff7b72; font-weight: 700; }\n  .near { color: #d29922; }\n  .gauge { position: relative; height: 4px; background: #222a35; border-radius: 2px; margin-top: 3px; min-width: 50px; }\n  .gauge i { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; background: #3fb950; }\n  .gauge i.near { background: #d29922; } .gauge i.over { background: #ff7b72; }\n  .gauge u { position: absolute; top: -3px; width: 1px; height: 10px; background: #f0f6fc; }\n  .note { color: #7d8590; font: 12px system-ui, sans-serif; margin: 0; }\n</style>\n</head>\n<body>\n  <h1>Service health</h1>\n\n  <div class=\"tiles\">\n    <div class=\"tile bad\" id=\"tBad\"><small>Breaching SLO</small><b id=\"breaching\"></b></div>\n    <div class=\"tile good\"><small>Within SLO</small><b id=\"healthy\"></b></div>\n    <div class=\"tile\"><small>Slowest p95</small><b id=\"slowest\"></b></div>\n    <div class=\"tile\"><small>Highest error rate</small><b id=\"worstErr\"></b></div>\n  </div>\n\n  <div class=\"panel\">\n    <h2>SLO thresholds</h2>\n    <div class=\"slo\"><label for=\"p95\">p95 latency under</label><output id=\"p95Out\"></output><input id=\"p95\" type=\"range\" min=\"100\" max=\"500\" step=\"10\" value=\"300\"></div>\n    <div class=\"slo\"><label for=\"err\">Error rate under</label><output id=\"errOut\"></output><input id=\"err\" type=\"range\" min=\"0.2\" max=\"3\" step=\"0.1\" value=\"1\"></div>\n  </div>\n\n  <div class=\"panel\">\n    <h2>Services (click a column to sort)</h2>\n    <table>\n      <thead><tr>\n        <th data-key=\"name\">service</th><th data-key=\"p95\">p95 ms</th><th data-key=\"err\">err %</th><th data-key=\"up\">uptime %</th>\n      </tr></thead>\n      <tbody id=\"rows\"></tbody>\n    </table>\n  </div>\n  <p class=\"note\" id=\"note\"></p>\n\n<script>\n(function () {\n  var services = [\n    { name: 'api-gateway', p95: 120, err: 0.2, up: 99.98 },\n    { name: 'auth', p95: 85, err: 0.1, up: 99.99 },\n    { name: 'payments', p95: 340, err: 1.8, up: 99.71 },\n    { name: 'search', p95: 210, err: 0.6, up: 99.90 },\n    { name: 'notifications', p95: 95, err: 0.3, up: 99.95 }\n  ];\n  var sortKey = 'p95';\n  var sortDir = -1;\n  var $ = function (id) { return document.getElementById(id); };\n\n  function el(tag, cls, text) {\n    var n = document.createElement(tag);\n    if (cls) { n.className = cls; }\n    if (text !== undefined) { n.textContent = text; }\n    return n;\n  }\n  function level(value, limit) {\n    if (value >= limit) { return 'over'; }\n    if (value >= limit * 0.6) { return 'near'; }\n    return '';\n  }\n  function gauge(value, limit, scaleMax) {\n    var g = el('div', 'gauge');\n    var fill = el('i', level(value, limit));\n    fill.style.width = Math.min(100, value / scaleMax * 100) + '%';\n    var mark = el('u');\n    mark.style.left = Math.min(100, limit / scaleMax * 100) + '%';\n    g.appendChild(fill); g.appendChild(mark);\n    return g;\n  }\n\n  function render() {\n    var p95Limit = parseInt($('p95').value, 10);\n    var errLimit = parseFloat($('err').value);\n    $('p95Out').textContent = p95Limit + ' ms';\n    $('errOut').textContent = errLimit.toFixed(1) + '%';\n\n    var list = services.slice().sort(function (a, b) {\n      if (sortKey === 'name') { return a.name < b.name ? -sortDir : (a.name > b.name ? sortDir : 0); }\n      return (a[sortKey] - b[sortKey]) * sortDir;\n    });\n    var bad = [];\n    var body = $('rows');\n    body.textContent = '';\n    var p95Scale = Math.max(500, p95Limit);\n    var errScale = Math.max(3, errLimit);\n\n    list.forEach(function (s) {\n      var p95Level = level(s.p95, p95Limit);\n      var errLevel = level(s.err, errLimit);\n      var breach = p95Level === 'over' || errLevel === 'over';\n      var near = !breach && (p95Level === 'near' || errLevel === 'near');\n      if (breach) { bad.push(s.name); }\n\n      var tr = el('tr');\n      var c1 = el('td');\n      c1.appendChild(el('span', 'name', s.name));\n      c1.appendChild(el('span', 'pill ' + (breach ? 'bad' : (near ? 'warn' : 'ok')), breach ? 'BREACH' : (near ? 'WATCH' : 'OK')));\n      var c2 = el('td', p95Level, String(s.p95));\n      c2.appendChild(gauge(s.p95, p95Limit, p95Scale));\n      var c3 = el('td', errLevel, s.err.toFixed(1));\n      c3.appendChild(gauge(s.err, errLimit, errScale));\n      var c4 = el('td', '', s.up.toFixed(2));\n      [c1, c2, c3, c4].forEach(function (c) { tr.appendChild(c); });\n      body.appendChild(tr);\n    });\n\n    $('breaching').textContent = String(bad.length);\n    $('healthy').textContent = String(services.length - bad.length);\n    $('tBad').className = 'tile ' + (bad.length ? 'bad' : 'good');\n    var slow = services.reduce(function (a, b) { return b.p95 > a.p95 ? b : a; });\n    var errs = services.reduce(function (a, b) { return b.err > a.err ? b : a; });\n    $('slowest').textContent = slow.p95 + ' ms';\n    $('worstErr').textContent = errs.err.toFixed(1) + '%';\n    $('note').textContent = bad.length\n      ? 'Breaching: ' + bad.join(', ') + '. The white tick on each bar is the SLO limit.'\n      : 'Everything is within the SLO at these thresholds. The white tick on each bar is the limit.';\n\n    var heads = document.querySelectorAll('th');\n    for (var i = 0; i < heads.length; i++) {\n      var key = heads[i].getAttribute('data-key');\n      var base = heads[i].textContent.replace(/ [▲▼]$/, '');\n      heads[i].textContent = base + (key === sortKey ? (sortDir === 1 ? ' ▲' : ' ▼') : '');\n      heads[i].className = key === sortKey ? 'sorted' : '';\n    }\n  }\n\n  document.querySelector('thead').addEventListener('click', function (e) {\n    var key = e.target.getAttribute('data-key');\n    if (!key) { return; }\n    if (key === sortKey) { sortDir = -sortDir; }\n    else { sortKey = key; sortDir = key === 'name' || key === 'up' ? 1 : -1; }\n    render();\n  });\n  $('p95').addEventListener('input', render);\n  $('err').addEventListener('input', render);\n  render();\n})();\n</script>\n</body>\n</html>\n",
+    "validation": {
+      "valid": true,
+      "checks": [
+        "is one complete HTML document",
+        "makes no external requests (no remote src/href/url(), no fetch/XHR/WebSocket, no imports, no navigation)",
+        "uses nothing that sandbox=\"allow-scripts\" blocks (storage, cookies, modals, popups, parent access, form submission)",
+        "every inline script parses",
+        "is interactive (has a script that listens for user input)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "agui": {
+    "toolCall": {
+      "id": "call_service_health_17",
+      "name": "generateUserInterface",
+      "arguments": {
+        "description": "Show the five services with p95 latency, error rate, uptime and SLO status as a read-only table (payments is breaching both targets; the rest are within SLO). Then ask the operator what to do about it: which service to act on, which action to take, who to notify and an optional note.",
+        "data": {
+          "slo": {
+            "p95MsUnder": 300,
+            "errorRatePercentUnder": 1
+          },
+          "services": [
+            {
+              "service": "payments",
+              "p95Ms": 340,
+              "errorPct": 1.8,
+              "uptimePct": 99.71,
+              "status": "BREACH (latency, errors)"
+            },
+            {
+              "service": "search",
+              "p95Ms": 210,
+              "errorPct": 0.6,
+              "uptimePct": 99.9,
+              "status": "OK, least headroom"
+            },
+            {
+              "service": "api-gateway",
+              "p95Ms": 120,
+              "errorPct": 0.2,
+              "uptimePct": 99.98,
+              "status": "OK"
+            },
+            {
+              "service": "notifications",
+              "p95Ms": 95,
+              "errorPct": 0.3,
+              "uptimePct": 99.95,
+              "status": "OK"
+            },
+            {
+              "service": "auth",
+              "p95Ms": 85,
+              "errorPct": 0.1,
+              "uptimePct": 99.99,
+              "status": "OK"
+            }
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "enum": [
+                "payments",
+                "search",
+                "api-gateway",
+                "notifications",
+                "auth"
+              ]
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "open-incident",
+                "page-on-call",
+                "acknowledge",
+                "ignore"
+              ]
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "sev1",
+                "sev2",
+                "sev3"
+              ]
+            },
+            "notify": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "on-call",
+                  "team-channel",
+                  "status-page"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "service",
+            "action"
+          ]
+        }
+      }
+    },
+    "ui": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "services": {
+            "type": "array",
+            "title": "SLO: p95 under 300 ms, errors under 1%",
+            "items": {
+              "type": "object",
+              "properties": {
+                "service": {
+                  "type": "string",
+                  "title": "Service"
+                },
+                "p95Ms": {
+                  "type": "number",
+                  "title": "p95 (ms)"
+                },
+                "errorPct": {
+                  "type": "number",
+                  "title": "Errors (%)"
+                },
+                "uptimePct": {
+                  "type": "number",
+                  "title": "Uptime (%)"
+                },
+                "status": {
+                  "type": "string",
+                  "title": "Status"
+                }
+              }
+            }
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "enum": [
+              "payments",
+              "search",
+              "api-gateway",
+              "notifications",
+              "auth"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "oneOf": [
+              {
+                "const": "open-incident",
+                "title": "Open an incident"
+              },
+              {
+                "const": "page-on-call",
+                "title": "Page the on-call engineer"
+              },
+              {
+                "const": "acknowledge",
+                "title": "Acknowledge and keep watching"
+              },
+              {
+                "const": "ignore",
+                "title": "Ignore for now"
+              }
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity",
+            "oneOf": [
+              {
+                "const": "sev1",
+                "title": "SEV1: customers cannot pay"
+              },
+              {
+                "const": "sev2",
+                "title": "SEV2: degraded"
+              },
+              {
+                "const": "sev3",
+                "title": "SEV3: minor"
+              }
+            ]
+          },
+          "notify": {
+            "type": "array",
+            "title": "Notify",
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "const": "on-call",
+                  "title": "On-call engineer"
+                },
+                {
+                  "const": "team-channel",
+                  "title": "Team channel"
+                },
+                {
+                  "const": "status-page",
+                  "title": "Public status page"
+                }
+              ]
+            }
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "service",
+          "action"
+        ]
+      },
+      "uiSchema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Label",
+            "text": "1 of 5 services is breaching the SLO: payments (340 ms p95, 1.8% errors)"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/services",
+            "options": {
+              "readonly": true
+            }
+          },
+          {
+            "type": "Group",
+            "label": "What do you want to do?",
+            "elements": [
+              {
+                "type": "HorizontalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/service"
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/action"
+                  }
+                ]
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/severity",
+                "options": {
+                  "format": "radio"
+                },
+                "rule": {
+                  "effect": "SHOW",
+                  "condition": {
+                    "scope": "#/properties/action",
+                    "schema": {
+                      "enum": [
+                        "open-incident",
+                        "page-on-call"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/notify",
+                "rule": {
+                  "effect": "SHOW",
+                  "condition": {
+                    "scope": "#/properties/action",
+                    "schema": {
+                      "enum": [
+                        "open-incident",
+                        "page-on-call"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/note",
+                "options": {
+                  "multi": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "initialData": {
+        "services": [
+          {
+            "service": "payments",
+            "p95Ms": 340,
+            "errorPct": 1.8,
+            "uptimePct": 99.71,
+            "status": "BREACH (latency, errors)"
+          },
+          {
+            "service": "search",
+            "p95Ms": 210,
+            "errorPct": 0.6,
+            "uptimePct": 99.9,
+            "status": "OK, least headroom"
+          },
+          {
+            "service": "api-gateway",
+            "p95Ms": 120,
+            "errorPct": 0.2,
+            "uptimePct": 99.98,
+            "status": "OK"
+          },
+          {
+            "service": "notifications",
+            "p95Ms": 95,
+            "errorPct": 0.3,
+            "uptimePct": 99.95,
+            "status": "OK"
+          },
+          {
+            "service": "auth",
+            "p95Ms": 85,
+            "errorPct": 0.1,
+            "uptimePct": 99.99,
+            "status": "OK"
+          }
+        ],
+        "service": "payments",
+        "action": "open-incident",
+        "severity": "sev2",
+        "notify": [
+          "on-call"
+        ]
+      }
+    },
+    "validation": {
+      "valid": true,
+      "checks": [
+        "tool call is generateUserInterface with {description, data, output}",
+        "output is a compilable JSON Schema for an object",
+        "UI has {schema, uiSchema, initialData} and the schema compiles",
+        "uiSchema uses JSON Forms elements only and every scope resolves in the schema",
+        "initialData has no type errors against the schema (unfilled required fields are fine)",
+        "the form can produce the output: every required output property exists in the UI schema"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  },
+  "notes": {
+    "text": "A status table with coloured emoji and a written diagnosis flags the breach clearly; it is a report, not a dashboard, and cannot be sorted or re-thresholded.",
+    "a2ui": "Summary cards, bound service cards with status icons and an Investigate button per service work well; there is no colour for severity and no gauges or sorting.",
+    "html": "A dark ops dashboard: stat tiles, sortable columns, gauges with an SLO tick and threshold sliders that re-evaluate which services breach as you drag.",
+    "agui": "This is the approach's best case: a human-in-the-loop decision (service, action, severity, who to notify) with rules that reveal fields, returned as a typed tool result."
+  }
+}

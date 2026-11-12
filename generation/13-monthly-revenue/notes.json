@@ -1,0 +1,6 @@
+{
+  "text": "Asked for a chart, it can only offer block characters in a code fence plus a table; the numbers and call-outs are right, the chart is a workaround.",
+  "a2ui": "The basic catalog has no chart component, so the bars are strings of block characters in a Text cell; stat cards carry the best and worst months well.",
+  "html": "A real SVG bar chart with best and worst coloured, an average line, month and quarter views and hover or tap details with month-over-month change.",
+  "agui": "JSON Forms has no chart either: the data is a twelve-row disabled table and the only thing the form adds is a typed request for a follow-up."
+}

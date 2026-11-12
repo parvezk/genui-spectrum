@@ -1,0 +1,75 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "weather-week",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "weather-week",
+      "components": [
+        { "id": "root", "component": "Column", "children": ["header", "beach-card", "forecast-card", "tips-card"] },
+        { "id": "header", "component": "Row", "align": "center", "children": ["header-icon", "header-col"] },
+        { "id": "header-icon", "component": "Icon", "name": "locationOn" },
+        { "id": "header-col", "component": "Column", "weight": 1, "children": ["title", "subtitle"] },
+        { "id": "title", "component": "Text", "variant": "h2", "text": "Lisbon" },
+        { "id": "subtitle", "component": "Text", "variant": "caption", "text": "7-day forecast · high / low in °C" },
+
+        { "id": "beach-card", "component": "Card", "child": "beach-row" },
+        { "id": "beach-row", "component": "Row", "align": "center", "children": ["beach-emoji", "beach-col"] },
+        { "id": "beach-emoji", "component": "Text", "variant": "h1", "text": "🏖️" },
+        { "id": "beach-col", "component": "Column", "weight": 1, "children": ["beach-title", "beach-text"] },
+        { "id": "beach-title", "component": "Text", "variant": "h4", "text": "Best beach day: Tuesday" },
+        { "id": "beach-text", "component": "Text", "text": "Sunny and the warmest day of the week at 26 °C. Monday (24 °C) is the backup; Sunday (23 °C) if it has to be the weekend." },
+
+        { "id": "forecast-card", "component": "Card", "child": "forecast-list" },
+        { "id": "forecast-list", "component": "List", "children": { "componentId": "day-row", "path": "/days" } },
+        { "id": "day-row", "component": "Row", "align": "center", "children": ["day-name", "day-emoji", "day-condition", "day-temps"] },
+        { "id": "day-name", "component": "Text", "variant": "h5", "weight": 2, "text": { "path": "day" } },
+        { "id": "day-emoji", "component": "Text", "variant": "h4", "weight": 1, "text": { "path": "emoji" } },
+        { "id": "day-condition", "component": "Text", "weight": 4, "text": { "path": "condition" } },
+        {
+          "id": "day-temps",
+          "component": "Text",
+          "weight": 3,
+          "text": { "call": "formatString", "args": { "value": "${high}° / ${low}°" }, "returnType": "string" }
+        },
+
+        { "id": "tips-card", "component": "Card", "child": "tips-col" },
+        { "id": "tips-col", "component": "Column", "children": ["tips-title", "tip-1", "tip-2", "tip-3", "remind-button"] },
+        { "id": "tips-title", "component": "Text", "variant": "h5", "text": "Planning the week" },
+        { "id": "tip-1", "component": "Text", "text": "**Thursday and Friday are wet** and the coolest days. Keep them for museums or a long lunch." },
+        { "id": "tip-2", "component": "Text", "text": "The weekend recovers: cloudy but dry on Saturday, sunny again on Sunday." },
+        { "id": "tip-3", "component": "Text", "text": "Evenings drop to 16–17 °C early in the week. Bring a light layer for sunset." },
+        {
+          "id": "remind-button",
+          "component": "Button",
+          "child": "remind-label",
+          "action": { "event": { "name": "set_beach_reminder", "context": { "day": "Tuesday", "city": "Lisbon" } } }
+        },
+        { "id": "remind-label", "component": "Text", "text": "Remind me on Tuesday morning" }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "weather-week",
+      "path": "/",
+      "value": {
+        "days": [
+          { "day": "Mon", "emoji": "☀️", "condition": "Sunny", "high": 24, "low": 16 },
+          { "day": "Tue", "emoji": "☀️", "condition": "Sunny · best for the beach", "high": 26, "low": 17 },
+          { "day": "Wed", "emoji": "⛅", "condition": "Partly cloudy", "high": 23, "low": 16 },
+          { "day": "Thu", "emoji": "🌧️", "condition": "Rain", "high": 19, "low": 14 },
+          { "day": "Fri", "emoji": "🌧️", "condition": "Rain", "high": 18, "low": 13 },
+          { "day": "Sat", "emoji": "☁️", "condition": "Cloudy", "high": 20, "low": 14 },
+          { "day": "Sun", "emoji": "☀️", "condition": "Sunny", "high": 23, "low": 15 }
+        ]
+      }
+    }
+  }
+]
