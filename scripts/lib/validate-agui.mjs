@@ -16,15 +16,35 @@ function makeAjv() {
   return ajv;
 }
 
-/** Resolve a JSON Forms scope such as "#/properties/a/properties/b" against a schema. */
-function resolveScope(schema, scope) {
-  if (typeof scope !== "string" || !scope.startsWith("#")) return undefined;
-  if (scope === "#") return schema;
-  let cur = schema;
-  for (const raw of scope.slice(2).split("/")) {
+function pointer(root, ref) {
+  let cur = root;
+  for (const raw of ref.slice(2).split("/")) {
+    if (raw === "") continue;
     const key = raw.replace(/~1/g, "/").replace(/~0/g, "~");
     if (!isObject(cur) && !Array.isArray(cur)) return undefined;
     cur = cur[key];
+    if (cur === undefined) return undefined;
+  }
+  return cur;
+}
+
+/** Follow local $refs the way JSON Forms does before it reads a subschema. */
+function deref(root, schema, depth = 0) {
+  if (isObject(schema) && typeof schema.$ref === "string" && schema.$ref.startsWith("#") && depth < 10) {
+    return deref(root, pointer(root, schema.$ref), depth + 1);
+  }
+  return schema;
+}
+
+/** Resolve a JSON Forms scope such as "#/properties/a/properties/b" against a schema. */
+function resolveScope(schema, scope) {
+  if (typeof scope !== "string" || !scope.startsWith("#")) return undefined;
+  let cur = deref(schema, schema);
+  if (scope === "#") return cur;
+  for (const raw of scope.slice(2).split("/")) {
+    const key = raw.replace(/~1/g, "/").replace(/~0/g, "~");
+    if (!isObject(cur) && !Array.isArray(cur)) return undefined;
+    cur = deref(schema, cur[key]);
     if (cur === undefined) return undefined;
   }
   return cur;
